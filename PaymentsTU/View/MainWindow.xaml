@@ -1,0 +1,21 @@
+﻿<Window x:Class="PaymentsTU.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PaymentsTU"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="350" Width="525">
+    <StackPanel Orientation="Vertical">
+        <StackPanel  Orientation="Horizontal" Height="25" VerticalAlignment="Top">
+            <Label x:Name="label" Content="Период:" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Top"/>
+            <ComboBox x:Name="comboBox" Width="219.365" Height="20" Margin="0,2.678"/>
+            <Label x:Name="label1" Content="Лимит:"/>
+            <Label x:Name="labelLimit" Content="labelLimit"/>
+        </StackPanel>
+        <StackPanel  Orientation="Horizontal" Height="25" VerticalAlignment="Top">
+            <Button x:Name="button" Content="Новый платеж" Height="20" Margin="5,0"/>
+        </StackPanel>
+        <Grid/>
+    </StackPanel>
+</Window>
