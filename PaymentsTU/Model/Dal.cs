@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace PaymentsTU.Model
 {
-    internal sealed class Dal
+    public sealed class Dal
     {
         public static IList<FinancialPeriod> FinancialPeriods()
         {
@@ -33,6 +33,28 @@ namespace PaymentsTU.Model
         public PaymentMatrix PaymentsInformation(DateTime startDate, DateTime endDate)
         {
             return new PaymentMatrix();
+        }
+
+        internal IList<Department> Departments()
+        {
+            return new[]
+            {
+                new Department
+                {
+                    Id = 0,
+                    Name = "Viktoria 1"
+                },
+                new Department
+                {
+                    Id = 1,
+                    Name = "Henadz 2"
+                },
+                new Department
+                {
+                    Id = 3,
+                    Name = "Department 3"
+                }
+            };
         }
 
         public IList<Employee> Employees()

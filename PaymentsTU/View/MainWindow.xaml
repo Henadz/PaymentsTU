@@ -3,10 +3,29 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:view="clr-namespace:PaymentsTU.View"
+        xmlns:viewModel="clr-namespace:PaymentsTU.ViewModel"
         xmlns:local="clr-namespace:PaymentsTU"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
-    <StackPanel Orientation="Vertical">
+        Title="Профсоюзные выплаты" Height="400" Width="800">
+    <Window.Resources>
+        <DataTemplate DataType="{x:Type viewModel:EmployeeViewModel}">
+            <view:EmployeeView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModel:DepartmentViewModel}">
+            <view:DepartmentView  />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModel:PaymentViewModel}">
+            <view:PaymentView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModel:PeriodViewModel}">
+            <view:PeriodView />
+        </DataTemplate>
+    </Window.Resources>
+    <Window.DataContext>
+        <viewModel:MainViewModel/>
+    </Window.DataContext>
+    <!--<StackPanel Orientation="Vertical">
         <StackPanel  Orientation="Horizontal" Height="25" VerticalAlignment="Top">
             <Label x:Name="label" Content="Период:" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Top"/>
             <ComboBox x:Name="comboBox" Width="219.365" Height="20" Margin="0,2.678"/>
@@ -17,5 +36,13 @@
             <Button x:Name="button" Content="Новый платеж" Height="20" Margin="5,0"/>
         </StackPanel>
         <Grid/>
-    </StackPanel>
+    </StackPanel>-->
+    <TabControl Name="Tabs" ItemsSource="{Binding Pages}" SelectedIndex="{Binding SelectedTab, Mode=TwoWay}">
+        <TabControl.ItemTemplate>
+            <DataTemplate>
+                <TextBlock
+                    Text="{Binding Title}" />
+            </DataTemplate>
+        </TabControl.ItemTemplate>
+    </TabControl>
 </Window>

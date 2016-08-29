@@ -21,9 +21,15 @@ namespace PaymentsTU
 	{
 		public MainWindow()
 		{
+            //ViewModel = new MainViewModel();
 			InitializeComponent();
 		}
 
-	    public MainViewModel Model { get; set; }
-	}
+	    public MainViewModel ViewModel { get; set; }
+
+        private void Tabs_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
+    }
 }

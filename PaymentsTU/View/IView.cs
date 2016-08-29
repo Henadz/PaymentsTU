@@ -2,7 +2,7 @@
 {
     internal interface IView<T>
     {
-        T Model { get; set; }
-        object DataContext { get; set; }
+        T ViewModel { get; set; }
+        //object DataContext { get; set; }
     }
 }

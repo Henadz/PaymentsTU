@@ -7,5 +7,13 @@
         public string Name { get; set; }
         public string Patronymic { get; set; }
         public string Note { get; set; }
+
+        public string FullName
+        {
+            get
+            {
+                return string.Join(" ", new[] { Surname, Name, Patronymic });
+            }
+        }
     }
 }

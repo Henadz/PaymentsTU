@@ -1,0 +1,42 @@
+﻿using PaymentsTU.Model;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Collections.ObjectModel;
+
+namespace PaymentsTU.ViewModel
+{
+    public class PeriodViewModel : ViewModelBase, IDirectoryPage<FinancialPeriod>
+    {
+        private ObservableCollection<FinancialPeriod> _periods;
+        public ObservableCollection<FinancialPeriod> Items
+        {
+            get
+            {
+                return _periods;
+            }
+        }
+
+        public Dal Repository
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public string Title
+        {
+            get
+            {
+                return "Платежные периоды";
+            }
+        }
+
+        public PeriodViewModel()
+        {
+            //Repository = new Dal();
+            _periods = new ObservableCollection<FinancialPeriod>(Dal.FinancialPeriods());
+        }
+    }
+}
