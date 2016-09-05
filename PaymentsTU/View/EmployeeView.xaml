@@ -16,7 +16,7 @@
             <Button x:Name="btnRefresh" Content="Обновить" Width="100"/>
         </StackPanel>
         <!--<toolkit:DataGrid ItemsSource="{Binding Items}" IsSynchronizedWithCurrentItem="True"/>-->
-        <ListView Name="Directory" ItemsSource="{Binding Items}">
+        <ListView Name="Directory" IsSynchronizedWithCurrentItem="True" ItemsSource="{Binding Items}" >
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <StackPanel>

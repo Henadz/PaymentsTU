@@ -10,5 +10,7 @@ namespace PaymentsTU.ViewModel
     {
         Dal Repository { get; }
         ObservableCollection<T> Items { get; }
+
+		//T CurrentItem { get; set; }
     }
 }
