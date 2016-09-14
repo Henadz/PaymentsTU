@@ -13,23 +13,21 @@ namespace PaymentsTU.ViewModel
         private ObservableCollection<Employee> _employees;
 		private ICollectionView _employeesView = null;
 
+	    public DataNavigationBarViewModel<Employee> NavigationBar { get; private set; }
+
 		public ObservableCollection<Employee> Items => _employees;
 
-	    private Employee _currentItem => _employeesView.CurrentItem as Employee;
+	    private Employee CurrentItem => _employeesView.CurrentItem as Employee;
 
-	    public string Title
-        {
-            get
-            {
-                return "Сотрудники";
-            }
-        }
+	    public string Title => "Сотрудники";
 
-        public Dal Repository
+	    public Dal Repository
         {
             get;
             private set;
         }
+
+	    private Action<Employee> RefreshData = null;
 
         public EmployeeViewModel()
         {
@@ -38,6 +36,10 @@ namespace PaymentsTU.ViewModel
 
 			_employeesView = CollectionViewSource.GetDefaultView(_employees);
 			_employeesView.MoveCurrentToPosition(_employees.Count > 0 ? 0 : - 1);
+
+			RefreshData = e => { _employeesView.Refresh(); };
+
+			NavigationBar = new DataNavigationBarViewModel<Employee>((CollectionView)_employeesView, null, null, null, RefreshData);
         }
 
     }

@@ -13,8 +13,7 @@
     </UserControl.DataContext>-->
 
     <StackPanel>
-        
-        <!--<toolkit:DataGrid ItemsSource="{Binding Items}" IsSynchronizedWithCurrentItem="True"/>-->
+        <local:DataNavigationBar DataContext="{Binding NavigationBar}" Height="30"></local:DataNavigationBar>
         <ListView Name="Directory" ItemsSource="{Binding Items}" SelectionMode="Single">
             <ListView.ItemTemplate>
                 <DataTemplate>
@@ -22,11 +21,5 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-        <StackPanel  VerticalAlignment="Bottom" Height="23" Orientation="Horizontal" Margin="5,0,5,5" >
-            <Button x:Name="btnAdd" Content="Добавить" Width="100" Margin="0,0,5,0"/>
-            <Button x:Name="btnDelete" Content="Удалить" Width="100" Margin="0,0,5,0"/>
-            <Button x:Name="btnEdit" Content="Редактировать" Width="100" Margin="0,0,5,0"/>
-            <Button x:Name="btnRefresh" Content="Обновить" Width="100"/>
-        </StackPanel>
     </StackPanel>
 </UserControl>

@@ -1,0 +1,43 @@
+﻿<UserControl x:Class="PaymentsTU.View.DataNavigationBar"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d"
+             d:DesignHeight="30" d:DesignWidth="300">
+    <UserControl.Resources>
+        <Style TargetType="{x:Type Image}">
+            <Style.Triggers>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Opacity" Value="0.30" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+    <StackPanel Orientation="Horizontal" Margin="1,1,1,1">
+        <Button Width="30" Margin="0,0,1,0" Command="{Binding FirstCommand}" Focusable="False">
+            <Image Source="{StaticResource FirstDrawingImage}"></Image>
+        </Button>
+        <Button Width="30" Margin="0,0,1,0" Command="{Binding PreviousCommand}" Focusable="False">
+            <Image Source="{StaticResource PreviousDrawingImage}"></Image>
+        </Button>
+        <Button Width="30" Margin="0,0,1,0" Command="{Binding NewCommand}" Focusable="False">
+            <Image Source="{StaticResource AddDrawingImage}"></Image>
+        </Button>
+        <Button Width="30" Margin="0,0,1,0" Command="{Binding EditCommand}" Focusable="False">
+            <Image Source="{StaticResource EditDrawingImage}"></Image>
+        </Button>
+        <Button Width="30" Margin="0,0,1,0" Command="{Binding DeleteCommand}" Focusable="False">
+            <Image Source="{StaticResource RemoveDrawingImage}"></Image>
+        </Button>
+        <Button Width="30" Margin="0,0,1,0" Command="{Binding NextCommand}" Focusable="False">
+            <Image Source="{StaticResource NextDrawingImage}"></Image>
+        </Button>
+        <Button Width="30" Margin="0,0,1,0" Command="{Binding LastCommand}" Focusable="False">
+            <Image Source="{StaticResource LastDrawingImage}"></Image>
+        </Button>
+        <Button Width="30" Margin="10,0,0,0" Command="{Binding RefreshCommand}" Focusable="False">
+            <Image Source="{StaticResource RefreshDrawingImage}"></Image>
+        </Button>
+    </StackPanel>
+</UserControl>
