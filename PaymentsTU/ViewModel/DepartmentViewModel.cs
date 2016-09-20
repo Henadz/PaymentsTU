@@ -18,12 +18,6 @@ namespace PaymentsTU.ViewModel
             }
         }
 
-        public Dal Repository
-        {
-            get;
-            private set;
-        }
-
         public string Title
         {
             get
@@ -34,8 +28,7 @@ namespace PaymentsTU.ViewModel
 
         public DepartmentViewModel()
         {
-            Repository = new Dal();
-            _departments = new ObservableCollection<Department>(Repository.Departments());
+            _departments = new ObservableCollection<Department>(Dal.Instance.Departments());
         }
     }
 }

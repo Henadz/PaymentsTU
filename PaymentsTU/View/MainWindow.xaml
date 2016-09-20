@@ -6,6 +6,7 @@
         xmlns:view="clr-namespace:PaymentsTU.View"
         xmlns:viewModel="clr-namespace:PaymentsTU.ViewModel"
         xmlns:local="clr-namespace:PaymentsTU"
+        xmlns:dialogView="clr-namespace:PaymentsTU.Dialogs.DialogView"
         mc:Ignorable="d"
         Title="Профсоюзные выплаты" Height="400" Width="800">
     <Window.Resources>

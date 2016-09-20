@@ -4,14 +4,15 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:view="clr-namespace:PaymentsTU.View"
-             xmlns:toolkit="http://schemas.microsoft.com/wpf/2008/toolkit"
-             xmlns:local="clr-namespace:PaymentsTU.View"
-             xmlns:viewModel="clr-namespace:PaymentsTU.ViewModel"
+             xmlns:dialogView="clr-namespace:PaymentsTU.Dialogs.DialogView"
+             xmlns:behaviors="clr-namespace:PaymentsTU.Behaviors"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="500">
-    <StackPanel>
-        <view:DataNavigationBar DataContext="{Binding NavigationBar}" Height="30"></view:DataNavigationBar>
-        <ListView Name="Directory" IsSynchronizedWithCurrentItem="True" ItemsSource="{Binding Items}" >
+    <UserControl.Resources>
+    </UserControl.Resources>
+    <DockPanel Name="BasePanel">
+        <view:DataNavigationBar DockPanel.Dock="Top" DataContext="{Binding NavigationBar}" Height="30"></view:DataNavigationBar>
+        <ListView Name="Directory" IsSynchronizedWithCurrentItem="True" ItemsSource="{Binding Items}" IsTabStop="True" SelectionMode="Single" VerticalAlignment="Stretch" behaviors:ScrollIntoViewBehavior.SelectedValue="{Binding ElementName=Directory, Path=SelectedValue}">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <StackPanel>
@@ -24,5 +25,5 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-    </StackPanel>
+    </DockPanel>
 </UserControl>

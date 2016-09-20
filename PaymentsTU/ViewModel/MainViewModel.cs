@@ -68,10 +68,10 @@ namespace PaymentsTU.ViewModel
             Pages = new ObservableCollection<IPageBase>
             {
                 new MatrixViewModel(),
-                new PaymentViewModel(),
-                new EmployeeViewModel(),
-                new DepartmentViewModel(),
-                new PeriodViewModel()
+				new PaymentViewModel(),
+				new EmployeeViewModel(),
+                //new DepartmentViewModel(),
+                //new PeriodViewModel()
             };
             //_periods = new ObservableCollection<FinancialPeriod>(Dal.FinancialPeriods());
             //_currentView = ViewType.Balance;

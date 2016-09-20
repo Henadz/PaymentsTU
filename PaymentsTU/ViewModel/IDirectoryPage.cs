@@ -1,16 +1,9 @@
-﻿using PaymentsTU.Model;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Text;
+﻿using System.Collections.ObjectModel;
 
 namespace PaymentsTU.ViewModel
 {
-    interface IDirectoryPage<T> : IPageBase
-    {
-        Dal Repository { get; }
-        ObservableCollection<T> Items { get; }
-
-		//T CurrentItem { get; set; }
-    }
+	internal interface IDirectoryPage<T> : IPageBase
+	{
+		ObservableCollection<T> Items { get; }
+	}
 }
