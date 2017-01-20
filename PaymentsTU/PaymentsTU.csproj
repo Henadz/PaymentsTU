@@ -87,6 +87,8 @@
     <Compile Include="Dialogs\DialogView\EditDialogViewModelBase.cs" />
     <Compile Include="Dialogs\DialogView\EditEmployeeDialogViewModel.cs" />
     <Compile Include="Dialogs\DialogView\EditPaymentTypeViewModel.cs" />
+    <Compile Include="Model\Currency.cs" />
+    <Compile Include="Model\EmployeeComparer.cs" />
     <Compile Include="Model\ViewType.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="ViewModel\DataNavigationBarViewModel.cs" />

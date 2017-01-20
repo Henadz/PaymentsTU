@@ -72,9 +72,10 @@ namespace PaymentsTU.Model
 			{
 				connection.Open();
 
-				var statement = new StringBuilder("SELECT Id, Surname, Name, Patronimic, IsFired, Note FROM Employee");
+				var statement = new StringBuilder();
+				statement.AppendLine("SELECT Id, Surname, Name, Patronimic, IsFired, Note FROM Employee");
 				if (onlyActive)
-					statement.AppendLine("WHERE IsFired = 1");
+					statement.AppendLine("WHERE IsFired = 0");
 
 				using (var command = new SQLiteCommand(statement.ToString(), connection))
 				{
@@ -163,6 +164,39 @@ namespace PaymentsTU.Model
 
 			return result > 0;
 		}
+
+		#region Currency
+		public IList<Currency> Currencies()
+		{
+			var resultset = new List<Currency>();
+			using (var connection = new SQLiteConnection(_connectionString))
+			{
+				connection.Open();
+
+				const string statement = "SELECT * FROM Currency";
+
+				using (var command = new SQLiteCommand(statement, connection))
+				{
+					using (var reader = command.ExecuteReader())
+					{
+						while (reader.Read())
+						{
+							resultset.Add(new Currency
+							{
+								DigitalCode = reader.GetInt32(0),
+								Code = DataReaderExtensions.SafeGetString(reader, 1),
+								Name = DataReaderExtensions.SafeGetString(reader, 2)
+							});
+						}
+					}
+				}
+
+				connection.Close();
+			}
+
+			return resultset;
+		}
+		#endregion
 
 		#region PaymentType
 		public IList<PaymentType> PaymentTypes()
@@ -345,23 +379,29 @@ namespace PaymentsTU.Model
 		#endregion
 
 		#region Payments
-		internal List<Payment> Payments()
+		internal List<Payment> Payments(long? id = null)
 		{
 			var resultset = new List<Payment>();
 			using (var connection = new SQLiteConnection(_connectionString))
 			{
 				connection.Open();
 
-				const string statement =
-					"SELECT p.Id, p.EmployeeId, e.Name, e.Surname, e.Patronimic, p.PaymentTypeId, pt.Name as PaymentType, p.DepartmentId, d.Name as Department, p.DatePayment, p.Value, p.CurrencyCode, c.Name as Currency "
-					+ "FROM Payment p "
-					+ "INNER JOIN Employee e ON p.EmployeeId = e.Id "
-					+ "INNER JOIN Department d ON p.DepartmentId = d.Id "
-					+ "INNER JOIN PaymentType pt ON p.PaymentTypeId = pt.Id "
-					+ "INNER JOIN Currency c ON p.CurrencyCode = c.Code";
+				var statement = new StringBuilder();
+				statement.AppendLine(
+					"SELECT p.Id, p.EmployeeId, e.Name, e.Surname, e.Patronimic, p.PaymentTypeId, pt.Name as PaymentType, p.DepartmentId, d.Name as Department, p.DatePayment, p.Value, p.CurrencyCode, c.Name as Currency ");
+				statement.AppendLine("FROM Payment p ");
+				statement.AppendLine("INNER JOIN Employee e ON p.EmployeeId = e.Id ");
+				statement.AppendLine("INNER JOIN Department d ON p.DepartmentId = d.Id ");
+				statement.AppendLine("INNER JOIN PaymentType pt ON p.PaymentTypeId = pt.Id ");
+				statement.AppendLine("INNER JOIN Currency c ON p.CurrencyCode = c.DigitalCode");
 
-				using (var command = new SQLiteCommand(statement, connection))
+				if (id.HasValue)
+					statement.AppendLine("WHERE p.Id = @Id");
+
+				using (var command = new SQLiteCommand(statement.ToString(), connection))
 				{
+					if (id.HasValue)
+						command.Parameters.AddWithValue("@Id", id.Value);
 					using (var reader = command.ExecuteReader())
 					{
 						while (reader.Read())
@@ -390,6 +430,48 @@ namespace PaymentsTU.Model
 			}
 
 			return resultset;
+		}
+
+		internal bool SavePayment(Payment record)
+		{
+			int result;
+			using (var connection = new SQLiteConnection(_connectionString))
+			{
+				connection.Open();
+
+				using (var command = new SQLiteCommand(connection))
+				{
+					command.CommandText = record.Id.HasValue
+						? "UPDATE Payment SET EmployeeId = @EmployeeId, PaymentTypeId = @PaymentTypeId, DepartmentId = @DepartmentId, DatePayment = @DatePayment, Value = @Value, CurrencyCode = @CurrencyCode WHERE Id = @Id"
+						: "INSERT INTO Payment(EmployeeId, PaymentTypeId, DepartmentId, DatePayment, Value, CurrencyCode) VALUES(@EmployeeId, @PaymentTypeId, @DepartmentId, @DatePayment, @Value, @CurrencyCode)";
+					command.Prepare();
+
+					if (record.Id.HasValue)
+						command.Parameters.AddWithValue("@Id", record.Id.Value);
+					command.Parameters.AddWithValue("@EmployeeId", record.EmployeeId);
+					command.Parameters.AddWithValue("@PaymentTypeId", record.PaymentTypeId);
+					command.Parameters.AddWithValue("@DepartmentId", record.DepartmentId);
+					command.Parameters.AddWithValue("@DatePayment", record.DatePayment);
+					command.Parameters.AddWithValue("@Value", record.Value);
+					command.Parameters.AddWithValue("@CurrencyCode", record.CurrencyId);
+					result = command.ExecuteNonQuery();
+
+					if (!record.Id.HasValue)
+						record.Id = connection.LastInsertRowId;
+
+					var recordData = Payments(record.Id)[0];
+					record.Currency = recordData.Currency;
+					record.Department = recordData.Department;
+					record.PaymentType = recordData.PaymentType;
+					record.Name = recordData.Name;
+					record.Patronimic = recordData.Patronimic;
+					record.Surname = recordData.Surname;
+				}
+
+				connection.Close();
+			}
+
+			return result > 0;
 		}
 
 		internal bool DeletePayment(Payment record)

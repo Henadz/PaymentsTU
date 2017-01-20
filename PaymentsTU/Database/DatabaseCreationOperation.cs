@@ -111,8 +111,7 @@ namespace PaymentsTU.Database
 				{
 					command.CommandText = "INSERT INTO Currency (DigitalCode, Code, Name)" +
 										  "VALUES" +
-										  "(933, \"BYN\", \"Белорусский рубль\")," +
-										  "(974, \"BYR\", \"Белорусский рубль BYR\")";
+										  "(933, \"BYN\", \"Белорусский рубль\")";
 					command.ExecuteNonQuery();
 				}
 			}

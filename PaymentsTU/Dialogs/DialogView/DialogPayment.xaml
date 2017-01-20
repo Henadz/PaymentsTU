@@ -11,15 +11,40 @@
     <StackPanel Margin="4">
         <StackPanel>
             <TextBlock  Text="Сотрудник" HorizontalAlignment="Left" VerticalAlignment="Top" />
-            <ComboBox Height="24" Margin="0,0,0,0" Name="Employee" VerticalAlignment="Top"/>
+            <ComboBox Name="Employee"
+                      Height="24"
+                      ItemsSource="{Binding EmployeesDataView}"
+                      IsEditable="True"
+                      DisplayMemberPath="FullName"
+                      SelectedValuePath="Id"
+                      SelectedValue="{Binding Path=Record.EmployeeId, Mode=TwoWay}"
+                      VerticalAlignment="Top"
+                      IsSynchronizedWithCurrentItem="False">
+            </ComboBox>
         </StackPanel>
         <StackPanel>
             <TextBlock  Text="Подразделение" HorizontalAlignment="Left" VerticalAlignment="Top" />
-            <ComboBox Height="24" Margin="0,0,0,0" Name="Department" VerticalAlignment="Top"/>
+            <ComboBox Name="Department"
+                      Height="24"
+                      ItemsSource="{Binding DepartmentsDataView}"
+                      IsEditable="True"
+                      DisplayMemberPath="Name"
+                      SelectedValuePath="Id"
+                      SelectedValue="{Binding Path=Record.DepartmentId, Mode=TwoWay}"
+                      VerticalAlignment="Top"
+                      IsSynchronizedWithCurrentItem="False"/>
         </StackPanel>
         <StackPanel>
             <TextBlock  Text="Вид платежа" HorizontalAlignment="Left" VerticalAlignment="Top" />
-            <ComboBox Height="24" Margin="0,0,0,0" Name="PaymentType" VerticalAlignment="Top"/>
+            <ComboBox Name="PaymentType"
+                      Height="24"
+                      ItemsSource="{Binding PaymentTypesDataView}"
+                      IsEditable="True"
+                      DisplayMemberPath="Name"
+                      SelectedValuePath="Id"
+                      SelectedValue="{Binding Path=Record.PaymentTypeId, Mode=TwoWay}"
+                      VerticalAlignment="Top"
+                      IsSynchronizedWithCurrentItem="False"/>
         </StackPanel>
         <Grid>
             <Grid.RowDefinitions>
@@ -33,24 +58,39 @@
             <StackPanel Grid.Row="0" Grid.Column="0">
                 <TextBlock  Text="Дата платежа" HorizontalAlignment="Left" VerticalAlignment="Top" />
                 <vdp:DatePicker Name="DatePicker"
-                            DateFormat="dd MMMM yyyy"
-                            HorizontalAlignment="Center" 
-                            CalendarTheme="AeroNormal"
-                            CalendarHeight="170" CalendarWidth="190" 
-                            ButtonStyle="Image"  
-                            IsCheckable="False" 
-                            IsReadOnly="False" 
-                            Height="24"
+                                DateFormat="dd MMMM yyyy"
+                                SelectedDate="{Binding Record.DatePayment, Mode=TwoWay}"
+                                HorizontalAlignment="Center"
+                                CalendarTheme="AeroNormal"
+                                CalendarHeight="170"
+                                CalendarWidth="190"
+                                ButtonStyle="Image"
+                                IsCheckable="False"
+                                IsReadOnly="False"
+                                Height="24"
                                 Width="150"
                             Background="White">
                 </vdp:DatePicker>
             </StackPanel>
             <StackPanel Grid.Row="0" Grid.Column="1" Margin="2, 0, 0, 0" Orientation="Vertical">
-                <controls:LabeledTextBox Label="Сумма" Text="" Mask="Decimal" HorizontalAlignment="Left" VerticalAlignment="Top" TextBoxHeight="24" Width="100"/>
+                <controls:LabeledTextBox Label="Сумма"
+                                         Text="{Binding Record.Value, Mode=TwoWay}"
+                                         Mask="Decimal"
+                                         HorizontalAlignment="Left"
+                                         VerticalAlignment="Top"
+                                         TextBoxHeight="24"
+                                         Width="100"/>
             </StackPanel>
             <StackPanel Grid.Row="0" Grid.Column="2" Margin="2, 0, 0, 0" Orientation="Vertical">
                 <TextBlock  Text="Валюта" HorizontalAlignment="Left" VerticalAlignment="Top" />
-                <ComboBox Height="24" Margin="0,0,0,0" Name="Currency" VerticalAlignment="Top"/>
+                <ComboBox Name="Currency" 
+                          Height="24"
+                          ItemsSource="{Binding CurrenciesDataView}"
+                          DisplayMemberPath="Name"
+                          SelectedValuePath="DigitalCode"
+                          SelectedValue="{Binding Path=Record.CurrencyId, Mode=TwoWay}"
+                          VerticalAlignment="Top"
+                          IsSynchronizedWithCurrentItem="False"/>
             </StackPanel>
         </Grid>
         <StackPanel Margin="2" Orientation="Horizontal" FlowDirection="RightToLeft">

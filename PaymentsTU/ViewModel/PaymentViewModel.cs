@@ -10,8 +10,8 @@ using PaymentsTU.Model;
 
 namespace PaymentsTU.ViewModel
 {
-    public sealed class PaymentViewModel : ViewModelBase, IDirectoryPage<Payment>
-    {
+	public sealed class PaymentViewModel : ViewModelBase, IDirectoryPage<Payment>
+	{
 		public string Title => "Выплаты";
 
 		private ObservableCollection<Payment> _items;
@@ -19,21 +19,21 @@ namespace PaymentsTU.ViewModel
 
 		public DataNavigationBarViewModel<Payment> NavigationBar { get; private set; }
 
-	    public ObservableCollection<Payment> Items
-	    {
-		    get { return _items; }
-		    set
-		    {
-			    _items = value;
+		public ObservableCollection<Payment> Items
+		{
+			get { return _items; }
+			set
+			{
+				_items = value;
 				_itemsView = new CollectionViewSource();
-			    _itemsView.Source = _items;
+				_itemsView.Source = _items;
 				OnPropertyChanged(nameof(ItemsDataView));
-		    }
-	    }
+			}
+		}
 
 		public ListCollectionView ItemsDataView => (ListCollectionView)_itemsView.View;
 
-	    public PaymentViewModel()
+		public PaymentViewModel()
 		{
 			Items = new ObservableCollection<Payment>(Dal.Instance.Payments());
 
@@ -48,7 +48,12 @@ namespace PaymentsTU.ViewModel
 		private void OnAdd(Payment item)
 		{
 			if (item == null)
-				item = new Payment();
+				item = new Payment
+				{
+					Value = 100.54M,
+					DatePayment = DateTime.Today,
+					CurrencyId = 933
+				};
 			var vm = new DialogPaymentViewModel("Новый платеж", item);
 			var result = DialogService.OpenDialog(vm);
 			if (result == DialogResult.Apply)

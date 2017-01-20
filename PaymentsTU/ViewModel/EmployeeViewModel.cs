@@ -67,13 +67,5 @@ namespace PaymentsTU.ViewModel
 		}
 
 		//_customerView.CustomSort = new CustomerSorter();
-
-		private class EmployeeComparer : IComparer
-		{
-			public int Compare(object x, object y)
-			{
-				return string.Compare(((Employee)x).FullName, ((Employee)y).FullName, StringComparison.CurrentCulture);
-			}
-		}
 	}
 }
