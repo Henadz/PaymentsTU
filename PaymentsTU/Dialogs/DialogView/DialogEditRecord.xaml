@@ -8,10 +8,10 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid Margin="4">
-        <Controls:LabeledTextBox Label="Фамилия" Text="{Binding Employee.Surname}" HorizontalAlignment="Left" Margin="10,10,10,0" VerticalAlignment="Top" Width="272"/>
-        <Controls:LabeledTextBox Label="Имя"  Text="{Binding Employee.Name}" HorizontalAlignment="Left" Margin="10,53.96,10,0" VerticalAlignment="Top" Width="272"/>
-        <Controls:LabeledTextBox Label="Отчество"  Text="{Binding Employee.Patronymic}" HorizontalAlignment="Left" Margin="10,97.92,10,0" VerticalAlignment="Top" Width="272"/>
-        <Controls:LabeledTextBox Label="Примечание"  Text="{Binding Employee.Note}" HorizontalAlignment="Left" Margin="10,141.88,10,0" VerticalAlignment="Top" Width="272"/>
+        <Controls:LabeledTextBox Label="Фамилия" Text="{Binding Record.Surname}" HorizontalAlignment="Left" Margin="10,10,10,0" VerticalAlignment="Top" Width="272"/>
+        <Controls:LabeledTextBox Label="Имя"  Text="{Binding Record.Name}" HorizontalAlignment="Left" Margin="10,53.96,10,0" VerticalAlignment="Top" Width="272"/>
+        <Controls:LabeledTextBox Label="Отчество"  Text="{Binding Record.Patronymic}" HorizontalAlignment="Left" Margin="10,97.92,10,0" VerticalAlignment="Top" Width="272"/>
+        <Controls:LabeledTextBox Label="Примечание"  Text="{Binding Record.Note}" HorizontalAlignment="Left" Margin="10,141.88,10,0" VerticalAlignment="Top" Width="272"/>
         <CheckBox x:Name="RetiredCheckBox" Content="Уволен" HorizontalAlignment="Left" Margin="10,185.84,0,0" VerticalAlignment="Top"/>
         <Button Content="Сохранить" HorizontalAlignment="Left" Margin="127,206.61,0,0" VerticalAlignment="Top" Width="75"
             Command="{Binding ApplyCommand}"

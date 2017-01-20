@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:PaymentsTU.Controls"
+             xmlns:behaviors="clr-namespace:PaymentsTU.Behaviors"
              mc:Ignorable="d" 
              d:DesignHeight="100" d:DesignWidth="300">
     <Grid x:Name="Root">
@@ -12,7 +13,7 @@
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0">
             <TextBlock  Text="{Binding Label}" HorizontalAlignment="Left" Name="BaseLabel" VerticalAlignment="Top" />
-            <TextBox Text="{Binding Text}" Height="23" Margin="0,0,0,0" Name="BaseTextBox" VerticalAlignment="Top" />
+            <TextBox Text="{Binding Text}" Height="{Binding TextBoxHeight}" behaviors:TextBoxMaskBehavior.Mask="{Binding Mask}"  Margin="0,0,0,0" Name="BaseTextBox" VerticalAlignment="Top" />
         </StackPanel>
     </Grid>
 </UserControl>

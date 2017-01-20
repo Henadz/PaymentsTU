@@ -1,0 +1,20 @@
+﻿<UserControl x:Class="PaymentsTU.Dialogs.DialogView.ConfirmDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:PaymentsTU.Dialogs.DialogView"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <StackPanel Margin="4">
+        <Label x:Name="Label" Content="{Binding Message}" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Top" MinHeight="40" MinWidth="300"/>
+        <StackPanel Margin="2" Orientation="Horizontal" FlowDirection="RightToLeft">
+            <Button Content="Нет" VerticalAlignment="Top" Width="75" Margin="0, 0, 10, 0"
+            Command="{Binding NoCommand}"
+            CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}}"/>
+            <Button Content="Да" VerticalAlignment="Top" Width="75" Margin="0, 0, 10, 0"
+            Command="{Binding YesCommand}"
+            CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}}"/>
+        </StackPanel>
+    </StackPanel>
+</UserControl>

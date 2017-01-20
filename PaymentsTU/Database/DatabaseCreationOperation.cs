@@ -85,11 +85,13 @@ namespace PaymentsTU.Database
 										  "Id INTEGER PRIMARY KEY ASC AUTOINCREMENT," +
 										  "EmployeeId INTEGER NOT NULL," +
 										  "PaymentTypeId INTEGER NOT NULL," +
+										  "DepartmentId INTEGER NOT NULL," +
 										  "DatePayment DATE NOT NULL," +
 										  "CurrencyCode INTEGER NOT NULL," +
 										  "Value DECIMAL(10,2) NOT NULL," +
 										  "FOREIGN KEY (EmployeeId) REFERENCES Employee (Id) ON DELETE CASCADE ON UPDATE NO ACTION," +
 										  "FOREIGN KEY (PaymentTypeId) REFERENCES PaymentType (Id) ON DELETE CASCADE ON UPDATE NO ACTION," +
+										  "FOREIGN KEY (DepartmentId) REFERENCES Department (Id) ON DELETE CASCADE ON UPDATE NO ACTION," +
 										  "FOREIGN KEY (CurrencyCode) REFERENCES Currency (DigitalCode) ON DELETE CASCADE ON UPDATE NO ACTION" +
 										  ")";
 					command.ExecuteNonQuery();

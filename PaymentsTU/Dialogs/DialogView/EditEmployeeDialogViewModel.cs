@@ -6,40 +6,19 @@ using PaymentsTU.ViewModel;
 
 namespace PaymentsTU.Dialogs.DialogView
 {
-	public class EditEmployeeDialogViewModel : DialogViewModelBase
+	public class EditEmployeeDialogViewModel : EditDialogViewModelBase<Employee>
 	{
-		public ICommand ApplyCommand { get; set; } = null;
 
-		public ICommand CancelCommand { get; set; } = null;
-
-		public Employee Employee { get; set; }
-
-		public EditEmployeeDialogViewModel(string title, Employee employee)
+		public EditEmployeeDialogViewModel(string title, Employee record) : base(title, record)
 		{
-			Title = title;
-			Employee = employee;
-			this.ApplyCommand = new RelayCommand<Window>(OnApplyClicked);
-			this.CancelCommand = new RelayCommand<Window>(OnCancelClicked);
 		}
 
-		private void OnApplyClicked(object parameter)
+		protected override void OnApplyClicked(Window parameter)
 		{
-			if (Dal.Instance.SaveEmployee(Employee))
+			if (Dal.Instance.SaveEmployee(Record))
 			{
-				this.CloseDialogWithResult(parameter as Window, DialogResult.Apply);
+				CloseDialogWithResult(parameter, DialogResult.Apply);
 			}
-		}
-
-		private void OnCancelClicked(object parameter)
-		{
-			this.CloseDialogWithResult(parameter as Window, DialogResult.Cancel);
-		}
-
-		public void CloseDialogWithResult(Window dialog, DialogResult result)
-		{
-			this.UserDialogResult = result;
-			if (dialog != null)
-				dialog.DialogResult = true;
 		}
 	}
 }

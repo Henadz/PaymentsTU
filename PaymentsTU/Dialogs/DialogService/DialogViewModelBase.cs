@@ -1,4 +1,5 @@
-﻿using PaymentsTU.ViewModel;
+﻿using System.Windows;
+using PaymentsTU.ViewModel;
 
 namespace PaymentsTU.Dialogs.DialogService
 {
@@ -9,6 +10,13 @@ namespace PaymentsTU.Dialogs.DialogService
 		{
 			get;
 			protected set;
+		}
+
+		public void CloseDialogWithResult(Window dialog, DialogResult result)
+		{
+			this.UserDialogResult = result;
+			if (dialog != null)
+				dialog.DialogResult = true;
 		}
 	}
 }

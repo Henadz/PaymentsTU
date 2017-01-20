@@ -1,10 +1,8 @@
 ﻿using PaymentsTU.Model;
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Text;
 using System.Windows.Data;
 using PaymentsTU.Dialogs.DialogService;
 using PaymentsTU.Dialogs.DialogView;
@@ -48,6 +46,7 @@ namespace PaymentsTU.ViewModel
 			{
 				_employees.Add(employee);
 				_employeesView.Refresh();
+				_employeesView.MoveCurrentTo(employee);
 			}
 		}
 
@@ -60,10 +59,11 @@ namespace PaymentsTU.ViewModel
 
 		private void OnDeleteEmployee(Employee employee)
 		{
-			var vm = new EditEmployeeDialogViewModel("Удалить сотрудника", employee);
+			var vm = new ConfirmDialogViewModel($"Вы действительно хотите удалить сотрудника {employee.FullName}?");
 			var result = DialogService.OpenDialog(vm);
-			if (result == DialogResult.Apply)
-				Items.Remove(employee);
+			if (result == DialogResult.Yes)
+				if (Dal.Instance.DeleteEmployee(employee))
+					Items.Remove(employee);
 		}
 
 		//_customerView.CustomSort = new CustomerSorter();

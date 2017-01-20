@@ -15,6 +15,8 @@ namespace PaymentsTU.Model
 
 		public static Dal Instance => Singleton.SingletonInstance;
 
+		
+
 		// ReSharper disable once ClassNeverInstantiated.Local
 		private class Singleton
 		{
@@ -44,6 +46,8 @@ namespace PaymentsTU.Model
 			};
 		}
 
+
+
 		public bool ClosePeriod(int id)
 		{
 			return id >= 0;
@@ -57,28 +61,6 @@ namespace PaymentsTU.Model
 		public PaymentMatrix PaymentsInformation(DateTime startDate, DateTime endDate)
 		{
 			return new PaymentMatrix();
-		}
-
-		internal IList<Department> Departments()
-		{
-			return new[]
-			{
-				new Department
-				{
-					Id = 0,
-					Name = "Viktoria 1"
-				},
-				new Department
-				{
-					Id = 1,
-					Name = "Henadz 2"
-				},
-				new Department
-				{
-					Id = 3,
-					Name = "Department 3"
-				}
-			};
 		}
 
 		public IEnumerable<Employee> Employees()
@@ -116,6 +98,8 @@ namespace PaymentsTU.Model
 			return resultset;
 		}
 
+
+
 		public bool SaveEmployee(Employee employee)
 		{
 			int result;
@@ -149,23 +133,291 @@ namespace PaymentsTU.Model
 			return result > 0;
 		}
 
-		public IList<PaymentType> PaymentTypes()
+		public bool DeleteEmployee(Employee employee)
 		{
-			return new[]
+			int result;
+			using (var connection = new SQLiteConnection(_connectionString))
 			{
-				new PaymentType
+				connection.Open();
+
+				using (var command = new SQLiteCommand(connection))
 				{
-					Id = 0,
-					Name = "Viktoria"
-				},
-				new PaymentType
-				{
-					Id = 1,
-					Name = "Henadz"
+					command.CommandText = "DELETE FROM Employee WHERE Id = @Id";
+					command.Prepare();
+
+					if (employee.Id.HasValue)
+					{
+						command.Parameters.AddWithValue("@Id", employee.Id.Value);
+						result = command.ExecuteNonQuery();
+					}
+					else
+					{
+						result = 1;
+					}
 				}
-			};
+
+				connection.Close();
+			}
+
+			return result > 0;
 		}
 
-		
+		#region PaymentType
+		public IList<PaymentType> PaymentTypes()
+		{
+			var resultset = new List<PaymentType>();
+			using (var connection = new SQLiteConnection(_connectionString))
+			{
+				connection.Open();
+
+				const string statement = "SELECT Id, Name FROM PaymentType";
+
+				using (var command = new SQLiteCommand(statement, connection))
+				{
+					using (var reader = command.ExecuteReader())
+					{
+						while (reader.Read())
+						{
+							resultset.Add(new PaymentType
+							{
+								Id = reader.GetInt64(0),
+								Name = DataReaderExtensions.SafeGetString(reader, 1)
+							});
+						}
+					}
+				}
+
+				connection.Close();
+			}
+
+			return resultset;
+		}
+
+		internal bool SavePaymentType(PaymentType record)
+		{
+			int result;
+			using (var connection = new SQLiteConnection(_connectionString))
+			{
+				connection.Open();
+
+				using (var command = new SQLiteCommand(connection))
+				{
+					command.CommandText = record.Id.HasValue
+						? "UPDATE PaymentType SET Name = @Name WHERE Id = @Id"
+						: "INSERT INTO PaymentType(Name) VALUES(@Name)";
+					command.Prepare();
+
+					if (record.Id.HasValue)
+						command.Parameters.AddWithValue("@Id", record.Id.Value);
+					command.Parameters.AddWithValue("@Name", record.Name);
+					result = command.ExecuteNonQuery();
+
+					if (!record.Id.HasValue)
+						record.Id = connection.LastInsertRowId;
+				}
+
+				connection.Close();
+			}
+
+			return result > 0;
+		}
+
+		public bool DeletePaymentType(PaymentType record)
+		{
+			int result;
+			using (var connection = new SQLiteConnection(_connectionString))
+			{
+				connection.Open();
+
+				using (var command = new SQLiteCommand(connection))
+				{
+					command.CommandText = "DELETE FROM PaymentType WHERE Id = @Id";
+					command.Prepare();
+
+					if (record.Id.HasValue)
+					{
+						command.Parameters.AddWithValue("@Id", record.Id.Value);
+						result = command.ExecuteNonQuery();
+					}
+					else
+					{
+						result = 1;
+					}
+				}
+
+				connection.Close();
+			}
+
+			return result > 0;
+		}
+		#endregion
+
+		#region Department
+		public IList<Department> Departments()
+		{
+			var resultset = new List<Department>();
+			using (var connection = new SQLiteConnection(_connectionString))
+			{
+				connection.Open();
+
+				const string statement = "SELECT Id, Name FROM Department";
+
+				using (var command = new SQLiteCommand(statement, connection))
+				{
+					using (var reader = command.ExecuteReader())
+					{
+						while (reader.Read())
+						{
+							resultset.Add(new Department
+							{
+								Id = reader.GetInt64(0),
+								Name = DataReaderExtensions.SafeGetString(reader, 1)
+							});
+						}
+					}
+				}
+
+				connection.Close();
+			}
+
+			return resultset;
+		}
+
+		internal bool SaveDepartment(Department record)
+		{
+			int result;
+			using (var connection = new SQLiteConnection(_connectionString))
+			{
+				connection.Open();
+
+				using (var command = new SQLiteCommand(connection))
+				{
+					command.CommandText = record.Id.HasValue
+						? "UPDATE Department SET Name = @Name WHERE Id = @Id"
+						: "INSERT INTO Department(Name) VALUES(@Name)";
+					command.Prepare();
+
+					if (record.Id.HasValue)
+						command.Parameters.AddWithValue("@Id", record.Id.Value);
+					command.Parameters.AddWithValue("@Name", record.Name);
+					result = command.ExecuteNonQuery();
+
+					if (!record.Id.HasValue)
+						record.Id = connection.LastInsertRowId;
+				}
+
+				connection.Close();
+			}
+
+			return result > 0;
+		}
+
+		public bool DeleteDepartment(Department record)
+		{
+			int result;
+			using (var connection = new SQLiteConnection(_connectionString))
+			{
+				connection.Open();
+
+				using (var command = new SQLiteCommand(connection))
+				{
+					command.CommandText = "DELETE FROM Department WHERE Id = @Id";
+					command.Prepare();
+
+					if (record.Id.HasValue)
+					{
+						command.Parameters.AddWithValue("@Id", record.Id.Value);
+						result = command.ExecuteNonQuery();
+					}
+					else
+					{
+						result = 1;
+					}
+				}
+
+				connection.Close();
+			}
+
+			return result > 0;
+		}
+		#endregion
+
+		#region Payments
+		internal List<Payment> Payments()
+		{
+			var resultset = new List<Payment>();
+			using (var connection = new SQLiteConnection(_connectionString))
+			{
+				connection.Open();
+
+				const string statement =
+					"SELECT p.Id, p.EmployeeId, e.Name, e.Surname, e.Patronimic, p.PaymentTypeId, pt.Name as PaymentType, p.DepartmentId, d.Name as Department, p.DatePayment, p.Value, p.CurrencyCode, c.Name as Currency "
+					+ "FROM Payment p "
+					+ "INNER JOIN Employee e ON p.EmployeeId = e.Id "
+					+ "INNER JOIN Department d ON p.DepartmentId = d.Id "
+					+ "INNER JOIN PaymentType pt ON p.PaymentTypeId = pt.Id "
+					+ "INNER JOIN Currency c ON p.CurrencyCode = c.Code";
+
+				using (var command = new SQLiteCommand(statement, connection))
+				{
+					using (var reader = command.ExecuteReader())
+					{
+						while (reader.Read())
+						{
+							resultset.Add(new Payment
+							{
+								Id = reader.GetInt64(0),
+								EmployeeId = reader.GetInt32(1),
+								Name = DataReaderExtensions.SafeGetString(reader, 2),
+								Surname = DataReaderExtensions.SafeGetString(reader, 3),
+								Patronimic = DataReaderExtensions.SafeGetString(reader, 4),
+								PaymentTypeId = reader.GetInt32(5),
+								PaymentType = DataReaderExtensions.SafeGetString(reader, 6),
+								DepartmentId = reader.GetInt32(7),
+								Department = DataReaderExtensions.SafeGetString(reader, 8),
+								DatePayment = DateTime.Today,
+								Value = reader.GetDecimal(10),
+								CurrencyId = reader.GetInt32(11),
+								Currency = DataReaderExtensions.SafeGetString(reader, 12)
+							});
+						}
+					}
+				}
+
+				connection.Close();
+			}
+
+			return resultset;
+		}
+
+		internal bool DeletePayment(Payment record)
+		{
+			int result;
+			using (var connection = new SQLiteConnection(_connectionString))
+			{
+				connection.Open();
+
+				using (var command = new SQLiteCommand(connection))
+				{
+					command.CommandText = "DELETE FROM Payment WHERE Id = @Id";
+					command.Prepare();
+
+					if (record.Id.HasValue)
+					{
+						command.Parameters.AddWithValue("@Id", record.Id.Value);
+						result = command.ExecuteNonQuery();
+					}
+					else
+					{
+						result = 1;
+					}
+				}
+
+				connection.Close();
+			}
+
+			return result > 0;
+		}
+		#endregion
 	}
 }

@@ -3,29 +3,38 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:toolkit="http://schemas.microsoft.com/wpf/2008/toolkit"
              xmlns:local="clr-namespace:PaymentsTU.View"
-             xmlns:viewModel="clr-namespace:PaymentsTU.ViewModel"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="500">
     <!--<UserControl.DataContext>
         <viewModel:EmployeeViewModel></viewModel:EmployeeViewModel>
     </UserControl.DataContext>-->
 
-    <StackPanel>
-        <local:DataNavigationBar DataContext="{Binding NavigationBar}" Height="30"></local:DataNavigationBar>
-        <ListView Name="Directory" ItemsSource="{Binding Items}">
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <StackPanel>
-                        <TextBlock Text="{Binding FullName}" VerticalAlignment="Top" />
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="Примечание: "></TextBlock>
-                            <TextBlock Text="{Binding Note}" FontStyle="Italic" />
-                        </StackPanel>
-                    </StackPanel>
-                </DataTemplate>
-            </ListView.ItemTemplate>
+    <DockPanel Name="BasePanel">
+        <local:DataNavigationBar DockPanel.Dock="Top" DataContext="{Binding NavigationBar}" Height="30"></local:DataNavigationBar>
+        <ListView Name="Payments" ItemsSource="{Binding ItemsDataView}">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn DisplayMemberBinding="{Binding FullName}">
+                        <GridViewColumnHeader Content="Ф.И.О. работника"></GridViewColumnHeader>
+                    </GridViewColumn>
+                    <GridViewColumn DisplayMemberBinding="{Binding PaymentType}">
+                        <GridViewColumnHeader Content="Вид платежа"></GridViewColumnHeader>
+                    </GridViewColumn>
+                    <GridViewColumn DisplayMemberBinding="{Binding Department}">
+                        <GridViewColumnHeader Content="Подразделение"></GridViewColumnHeader>
+                    </GridViewColumn>
+                    <GridViewColumn DisplayMemberBinding="{Binding DatePayment}">
+                        <GridViewColumnHeader Content="Дата выплаты"></GridViewColumnHeader>
+                    </GridViewColumn>
+                    <GridViewColumn DisplayMemberBinding="{Binding Value}">
+                        <GridViewColumnHeader Content="Сумма"></GridViewColumnHeader>
+                    </GridViewColumn>
+                    <GridViewColumn DisplayMemberBinding="{Binding Currency}">
+                        <GridViewColumnHeader Content="Валюта"></GridViewColumnHeader>
+                    </GridViewColumn>
+                </GridView>
+            </ListView.View>
         </ListView>
-    </StackPanel>
+    </DockPanel>
 </UserControl>

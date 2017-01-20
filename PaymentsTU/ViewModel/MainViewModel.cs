@@ -70,8 +70,9 @@ namespace PaymentsTU.ViewModel
                 new MatrixViewModel(),
 				new PaymentViewModel(),
 				new EmployeeViewModel(),
-                //new DepartmentViewModel(),
-                //new PeriodViewModel()
+                new DepartmentViewModel(),
+				new PaymentTypeViewModel(),
+				new PeriodViewModel()
             };
             //_periods = new ObservableCollection<FinancialPeriod>(Dal.FinancialPeriods());
             //_currentView = ViewType.Balance;

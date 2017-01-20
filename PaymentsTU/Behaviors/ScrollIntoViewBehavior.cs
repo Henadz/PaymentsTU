@@ -28,5 +28,29 @@ namespace PaymentsTU.Behaviors
 			var listbox = d as ListBox;
 			listbox?.ScrollIntoView(e.NewValue);
 		}
+
+		public static readonly DependencyProperty SelectedItemProperty = DependencyProperty.RegisterAttached
+			(
+				"SelectedItem",
+				typeof(object),
+				typeof(ScrollIntoViewBehavior),
+				new PropertyMetadata(null, OnSelectedItemChange)
+			);
+
+		public static void SetSelectedItem(DependencyObject source, object value)
+		{
+			source.SetValue(SelectedItemProperty, value);
+		}
+
+		public static object GetSelectedItem(DependencyObject source)
+		{
+			return source.GetValue(SelectedItemProperty);
+		}
+
+		private static void OnSelectedItemChange(DependencyObject d, DependencyPropertyChangedEventArgs e)
+		{
+			var listbox = d as ListBox;
+			listbox?.ScrollIntoView(e.NewValue);
+		}
 	}
 }
