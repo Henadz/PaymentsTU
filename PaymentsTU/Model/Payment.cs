@@ -11,7 +11,7 @@ namespace PaymentsTU.Model
 		public string Patronimic { get; set; }
 
 	    public string FullName
-		    => string.Join(" ", new[] {Surname.Trim(), (Name ?? "").Trim(), (Patronimic ?? "").Trim()}).Trim();
+		    => string.Join(" ", new[] {Surname, Name, Patronimic}).Trim();
         public int PaymentTypeId { get; set; }
 		public string PaymentType { get; set; }
 		public int DepartmentId { get; set; }

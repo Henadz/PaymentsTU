@@ -78,7 +78,10 @@ namespace PaymentsTU.Database
 										  "Name NVARCHAR(255) NOT NULL," +
 										  "Patronimic NVARCHAR(255)," +
 										  "IsFired INTEGER NOT NULL CHECK (IsFired IN (0,1))," +
-										  "Note NVARCHAR(1024))";
+										  "DepartmentId INTEGER," +
+										  "Note NVARCHAR(1024),"+
+										  "FOREIGN KEY (DepartmentId) REFERENCES Department (Id) ON DELETE NO ACTION ON UPDATE NO ACTION" +
+										  ")";
 					command.ExecuteNonQuery();
 
 					command.CommandText = "CREATE TABLE Payment (" +

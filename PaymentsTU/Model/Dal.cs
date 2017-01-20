@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Configuration;
 using System.Data.SQLite;
+using System.Text;
 using PaymentsTU.Database;
 
 namespace PaymentsTU.Model
@@ -63,17 +65,18 @@ namespace PaymentsTU.Model
 			return new PaymentMatrix();
 		}
 
-		public IEnumerable<Employee> Employees()
+		public IEnumerable<Employee> Employees(bool onlyActive = false)
 		{
 			var resultset = new List<Employee>();
 			using (var connection = new SQLiteConnection(_connectionString))
 			{
 				connection.Open();
 
-				//var statement = "SELECT * FROM Cars LIMIT 5";
-				const string statement = "SELECT Id, Surname, Name, Patronimic, IsFired, Note FROM Employee";
+				var statement = new StringBuilder("SELECT Id, Surname, Name, Patronimic, IsFired, Note FROM Employee");
+				if (onlyActive)
+					statement.AppendLine("WHERE IsFired = 1");
 
-				using (var command = new SQLiteCommand(statement, connection))
+				using (var command = new SQLiteCommand(statement.ToString(), connection))
 				{
 					using (var reader = command.ExecuteReader())
 					{
@@ -98,8 +101,6 @@ namespace PaymentsTU.Model
 			return resultset;
 		}
 
-
-
 		public bool SaveEmployee(Employee employee)
 		{
 			int result;
@@ -110,17 +111,18 @@ namespace PaymentsTU.Model
 				using (var command = new SQLiteCommand(connection))
 				{
 					command.CommandText = employee.Id.HasValue 
-						? "UPDATE Employee SET Surname = @Surname, Name = @Name, Patronimic = @Patronimic, IsFired = @IsFired, Note = @Note WHERE Id = @Id"
-						: "INSERT INTO Employee(Surname, Name, Patronimic, IsFired, Note) VALUES(@Surname, @Name, @Patronimic, @IsFired, @Note)";
+						? "UPDATE Employee SET Surname = @Surname, Name = @Name, Patronimic = @Patronimic, IsFired = @IsFired, Note = @Note, DepartmentId = @DepartmentId WHERE Id = @Id"
+						: "INSERT INTO Employee(Surname, Name, Patronimic, IsFired, Note, DepartmentId) VALUES(@Surname, @Name, @Patronimic, @IsFired, @Note, @DepartmentId)";
 					command.Prepare();
 
 					if (employee.Id.HasValue)
 						command.Parameters.AddWithValue("@Id", employee.Id.Value);
-					command.Parameters.AddWithValue("@Surname", employee.Surname);
-					command.Parameters.AddWithValue("@Name", employee.Name);
-					command.Parameters.AddWithValue("@Patronimic", employee.Patronymic);
+					command.Parameters.AddWithValue("@Surname", employee.Surname.Trim());
+					command.Parameters.AddWithValue("@Name", employee.Name.Trim());
+					command.Parameters.AddWithValue("@Patronimic", employee.Patronymic?.Trim());
 					command.Parameters.AddWithValue("@IsFired", Convert.ToInt32(employee.IsFired));
 					command.Parameters.AddWithValue("@Note", employee.Note);
+					command.Parameters.AddWithValue("@DepartmentId", employee.DepartmentId);
 					result = command.ExecuteNonQuery();
 
 					if (!employee.Id.HasValue)
