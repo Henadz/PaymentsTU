@@ -9,10 +9,10 @@ namespace PaymentsTU.Database
 			return !reader.IsDBNull(colIndex) ? reader.GetString(colIndex) : null;
 		}
 
-		public static int? SafeGetInt(SQLiteDataReader reader, int colIndex)
+		public static long? SafeGetLong(SQLiteDataReader reader, int colIndex)
 		{
 			if (!reader.IsDBNull(colIndex))
-				return reader.GetInt32(colIndex);
+				return reader.GetInt64(colIndex);
 			return null;
 		}
 	}

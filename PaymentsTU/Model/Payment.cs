@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Collections;
 
 namespace PaymentsTU.Model
 {
-	public class Payment
+	public class Payment : ICloneable
 	{
 		public long? Id { get; set; }
 		public long EmployeeId { get; set; }
@@ -20,5 +21,9 @@ namespace PaymentsTU.Model
 		public int CurrencyId { get; set; }
 		public string Currency { get; set; }
 		public decimal Value { get; set; }
+		public object Clone()
+		{
+			return this.MemberwiseClone();
+		}
 	}
 }

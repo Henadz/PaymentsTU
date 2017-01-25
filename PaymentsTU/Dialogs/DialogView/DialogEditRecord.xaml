@@ -3,21 +3,44 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:PaymentsTU.Dialogs.DialogView"
-             xmlns:Controls="clr-namespace:PaymentsTU.Controls" x:Class="PaymentsTU.Dialogs.DialogView.DialogEditRecord"
+             x:Class="PaymentsTU.Dialogs.DialogView.DialogEditRecord"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
-    <Grid Margin="4">
-        <Controls:LabeledTextBox Label="Фамилия" Text="{Binding Record.Surname}" HorizontalAlignment="Left" Margin="10,10,10,0" VerticalAlignment="Top" Width="272"/>
-        <Controls:LabeledTextBox Label="Имя"  Text="{Binding Record.Name}" HorizontalAlignment="Left" Margin="10,53.96,10,0" VerticalAlignment="Top" Width="272"/>
-        <Controls:LabeledTextBox Label="Отчество"  Text="{Binding Record.Patronymic}" HorizontalAlignment="Left" Margin="10,97.92,10,0" VerticalAlignment="Top" Width="272"/>
-        <Controls:LabeledTextBox Label="Примечание"  Text="{Binding Record.Note}" HorizontalAlignment="Left" Margin="10,141.88,10,0" VerticalAlignment="Top" Width="272"/>
-        <CheckBox x:Name="RetiredCheckBox" Content="Уволен" HorizontalAlignment="Left" Margin="10,185.84,0,0" VerticalAlignment="Top"/>
-        <Button Content="Сохранить" HorizontalAlignment="Left" Margin="127,206.61,0,0" VerticalAlignment="Top" Width="75"
-            Command="{Binding ApplyCommand}"
-            CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}}"/>
-        <Button Content="Отмена" HorizontalAlignment="Left" Margin="207,206.61,0,0" VerticalAlignment="Top" Width="75"
+             d:DesignHeight="300" Width="400">
+    <StackPanel Margin="4" FocusManager.FocusedElement="{Binding ElementName=Surname}">
+        <StackPanel>
+            <TextBlock Text="Фамилия" HorizontalAlignment="Left" VerticalAlignment="Top" />
+            <TextBox Name="Surname" Text="{Binding Record.Surname}" Height="24" IsTabStop="True" TabIndex="0" Focusable="True"/>
+        </StackPanel>
+        <StackPanel>
+            <TextBlock Text="Имя" HorizontalAlignment="Left" VerticalAlignment="Top" />
+            <TextBox Name="Name" Text="{Binding Record.Name}" Height="24" IsTabStop="True" TabIndex="1" Focusable="True"/>
+        </StackPanel>
+        <StackPanel>
+            <TextBlock Text="Отчество" HorizontalAlignment="Left" VerticalAlignment="Top" />
+            <TextBox Name="Patronymic" Text="{Binding Record.Patronymic}" Height="24" IsTabStop="True" TabIndex="2" Focusable="True"/>
+        </StackPanel>
+        <TextBlock  Text="Подразделение" HorizontalAlignment="Left" VerticalAlignment="Top" />
+        <ComboBox Name="Department"
+                      Height="24"
+                      ItemsSource="{Binding DepartmentsDataView}"
+                      IsEditable="True"
+                      DisplayMemberPath="Name"
+                      SelectedValuePath="Id"
+                      SelectedValue="{Binding Path=Record.DepartmentId, Mode=TwoWay}"
+                      VerticalAlignment="Top"
+                      IsSynchronizedWithCurrentItem="False" TabIndex="3" IsTabStop="True"/>
+        <StackPanel>
+            <TextBlock Text="Примечание" HorizontalAlignment="Left" VerticalAlignment="Top" />
+            <TextBox Name="Note" Text="{Binding Record.Note}" Height="24" IsTabStop="True" TabIndex="4" Focusable="True"/>
+        </StackPanel>
+        <CheckBox x:Name="RetiredCheckBox" Content="Уволен" IsChecked="{Binding Path=Record.IsFired}" HorizontalAlignment="Left" Margin="0,5,0,0" VerticalAlignment="Top" TabIndex="5"/>
+        <StackPanel Margin="0,10,0,0" Orientation="Horizontal" FlowDirection="RightToLeft">
+            <Button Content="Отмена" VerticalAlignment="Top" Width="75" Margin="0, 0, 5, 0"
             Command="{Binding CancelCommand}"
-            CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}}"/>
-    </Grid>
+            CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}}" TabIndex="7" IsCancel="True"/>
+            <Button Content="Сохранить" VerticalAlignment="Top" Width="75" Margin="0, 0, 5, 0"
+            Command="{Binding ApplyCommand}"
+            CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}}" TabIndex="6" IsDefault="True"/>
+        </StackPanel>
+    </StackPanel>
 </UserControl>

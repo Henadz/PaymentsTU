@@ -3,12 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:vdp="clr-namespace:vhDatePicker;assembly=vhDatePicker"
-             xmlns:local="clr-namespace:PaymentsTU.Dialogs.DialogView"
-             xmlns:controls="clr-namespace:PaymentsTU.Controls"
+             xmlns:xwpf="clr-namespace:Xceed.Wpf.Toolkit;assembly=Xceed.Wpf.Toolkit"
              mc:Ignorable="d" 
              d:DesignHeight="300" Width="400">
-    <StackPanel Margin="4">
+    <StackPanel Margin="4" FocusManager.FocusedElement="{Binding ElementName=Employee}">
         <StackPanel>
             <TextBlock  Text="Сотрудник" HorizontalAlignment="Left" VerticalAlignment="Top" />
             <ComboBox Name="Employee"
@@ -19,7 +17,7 @@
                       SelectedValuePath="Id"
                       SelectedValue="{Binding Path=Record.EmployeeId, Mode=TwoWay}"
                       VerticalAlignment="Top"
-                      IsSynchronizedWithCurrentItem="False">
+                      IsSynchronizedWithCurrentItem="False" IsTabStop="True" TabIndex="0">
             </ComboBox>
         </StackPanel>
         <StackPanel>
@@ -32,7 +30,7 @@
                       SelectedValuePath="Id"
                       SelectedValue="{Binding Path=Record.DepartmentId, Mode=TwoWay}"
                       VerticalAlignment="Top"
-                      IsSynchronizedWithCurrentItem="False"/>
+                      IsSynchronizedWithCurrentItem="False" TabIndex="1" IsTabStop="True"/>
         </StackPanel>
         <StackPanel>
             <TextBlock  Text="Вид платежа" HorizontalAlignment="Left" VerticalAlignment="Top" />
@@ -44,7 +42,7 @@
                       SelectedValuePath="Id"
                       SelectedValue="{Binding Path=Record.PaymentTypeId, Mode=TwoWay}"
                       VerticalAlignment="Top"
-                      IsSynchronizedWithCurrentItem="False"/>
+                      IsSynchronizedWithCurrentItem="False" TabIndex="2" IsTabStop="True"/>
         </StackPanel>
         <Grid>
             <Grid.RowDefinitions>
@@ -57,29 +55,25 @@
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Row="0" Grid.Column="0">
                 <TextBlock  Text="Дата платежа" HorizontalAlignment="Left" VerticalAlignment="Top" />
-                <vdp:DatePicker Name="DatePicker"
-                                DateFormat="dd MMMM yyyy"
-                                SelectedDate="{Binding Record.DatePayment, Mode=TwoWay}"
-                                HorizontalAlignment="Center"
-                                CalendarTheme="AeroNormal"
-                                CalendarHeight="170"
-                                CalendarWidth="190"
-                                ButtonStyle="Image"
-                                IsCheckable="False"
-                                IsReadOnly="False"
-                                Height="24"
-                                Width="150"
-                            Background="White">
-                </vdp:DatePicker>
+                <xwpf:DateTimePicker
+                    Height="24"
+                    AutoCloseCalendar="True"
+                    ButtonSpinnerLocation="Left"
+                    Format="LongDate"
+                    Value="{Binding Record.DatePayment, Mode=TwoWay}"
+                    TimePickerAllowSpin="False"
+                    TimePickerShowButtonSpinner="False"
+                    TimePickerVisibility="Hidden"
+                    AllowTextInput="False" TabIndex="3"/>
             </StackPanel>
             <StackPanel Grid.Row="0" Grid.Column="1" Margin="2, 0, 0, 0" Orientation="Vertical">
-                <controls:LabeledTextBox Label="Сумма"
-                                         Text="{Binding Record.Value, Mode=TwoWay}"
-                                         Mask="Decimal"
-                                         HorizontalAlignment="Left"
-                                         VerticalAlignment="Top"
-                                         TextBoxHeight="24"
-                                         Width="100"/>
+                <TextBlock  Text="Сумма" HorizontalAlignment="Left" VerticalAlignment="Top" />
+                <xwpf:DecimalUpDown Name="PaymentSum"
+                                    Height="24"
+                                    FormatString="#,##0.00"
+                                    Value="{Binding Record.Value, Mode=TwoWay}"
+                                    Minimum="0"
+                                    TabIndex="4"/>
             </StackPanel>
             <StackPanel Grid.Row="0" Grid.Column="2" Margin="2, 0, 0, 0" Orientation="Vertical">
                 <TextBlock  Text="Валюта" HorizontalAlignment="Left" VerticalAlignment="Top" />
@@ -90,16 +84,16 @@
                           SelectedValuePath="DigitalCode"
                           SelectedValue="{Binding Path=Record.CurrencyId, Mode=TwoWay}"
                           VerticalAlignment="Top"
-                          IsSynchronizedWithCurrentItem="False"/>
+                          IsSynchronizedWithCurrentItem="False" TabIndex="5"/>
             </StackPanel>
         </Grid>
-        <StackPanel Margin="2" Orientation="Horizontal" FlowDirection="RightToLeft">
+        <StackPanel Margin="0,10,0,0" Orientation="Horizontal" FlowDirection="RightToLeft">
             <Button Content="Отмена" VerticalAlignment="Top" Width="75" Margin="0, 0, 5, 0"
             Command="{Binding CancelCommand}"
-            CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}}"/>
+            CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}}" TabIndex="7" IsCancel="True"/>
             <Button Content="Сохранить" VerticalAlignment="Top" Width="75" Margin="0, 0, 5, 0"
             Command="{Binding ApplyCommand}"
-            CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}}"/>
+            CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}}" TabIndex="6" IsDefault="True"/>
         </StackPanel>
     </StackPanel>
 </UserControl>

@@ -7,26 +7,32 @@ using PaymentsTU.Model;
 
 namespace PaymentsTU.ViewModel
 {
-	public sealed class PaymentTypeViewModel : ViewModelBase, IDirectoryPage<PaymentType>
+	public sealed class PaymentTypeViewModel : ViewModelBase, IListPageViewModel<PaymentType>
 	{
 		public string Title => "Виды платежей";
 
 		private ObservableCollection<PaymentType> _items;
-		private ICollectionView _itemsView = null;
 
 		public DataNavigationBarViewModel<PaymentType> NavigationBar { get; private set; }
-		public ObservableCollection<PaymentType> Items => _items;
+		public ListCollectionView ItemsDataView { get; }
 
 		public PaymentTypeViewModel()
 		{
 			_items = new ObservableCollection<PaymentType>(Dal.Instance.PaymentTypes());
+			ItemsDataView = (ListCollectionView)CollectionViewSource.GetDefaultView(_items);
+			ItemsDataView.CustomSort = new PaymentTypeComparer();
 
-			_itemsView = CollectionViewSource.GetDefaultView(_items);// as ListCollectionView;
-																	 //_employeesView.CustomSort = new EmployeeComparer();
+			ItemsDataView.MoveCurrentToPosition(_items.Count > 0 ? 0 : -1);
 
-			_itemsView.MoveCurrentToPosition(_items.Count > 0 ? 0 : -1);
-
-			NavigationBar = new DataNavigationBarViewModel<PaymentType>((CollectionView)_itemsView, OnAddPaymentType, OnDeletePaymentType, OnEditPaymentType, () => { _itemsView.Refresh(); });
+			NavigationBar = new DataNavigationBarViewModel<PaymentType>(ItemsDataView, OnAddPaymentType, OnDeletePaymentType, OnEditPaymentType, () => {
+				_items.Clear();
+				foreach (var payment in Dal.Instance.PaymentTypes())
+				{
+					_items.Add(payment);
+				}
+				ItemsDataView.Refresh();
+				ItemsDataView.MoveCurrentToPosition(_items.Count > 0 ? 0 : -1);
+			});
 		}
 
 		private void OnAddPaymentType(PaymentType item)
@@ -38,8 +44,8 @@ namespace PaymentsTU.ViewModel
 			if (result == DialogResult.Apply)
 			{
 				_items.Add(item);
-				_itemsView.Refresh();
-				_itemsView.MoveCurrentTo(item);
+				ItemsDataView.Refresh();
+				ItemsDataView.MoveCurrentTo(item);
 			}
 		}
 
@@ -49,14 +55,19 @@ namespace PaymentsTU.ViewModel
 			var result = DialogService.OpenDialog(vm);
 			if (result == DialogResult.Yes)
 				if (Dal.Instance.DeletePaymentType(item))
-					Items.Remove(item);
+					ItemsDataView.Remove(item);
 		}
 
 		private void OnEditPaymentType(PaymentType item)
 		{
+			var editItem = (PaymentType)item.Clone();
 			var vm = new EditPaymentTypeViewModel("Редактирование вида платежа", item);
-			var result = DialogService.OpenDialog(vm);
-			_itemsView.Refresh();
+			if (DialogService.OpenDialog(vm) == DialogResult.Apply)
+			{
+				var index = _items.IndexOf(item);
+				_items[index] = editItem;
+			}
+			ItemsDataView.Refresh();
 		}
 	}
 }

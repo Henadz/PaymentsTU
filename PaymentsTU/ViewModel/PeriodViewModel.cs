@@ -3,10 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Collections.ObjectModel;
+using System.Windows.Data;
 
 namespace PaymentsTU.ViewModel
 {
-    public class PeriodViewModel : ViewModelBase, IDirectoryPage<FinancialPeriod>
+    public class PeriodViewModel : ViewModelBase, IListPageViewModel<FinancialPeriod>
     {
         private ObservableCollection<FinancialPeriod> _periods;
         public ObservableCollection<FinancialPeriod> Items
@@ -17,7 +18,9 @@ namespace PaymentsTU.ViewModel
             }
         }
 
-        public Dal Repository
+	    public ListCollectionView ItemsDataView { get; }
+
+	    public Dal Repository
         {
             get
             {

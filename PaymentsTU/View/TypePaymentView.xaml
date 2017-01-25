@@ -9,7 +9,7 @@
              d:DesignHeight="300" d:DesignWidth="300">
     <DockPanel Name="BasePanel">
         <view:DataNavigationBar DockPanel.Dock="Top" DataContext="{Binding NavigationBar}" Height="30"></view:DataNavigationBar>
-        <ListView Name="Directory" IsSynchronizedWithCurrentItem="True" ItemsSource="{Binding Items}" IsTabStop="True" SelectionMode="Single" VerticalAlignment="Stretch" behaviors:ScrollIntoViewBehavior.SelectedItem="{Binding ElementName=Directory, Path=SelectedItem}">
+        <ListView Name="Directory" IsSynchronizedWithCurrentItem="True" ItemsSource="{Binding ItemsDataView}" IsTabStop="True" SelectionMode="Single" VerticalAlignment="Stretch" behaviors:ScrollIntoViewBehavior.SelectedItem="{Binding ElementName=Directory, Path=SelectedItem}">
             <ListView.ItemTemplate>
                 <DataTemplate>
                         <TextBlock Text="{Binding Name}" VerticalAlignment="Top" />

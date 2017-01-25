@@ -73,7 +73,9 @@ namespace PaymentsTU.Model
 				connection.Open();
 
 				var statement = new StringBuilder();
-				statement.AppendLine("SELECT Id, Surname, Name, Patronimic, IsFired, Note FROM Employee");
+				statement.AppendLine("SELECT e.Id, e.Surname, e.Name, e.Patronimic, e.IsFired, e.Note, e.DepartmentId, d.Name  as Department ");
+				statement.AppendLine("FROM Employee e ");
+				statement.AppendLine("LEFT JOIN Department d ON e.DepartmentId = d.Id ");
 				if (onlyActive)
 					statement.AppendLine("WHERE IsFired = 0");
 
@@ -90,7 +92,9 @@ namespace PaymentsTU.Model
 								Name = DataReaderExtensions.SafeGetString(reader, 2),
 								Patronymic = DataReaderExtensions.SafeGetString(reader, 3),
 								IsFired = reader.GetBoolean(4),
-								Note = DataReaderExtensions.SafeGetString(reader, 5)
+								Note = DataReaderExtensions.SafeGetString(reader, 5),
+								DepartmentId = DataReaderExtensions.SafeGetLong(reader, 6),
+								
 							});
 						}
 					}
@@ -417,7 +421,7 @@ namespace PaymentsTU.Model
 								PaymentType = DataReaderExtensions.SafeGetString(reader, 6),
 								DepartmentId = reader.GetInt32(7),
 								Department = DataReaderExtensions.SafeGetString(reader, 8),
-								DatePayment = DateTime.Today,
+								DatePayment = reader.GetDateTime(9),
 								Value = reader.GetDecimal(10),
 								CurrencyId = reader.GetInt32(11),
 								Currency = DataReaderExtensions.SafeGetString(reader, 12)

@@ -39,6 +39,9 @@
     <StartupObject>PaymentsTU.App</StartupObject>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="FrameworkExtend">
+      <HintPath>..\Library\FrameworkExtend.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
@@ -50,6 +53,12 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="WPFToolkit">
+      <HintPath>..\Library\WPFToolkit.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.Toolkit">
+      <HintPath>..\Library\Xceed.Wpf.Toolkit.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -94,7 +103,7 @@
     <Compile Include="ViewModel\DataNavigationBarViewModel.cs" />
     <Compile Include="ViewModel\DepartmentViewModel.cs" />
     <Compile Include="ViewModel\EmployeeViewModel.cs" />
-    <Compile Include="ViewModel\IDirectoryPage.cs" />
+    <Compile Include="ViewModel\IListPageViewModel.cs" />
     <Compile Include="ViewModel\IPageBase.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\MatrixViewMode.cs" />

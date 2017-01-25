@@ -10,26 +10,32 @@ using PaymentsTU.Dialogs.DialogView;
 
 namespace PaymentsTU.ViewModel
 {
-    public sealed class DepartmentViewModel : ViewModelBase, IDirectoryPage<Department>
-    {
-	    public string Title => "Подразделения";
+	public sealed class DepartmentViewModel : ViewModelBase, IListPageViewModel<Department>
+	{
+		public string Title => "Подразделения";
 
 		private ObservableCollection<Department> _items;
-		private ICollectionView _itemsView = null;
 
 		public DataNavigationBarViewModel<Department> NavigationBar { get; private set; }
-		public ObservableCollection<Department> Items => _items;
+		public ListCollectionView ItemsDataView { get; }
 
 		public DepartmentViewModel()
 		{
 			_items = new ObservableCollection<Department>(Dal.Instance.Departments());
+			ItemsDataView = (ListCollectionView)CollectionViewSource.GetDefaultView(_items);
+			ItemsDataView.CustomSort = new DepartmentComparer();
 
-			_itemsView = CollectionViewSource.GetDefaultView(_items);// as ListCollectionView;
-																	 //_employeesView.CustomSort = new EmployeeComparer();
+			ItemsDataView.MoveCurrentToPosition(_items.Count > 0 ? 0 : -1);
 
-			_itemsView.MoveCurrentToPosition(_items.Count > 0 ? 0 : -1);
-
-			NavigationBar = new DataNavigationBarViewModel<Department>((CollectionView)_itemsView, OnAdd, OnDelete, OnEdit, () => { _itemsView.Refresh(); });
+			NavigationBar = new DataNavigationBarViewModel<Department>(ItemsDataView, OnAdd, OnDelete, OnEdit, () => {
+				_items.Clear();
+				foreach (var payment in Dal.Instance.Departments())
+				{
+					_items.Add(payment);
+				}
+				ItemsDataView.Refresh();
+				ItemsDataView.MoveCurrentToPosition(_items.Count > 0 ? 0 : -1);
+			});
 		}
 
 		private void OnAdd(Department item)
@@ -41,8 +47,8 @@ namespace PaymentsTU.ViewModel
 			if (result == DialogResult.Apply)
 			{
 				_items.Add(item);
-				_itemsView.Refresh();
-				_itemsView.MoveCurrentTo(item);
+				ItemsDataView.Refresh();
+				ItemsDataView.MoveCurrentTo(item);
 			}
 		}
 
@@ -52,14 +58,21 @@ namespace PaymentsTU.ViewModel
 			var result = DialogService.OpenDialog(vm);
 			if (result == DialogResult.Yes)
 				if (Dal.Instance.DeleteDepartment(item))
-					Items.Remove(item);
+					_items.Remove(item);
 		}
 
 		private void OnEdit(Department item)
 		{
+			var editItem = (Department)item.Clone();
+			
 			var vm = new EditDepartmentViewModel("Редактирование подразделение", item);
-			var result = DialogService.OpenDialog(vm);
-			_itemsView.Refresh();
+			if (DialogService.OpenDialog(vm) == DialogResult.Apply)
+			{
+				var index = _items.IndexOf(item);
+				_items[index] = editItem;
+			}
+
+			ItemsDataView.Refresh();
 		}
 	}
 }

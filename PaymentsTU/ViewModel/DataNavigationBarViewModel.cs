@@ -16,7 +16,10 @@ namespace PaymentsTU.ViewModel
 
 			_view.CurrentChanged += (sender, args) => { OnPropertyChanged(nameof(CurrentItem)); };
 
-			FirstCommand = new RelayCommand(() => _view.MoveCurrentToFirst(), _ => _view != null && !_view.IsEmpty && _view.CurrentPosition > 0);
+			FirstCommand = new RelayCommand(() =>
+			{
+				_view.MoveCurrentToFirst();
+			}, _ => _view != null && !_view.IsEmpty && _view.CurrentPosition > 0);
 			PreviousCommand = new RelayCommand(() => _view.MoveCurrentToPrevious(), _ => _view != null && !_view.IsEmpty && _view.CurrentPosition > 0);
 			NextCommand = new RelayCommand(() => _view.MoveCurrentToNext(), _ => _view != null && !_view.IsEmpty && _view.CurrentPosition + 1 < _view.Count);
 			LastCommand = new RelayCommand(() => _view.MoveCurrentToLast(), _ => _view != null && !_view.IsEmpty && _view.CurrentPosition + 1 < _view.Count);

@@ -9,31 +9,31 @@ using PaymentsTU.Dialogs.DialogView;
 
 namespace PaymentsTU.ViewModel
 {
-	public sealed class EmployeeViewModel : ViewModelBase, IDirectoryPage<Employee>
+	public sealed class EmployeeViewModel : ViewModelBase, IListPageViewModel<Employee>
 	{
 		private ObservableCollection<Employee> _employees;
-		private ICollectionView _employeesView = null;
-
 		public DataNavigationBarViewModel<Employee> NavigationBar { get; private set; }
-
-		public ObservableCollection<Employee> Items => _employees;
-
-		//public Employee CurrentItem => _employeesView.CurrentItem as Employee;
+		public ListCollectionView ItemsDataView { get; set; }
 
 		public string Title => "Сотрудники";
-
-		//private readonly Action RefreshData;
 
 		public EmployeeViewModel()
 		{
 			_employees = new ObservableCollection<Employee>(Dal.Instance.Employees());
+			ItemsDataView = (ListCollectionView)CollectionViewSource.GetDefaultView(_employees);
+			ItemsDataView.CustomSort = new EmployeeComparer();
 
-			_employeesView = CollectionViewSource.GetDefaultView(_employees);// as ListCollectionView;
-			//_employeesView.CustomSort = new EmployeeComparer();
+			ItemsDataView.MoveCurrentToPosition(_employees.Count > 0 ? 0 : - 1);
 
-			_employeesView.MoveCurrentToPosition(_employees.Count > 0 ? 0 : - 1);
-
-			NavigationBar = new DataNavigationBarViewModel<Employee>((CollectionView)_employeesView, OnAddEmployee, OnDeleteEmployee, OnEditEmployee, () => { _employeesView.Refresh(); });
+			NavigationBar = new DataNavigationBarViewModel<Employee>(ItemsDataView, OnAddEmployee, OnDeleteEmployee, OnEditEmployee, () => {
+				_employees.Clear();
+				foreach (var payment in Dal.Instance.Employees())
+				{
+					_employees.Add(payment);
+				}
+				ItemsDataView.Refresh();
+				ItemsDataView.MoveCurrentToPosition(_employees.Count > 0 ? 0 : -1);
+			});
 		}
 
 		private void OnAddEmployee(Employee employee)
@@ -45,16 +45,21 @@ namespace PaymentsTU.ViewModel
 			if (result == DialogResult.Apply)
 			{
 				_employees.Add(employee);
-				_employeesView.Refresh();
-				_employeesView.MoveCurrentTo(employee);
+				ItemsDataView.Refresh();
+				ItemsDataView.MoveCurrentTo(employee);
 			}
 		}
 
 		private void OnEditEmployee(Employee employee)
 		{
-			var vm = new EditEmployeeDialogViewModel("Редактирование сотрудника", employee);
-			var result = DialogService.OpenDialog(vm);
-			_employeesView.Refresh();
+			var editItem = (Employee)employee.Clone();
+			var vm = new EditEmployeeDialogViewModel("Редактирование сотрудника", editItem);
+			if (DialogService.OpenDialog(vm) == DialogResult.Apply)
+			{
+				var index = _employees.IndexOf(employee);
+				_employees[index] = editItem;
+			}
+			ItemsDataView.Refresh();
 		}
 
 		private void OnDeleteEmployee(Employee employee)
@@ -63,9 +68,7 @@ namespace PaymentsTU.ViewModel
 			var result = DialogService.OpenDialog(vm);
 			if (result == DialogResult.Yes)
 				if (Dal.Instance.DeleteEmployee(employee))
-					Items.Remove(employee);
+					_employees.Remove(employee);
 		}
-
-		//_customerView.CustomSort = new CustomerSorter();
 	}
 }

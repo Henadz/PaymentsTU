@@ -1,16 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Text;
+using System.Globalization;
 using System.Windows.Data;
+using FrameworkExtend;
 using PaymentsTU.Dialogs.DialogService;
 using PaymentsTU.Dialogs.DialogView;
 using PaymentsTU.Model;
 
 namespace PaymentsTU.ViewModel
 {
-	public sealed class PaymentViewModel : ViewModelBase, IDirectoryPage<Payment>
+	public sealed class PaymentViewModel : ViewModelBase, IListPageViewModel<Payment>
 	{
 		public string Title => "Выплаты";
 
@@ -35,13 +34,19 @@ namespace PaymentsTU.ViewModel
 
 		public PaymentViewModel()
 		{
-			Items = new ObservableCollection<Payment>(Dal.Instance.Payments());
-
-			//_itemsView.MoveCurrentToPosition(_items.Count > 0 ? 0 : -1);
-
+			Items = new ObservableCollection<Payment>(Dal.Instance.Payments().OrderByDescending(x => x.DatePayment).ThenBy(x => x.FullName));
+			ItemsDataView.Culture = CultureInfo.CurrentCulture;
+			ItemsDataView.MoveCurrentToPosition(Items.Count > 0 ? 0 : -1);
+			//TODO: refactoring viewmodel for navigation bar
 			NavigationBar = new DataNavigationBarViewModel<Payment>(ItemsDataView, OnAdd, OnDelete, OnEdit, () =>
 			{
-				Items = new ObservableCollection<Payment>(Dal.Instance.Payments());
+				Items.Clear();
+				foreach (var payment in Dal.Instance.Payments())
+				{
+					Items.Add(payment);
+				}
+				ItemsDataView.Refresh();
+				ItemsDataView.MoveCurrentToPosition(Items.Count > 0 ? 0 : -1);
 			});
 		}
 
@@ -50,7 +55,7 @@ namespace PaymentsTU.ViewModel
 			if (item == null)
 				item = new Payment
 				{
-					Value = 100.54M,
+					Value = 0M,
 					DatePayment = DateTime.Today,
 					CurrencyId = 933
 				};
@@ -75,8 +80,13 @@ namespace PaymentsTU.ViewModel
 
 		private void OnEdit(Payment item)
 		{
-			var vm = new DialogPaymentViewModel("Редактирование платежа", item);
-			var result = DialogService.OpenDialog(vm);
+			var editItem = (Payment)item.Clone();
+			var vm = new DialogPaymentViewModel("Редактирование платежа", editItem);
+			if (DialogService.OpenDialog(vm) == DialogResult.Apply)
+			{
+				var index = Items.IndexOf(item);
+				Items[index] = editItem;
+			}
 			ItemsDataView.Refresh();
 		}
 	}
