@@ -9,6 +9,11 @@
     <!--<UserControl.DataContext>
         <viewModel:EmployeeViewModel></viewModel:EmployeeViewModel>
     </UserControl.DataContext>-->
+    <UserControl.Resources>
+        <Style TargetType="ListViewItem">
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        </Style>
+    </UserControl.Resources>
 
     <DockPanel Name="BasePanel">
         <local:DataNavigationBar DockPanel.Dock="Top" DataContext="{Binding NavigationBar}" Height="30"></local:DataNavigationBar>
@@ -24,11 +29,16 @@
                     <GridViewColumn DisplayMemberBinding="{Binding Department}">
                         <GridViewColumnHeader Content="Подразделение"></GridViewColumnHeader>
                     </GridViewColumn>
-                    <GridViewColumn DisplayMemberBinding="{Binding DatePayment, StringFormat=\{0:dd.MM.yyyy\}}">
+                    <GridViewColumn DisplayMemberBinding="{Binding DatePayment, StringFormat={}{0:dd.MM.yyyy}}">
                         <GridViewColumnHeader Content="Дата выплаты"></GridViewColumnHeader>
                     </GridViewColumn>
-                    <GridViewColumn DisplayMemberBinding="{Binding Value, StringFormat=\{0:#\,##0.00\}}">
+                    <GridViewColumn>
                         <GridViewColumnHeader Content="Сумма"></GridViewColumnHeader>
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Value, StringFormat=\{0:#\,##0.00\}}" TextAlignment="Right"></TextBlock>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
                     </GridViewColumn>
                     <GridViewColumn DisplayMemberBinding="{Binding Currency}">
                         <GridViewColumnHeader Content="Валюта"></GridViewColumnHeader>

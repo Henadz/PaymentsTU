@@ -15,6 +15,7 @@
                       IsEditable="True"
                       DisplayMemberPath="FullName"
                       SelectedValuePath="Id"
+                      SelectedItem="{Binding Path=CurrentEmployee, Mode=TwoWay}"
                       SelectedValue="{Binding Path=Record.EmployeeId, Mode=TwoWay}"
                       VerticalAlignment="Top"
                       IsSynchronizedWithCurrentItem="False" IsTabStop="True" TabIndex="0">
@@ -28,6 +29,7 @@
                       IsEditable="True"
                       DisplayMemberPath="Name"
                       SelectedValuePath="Id"
+                      SelectedItem="{Binding Path=CurrentDepartment, Mode=TwoWay}"
                       SelectedValue="{Binding Path=Record.DepartmentId, Mode=TwoWay}"
                       VerticalAlignment="Top"
                       IsSynchronizedWithCurrentItem="False" TabIndex="1" IsTabStop="True"/>

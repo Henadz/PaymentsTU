@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Text;
+﻿using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Data;
+using FrameworkExtend;
 using PaymentsTU.Dialogs.DialogService;
 using PaymentsTU.Model;
 
@@ -20,18 +17,42 @@ namespace PaymentsTU.Dialogs.DialogView
 
 		public ListCollectionView CurrenciesDataView { get; set; }
 
+		private readonly ObservableCollection<Employee> _employees;
+
+		public Employee CurrentEmployee
+		{
+			get { return _employees.FirstOrDefault(x => x.Id == Record.Id); }
+			set
+			{
+				Record.DepartmentId = value.DepartmentId ?? 0;
+				OnPropertyChanged(nameof(CurrentDepartment));
+				OnPropertyChanged(nameof(CurrentEmployee));
+			}
+		}
+
+		private readonly ObservableCollection<Department> _departments;
+
+		public Department CurrentDepartment
+		{
+			get { return _departments.FirstOrDefault(x => x.Id == Record.DepartmentId); }
+			set
+			{
+				OnPropertyChanged(nameof(CurrentDepartment));
+			}
+		}
+
 		public DialogPaymentViewModel(string title, Payment record) : base(title, record)
 		{
-			var employees = new ObservableCollection<Employee>(Dal.Instance.Employees(true));
-			EmployeesDataView = (ListCollectionView)CollectionViewSource.GetDefaultView(employees);
+			_employees = new ObservableCollection<Employee>(Dal.Instance.Employees(true));
+			EmployeesDataView = (ListCollectionView)CollectionViewSource.GetDefaultView(_employees);
 			EmployeesDataView.CustomSort = new EmployeeComparer();
 			EmployeesDataView.MoveCurrentToFirst();
 
 			var currencies = new ObservableCollection<Currency>(Dal.Instance.Currencies());
 			CurrenciesDataView = (ListCollectionView)CollectionViewSource.GetDefaultView(currencies);
 
-			var departments = new ObservableCollection<Department>(Dal.Instance.Departments());
-			DepartmentsDataView = (ListCollectionView)CollectionViewSource.GetDefaultView(departments);
+			_departments = new ObservableCollection<Department>(Dal.Instance.Departments());
+			DepartmentsDataView = (ListCollectionView)CollectionViewSource.GetDefaultView(_departments);
 			DepartmentsDataView.CustomSort = new DepartmentComparer();
 
 			var types = new ObservableCollection<PaymentType>(Dal.Instance.PaymentTypes());
