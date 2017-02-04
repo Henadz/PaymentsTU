@@ -38,6 +38,9 @@
   <PropertyGroup>
     <StartupObject>PaymentsTU.App</StartupObject>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>1485909538_money-safe-box.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="FrameworkExtend">
       <HintPath>..\Library\FrameworkExtend.dll</HintPath>
@@ -233,14 +236,7 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Calendar\vhCalendar\vhCalendar.csproj">
-      <Project>{f82264b8-4cad-44a6-91be-2979d1e6d0e2}</Project>
-      <Name>vhCalendar</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DatePicker\vhDatePicker\vhDatePicker.csproj">
-      <Project>{774124c9-a349-408c-87ab-273f0578a83a}</Project>
-      <Name>vhDatePicker</Name>
-    </ProjectReference>
+    <Resource Include="1485909538_money-safe-box.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\System.Data.SQLite.Core.1.0.102.0\build\net20\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.102.0\build\net20\System.Data.SQLite.Core.targets')" />
