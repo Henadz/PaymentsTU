@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Data;
 using FrameworkExtend;
@@ -24,8 +25,11 @@ namespace PaymentsTU.Dialogs.DialogView
 			get { return _employees.FirstOrDefault(x => x.Id == Record.Id); }
 			set
 			{
-				Record.DepartmentId = value.DepartmentId ?? 0;
-				OnPropertyChanged(nameof(CurrentDepartment));
+				if (Record.DepartmentId == default(int) && value != null)
+				{
+					Record.DepartmentId = value.DepartmentId ?? 0;
+					OnPropertyChanged(nameof(CurrentDepartment));
+				}
 				OnPropertyChanged(nameof(CurrentEmployee));
 			}
 		}
@@ -41,7 +45,7 @@ namespace PaymentsTU.Dialogs.DialogView
 			}
 		}
 
-		public DialogPaymentViewModel(string title, Payment record) : base(title, record)
+		public DialogPaymentViewModel(string title, Payment record, Func<Payment, bool> applyDataFunc) : base(title, record, applyDataFunc)
 		{
 			_employees = new ObservableCollection<Employee>(Dal.Instance.Employees(true));
 			EmployeesDataView = (ListCollectionView)CollectionViewSource.GetDefaultView(_employees);
@@ -62,9 +66,19 @@ namespace PaymentsTU.Dialogs.DialogView
 
 		protected override void OnApplyClicked(Window parameter)
 		{
-			if (Dal.Instance.SavePayment(Record))
+			if (ApplyDataFunc(Record))
 			{
-				CloseDialogWithResult(parameter, DialogResult.Apply);
+				if (AddNextRecord)
+				{
+					Record = new Payment
+					{
+						Value = 0M,
+						DatePayment = DateTime.Today,
+						CurrencyId = 933
+					};
+				}
+				else
+					CloseDialogWithResult(parameter, DialogResult.Apply);
 			}
 		}
 	}

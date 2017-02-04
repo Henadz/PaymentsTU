@@ -59,13 +59,20 @@ namespace PaymentsTU.ViewModel
 					DatePayment = DateTime.Today,
 					CurrencyId = 933
 				};
-			var vm = new DialogPaymentViewModel("Новый платеж", item);
+			var vm = new DialogPaymentViewModel("Новый платеж", item, p =>
+			{
+				if (Dal.Instance.SavePayment(p))
+				{
+					_items.Add(p);
+					ItemsDataView.Refresh();
+					ItemsDataView.MoveCurrentTo(p);
+					return true;
+				}
+				return false;
+			});
 			var result = DialogService.OpenDialog(vm);
 			if (result == DialogResult.Apply)
 			{
-				_items.Add(item);
-				ItemsDataView.Refresh();
-				ItemsDataView.MoveCurrentTo(item);
 			}
 		}
 
@@ -81,11 +88,19 @@ namespace PaymentsTU.ViewModel
 		private void OnEdit(Payment item)
 		{
 			var editItem = (Payment)item.Clone();
-			var vm = new DialogPaymentViewModel("Редактирование платежа", editItem);
+			var vm = new DialogPaymentViewModel("Редактирование платежа", editItem, p =>
+			{
+				if (Dal.Instance.SavePayment(p))
+				{
+					var index = Items.IndexOf(item);
+					Items[index] = editItem;
+					ItemsDataView.Refresh();
+					return true;
+				}
+				return false;
+			});
 			if (DialogService.OpenDialog(vm) == DialogResult.Apply)
 			{
-				var index = Items.IndexOf(item);
-				Items[index] = editItem;
 			}
 			ItemsDataView.Refresh();
 		}

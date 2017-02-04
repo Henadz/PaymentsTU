@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using FrameworkExtend;
 using PaymentsTU.Dialogs.DialogService;
 using PaymentsTU.Model;
 
@@ -14,15 +15,21 @@ namespace PaymentsTU.Dialogs.DialogView
 			set { Record.Name = value; }
 		}
 
-		public EditPaymentTypeViewModel(string title, PaymentType record) : base(title, record)
+		public EditPaymentTypeViewModel(string title, PaymentType record, Func<PaymentType, bool> applyDataFunc) : base(title, record, applyDataFunc)
 		{
 		}
 
 		protected override void OnApplyClicked(Window parameter)
 		{
-			if (Dal.Instance.SavePaymentType(Record))
+			if (ApplyDataFunc(Record))
 			{
-				CloseDialogWithResult(parameter, DialogResult.Apply);
+				if (AddNextRecord)
+				{
+					Record = new PaymentType();
+					OnPropertyChanged(nameof(RecordData));
+				}
+				else
+					CloseDialogWithResult(parameter, DialogResult.Apply);
 			}
 		}
 	}

@@ -40,24 +40,44 @@ namespace PaymentsTU.ViewModel
 		{
 			if (employee == null)
 				employee = new Employee();
-			var vm = new EditEmployeeDialogViewModel("Новый сотрудник", employee);
+			var vm = new EditEmployeeDialogViewModel("Новый сотрудник", employee, e =>
+			{
+				if (Dal.Instance.SaveEmployee(e))
+				{
+					_employees.Add(e);
+					ItemsDataView.Refresh();
+					ItemsDataView.MoveCurrentTo(e);
+					return true;
+				}
+				return false;
+			});
 			var result = DialogService.OpenDialog(vm);
 			if (result == DialogResult.Apply)
 			{
-				_employees.Add(employee);
+				//_employees.Add(employee);
 				ItemsDataView.Refresh();
-				ItemsDataView.MoveCurrentTo(employee);
+				//ItemsDataView.MoveCurrentTo(employee);
 			}
 		}
 
 		private void OnEditEmployee(Employee employee)
 		{
 			var editItem = (Employee)employee.Clone();
-			var vm = new EditEmployeeDialogViewModel("Редактирование сотрудника", editItem);
+			var vm = new EditEmployeeDialogViewModel("Редактирование сотрудника", editItem, e =>
+			{
+				if (Dal.Instance.SaveEmployee(e))
+				{
+					var index = _employees.IndexOf(employee);
+					_employees[index] = editItem;
+					ItemsDataView.Refresh();
+					return true;
+				}
+				return false;
+			});
 			if (DialogService.OpenDialog(vm) == DialogResult.Apply)
 			{
-				var index = _employees.IndexOf(employee);
-				_employees[index] = editItem;
+				//var index = _employees.IndexOf(employee);
+				//_employees[index] = editItem;
 			}
 			ItemsDataView.Refresh();
 		}

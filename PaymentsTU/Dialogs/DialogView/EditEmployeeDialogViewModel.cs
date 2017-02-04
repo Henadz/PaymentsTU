@@ -1,10 +1,7 @@
 ﻿using System.Collections.ObjectModel;
-using System.Windows;
 using System.Windows.Data;
-using System.Windows.Input;
-using PaymentsTU.Dialogs.DialogService;
+using FrameworkExtend;
 using PaymentsTU.Model;
-using PaymentsTU.ViewModel;
 
 namespace PaymentsTU.Dialogs.DialogView
 {
@@ -12,19 +9,11 @@ namespace PaymentsTU.Dialogs.DialogView
 	{
 		public ListCollectionView DepartmentsDataView { get; set; }
 
-		public EditEmployeeDialogViewModel(string title, Employee record) : base(title, record)
+		public EditEmployeeDialogViewModel(string title, Employee record, Func<Employee, bool> applyDataFunc) : base(title, record, applyDataFunc)
 		{
 			var departments = new ObservableCollection<Department>(Dal.Instance.Departments());
 			DepartmentsDataView = (ListCollectionView)CollectionViewSource.GetDefaultView(departments);
 			DepartmentsDataView.CustomSort = new DepartmentComparer();
-		}
-
-		protected override void OnApplyClicked(Window parameter)
-		{
-			if (Dal.Instance.SaveEmployee(Record))
-			{
-				CloseDialogWithResult(parameter, DialogResult.Apply);
-			}
 		}
 	}
 }

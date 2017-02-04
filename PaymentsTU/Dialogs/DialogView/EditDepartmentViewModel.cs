@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows;
+﻿using System.Windows;
+using FrameworkExtend;
 using PaymentsTU.Dialogs.DialogService;
 using PaymentsTU.Model;
 
@@ -17,15 +15,21 @@ namespace PaymentsTU.Dialogs.DialogView
 			set { Record.Name = value; }
 		}
 
-		public EditDepartmentViewModel(string title, Department record) : base(title, record)
+		public EditDepartmentViewModel(string title, Department record, Func<Department, bool> applyDataFunc) : base(title, record, applyDataFunc)
 		{
 		}
 
 		protected override void OnApplyClicked(Window parameter)
 		{
-			if (Dal.Instance.SaveDepartment(Record))
+			if (ApplyDataFunc(Record))
 			{
-				CloseDialogWithResult(parameter, DialogResult.Apply);
+				if (AddNextRecord)
+				{
+					Record = new Department();
+					OnPropertyChanged(nameof(RecordData));
+				}
+				else
+					CloseDialogWithResult(parameter, DialogResult.Apply);
 			}
 		}
 	}

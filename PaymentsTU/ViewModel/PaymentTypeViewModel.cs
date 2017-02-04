@@ -39,13 +39,23 @@ namespace PaymentsTU.ViewModel
 		{
 			if (item == null)
 				item = new PaymentType();
-			var vm = new EditPaymentTypeViewModel("Новый вид платежа", item);
+			var vm = new EditPaymentTypeViewModel("Новый вид платежа", item, type =>
+			{
+				if (Dal.Instance.SavePaymentType(type))
+				{
+					_items.Add(type);
+					ItemsDataView.Refresh();
+					ItemsDataView.MoveCurrentTo(type);
+					return true;
+				}
+				return false;
+			});
 			var result = DialogService.OpenDialog(vm);
 			if (result == DialogResult.Apply)
 			{
-				_items.Add(item);
+				//_items.Add(item);
 				ItemsDataView.Refresh();
-				ItemsDataView.MoveCurrentTo(item);
+				//ItemsDataView.MoveCurrentTo(item);
 			}
 		}
 
@@ -61,13 +71,23 @@ namespace PaymentsTU.ViewModel
 		private void OnEditPaymentType(PaymentType item)
 		{
 			var editItem = (PaymentType)item.Clone();
-			var vm = new EditPaymentTypeViewModel("Редактирование вида платежа", item);
+			var vm = new EditPaymentTypeViewModel("Редактирование вида платежа", editItem, type =>
+			{
+				if (Dal.Instance.SavePaymentType(type))
+				{
+					var index = _items.IndexOf(item);
+					_items[index] = type;
+					ItemsDataView.Refresh();
+					return true;
+				}
+				return false;
+			});
 			if (DialogService.OpenDialog(vm) == DialogResult.Apply)
 			{
-				var index = _items.IndexOf(item);
-				_items[index] = editItem;
+				//var index = _items.IndexOf(item);
+				//_items[index] = editItem;
 			}
-			ItemsDataView.Refresh();
+			//ItemsDataView.Refresh();
 		}
 	}
 }

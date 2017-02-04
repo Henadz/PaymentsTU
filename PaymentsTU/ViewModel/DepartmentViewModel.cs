@@ -5,6 +5,7 @@ using System.Text;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Data;
+using FrameworkExtend;
 using PaymentsTU.Dialogs.DialogService;
 using PaymentsTU.Dialogs.DialogView;
 
@@ -42,13 +43,26 @@ namespace PaymentsTU.ViewModel
 		{
 			if (item == null)
 				item = new Department();
-			var vm = new EditDepartmentViewModel("Новое подразделение", item);
+
+			Func<Department, bool> ApplyData = i =>
+			{
+				if (Dal.Instance.SaveDepartment(i))
+				{
+					_items.Add(i);
+					ItemsDataView.Refresh();
+					ItemsDataView.MoveCurrentTo(i);
+					return true;
+				}
+				return false;
+			};
+
+			var vm = new EditDepartmentViewModel("Новое подразделение", item, ApplyData);
 			var result = DialogService.OpenDialog(vm);
 			if (result == DialogResult.Apply)
 			{
-				_items.Add(item);
+				//_items.Add(item);
 				ItemsDataView.Refresh();
-				ItemsDataView.MoveCurrentTo(item);
+				//ItemsDataView.MoveCurrentTo(item);
 			}
 		}
 
@@ -64,12 +78,24 @@ namespace PaymentsTU.ViewModel
 		private void OnEdit(Department item)
 		{
 			var editItem = (Department)item.Clone();
-			
-			var vm = new EditDepartmentViewModel("Редактирование подразделение", item);
+
+			Func<Department, bool> ApplyData = i =>
+			{
+				if (Dal.Instance.SaveDepartment(i))
+				{
+					var index = _items.IndexOf(item);
+					_items[index] = i;
+					ItemsDataView.Refresh();
+					return true;
+				}
+				return false;
+			};
+
+			var vm = new EditDepartmentViewModel("Редактирование подразделение", editItem, ApplyData);
 			if (DialogService.OpenDialog(vm) == DialogResult.Apply)
 			{
-				var index = _items.IndexOf(item);
-				_items[index] = editItem;
+				//var index = _items.IndexOf(item);
+				//_items[index] = editItem;
 			}
 
 			ItemsDataView.Refresh();
