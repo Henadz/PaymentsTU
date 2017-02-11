@@ -1,4 +1,7 @@
-﻿using System.Windows;
+﻿using System;
+using System.ComponentModel;
+using System.Windows;
+using PaymentsTU.Validation;
 using PaymentsTU.ViewModel;
 
 namespace PaymentsTU.Dialogs.DialogService

@@ -9,7 +9,7 @@ using PaymentsTU.Validation;
 
 namespace PaymentsTU.Dialogs.DialogView
 {
-	public class EditEmployeeDialogViewModel : EditDialogViewModelBase<Employee>, IDataErrorInfo
+	public class EditEmployeeDialogViewModel : EditDialogViewModelBase<Employee>
 	{
 		public ListCollectionView DepartmentsDataView { get; set; }
 
@@ -29,14 +29,6 @@ namespace PaymentsTU.Dialogs.DialogView
 			DepartmentsDataView.CustomSort = new DepartmentComparer();
 		}
 
-		public string this[string columnName] => AttributeValidator.Validate(this, columnName);
-
-		public string Error
-		{
-			get
-			{
-				throw new NotImplementedException();
-			}
-		}
+		
 	}
 }

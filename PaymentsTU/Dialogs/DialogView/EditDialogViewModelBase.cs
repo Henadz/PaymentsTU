@@ -1,12 +1,15 @@
-﻿using System.Windows;
+﻿using System;
+using System.ComponentModel;
+using System.Windows;
 using System.Windows.Input;
 using FrameworkExtend;
 using PaymentsTU.Dialogs.DialogService;
+using PaymentsTU.Validation;
 using PaymentsTU.ViewModel;
 
 namespace PaymentsTU.Dialogs.DialogView
 {
-	public abstract class EditDialogViewModelBase<T> : DialogViewModelBase
+	public abstract class EditDialogViewModelBase<T> : DialogViewModelBase, IDataValidation
 		where T: new()
 	{
 		public ICommand ApplyCommand { get; set; } = null;
@@ -21,6 +24,13 @@ namespace PaymentsTU.Dialogs.DialogView
 			set { _record = value; OnPropertyChanged(nameof(Record)); }
 		}
 
+		private bool _isModelValid;
+		public bool IsModelValid
+		{
+			get { return _isModelValid; }
+			set { _isModelValid = value; OnPropertyChanged(nameof(IsModelValid)); }
+		}
+
 		public Func<T, bool> ApplyDataFunc { get; private set; }
 
 		public bool AddNextRecord { get; set; }
@@ -30,7 +40,7 @@ namespace PaymentsTU.Dialogs.DialogView
 			Title = title;
 			Record = record;
 			ApplyDataFunc = applyDataFunc;
-			this.ApplyCommand = new RelayCommand<Window>(OnApplyClicked);
+			this.ApplyCommand = new RelayCommand<Window>(OnApplyClicked, w => IsModelValid);
 			this.CancelCommand = new RelayCommand<Window>(OnCancelClicked);
 		}
 
@@ -48,6 +58,16 @@ namespace PaymentsTU.Dialogs.DialogView
 		protected virtual void OnCancelClicked(Window parameter)
 		{
 			CloseDialogWithResult(parameter, DialogResult.Cancel);
+		}
+
+		public string this[string columnName] => AttributeValidator.Validate(this, columnName);
+
+		public string Error
+		{
+			get
+			{
+				throw new NotImplementedException();
+			}
 		}
 	}
 }

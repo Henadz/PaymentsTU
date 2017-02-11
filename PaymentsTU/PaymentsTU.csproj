@@ -95,6 +95,7 @@
       <DependentUpon>DialogPayment.xaml</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\DialogView\DialogPaymentViewModel.cs" />
+    <Compile Include="Dialogs\DialogView\DialogViewBase.cs" />
     <Compile Include="Dialogs\DialogView\EditDepartmentViewModel.cs" />
     <Compile Include="Dialogs\DialogView\EditDialogViewModelBase.cs" />
     <Compile Include="Dialogs\DialogView\EditEmployeeDialogViewModel.cs" />
@@ -105,6 +106,7 @@
     <Compile Include="Model\ViewType.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Validation\AttributeValidator.cs" />
+    <Compile Include="Validation\IDataValidation.cs" />
     <Compile Include="Validation\RequiredAttribute.cs" />
     <Compile Include="Validation\ValidationAttribute.cs" />
     <Compile Include="Validation\ValidationContext.cs" />
