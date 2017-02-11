@@ -46,22 +46,6 @@ namespace PaymentsTU.Validation
 		{
 		}
 
-#if SILVERLIGHT
-        /// <summary>
-        /// Construct a <see cref="ValidationContext"/> for a given object instance, an optional <paramref name="serviceProvider"/>, and an optional
-        /// property bag of <paramref name="items"/>.
-        /// </summary>
-        /// <param name="instance">The object instance being validated.  It cannot be null.</param>
-        /// <param name="serviceProvider">
-        /// Optional <see cref="IServiceProvider"/> to use when <see cref="GetService"/> is called.
-        /// If it is null, <see cref="GetService"/> will always return null.
-        /// </param>
-        /// <param name="items">Optional set of key/value pairs to make available to consumers via <see cref="Items"/>.
-        /// If null, an empty dictionary will be created.  If not null, the set of key/value pairs will be copied into a
-        /// new dictionary, preventing consumers from modifying the original dictionary.
-        /// </param>
-        /// <exception cref="ArgumentNullException">When <paramref name="instance"/> is <c>null</c></exception>
-#else
 		/// <summary>
 		/// Construct a <see cref="ValidationContext"/> for a given object instance, an optional <paramref name="serviceProvider"/>, and an optional
 		/// property bag of <paramref name="items"/>.
@@ -80,7 +64,6 @@ namespace PaymentsTU.Validation
 		/// new dictionary, preventing consumers from modifying the original dictionary.
 		/// </param>
 		/// <exception cref="ArgumentNullException">When <paramref name="instance"/> is <c>null</c></exception>
-#endif
 		public ValidationContext(object instance, IServiceProvider serviceProvider, IDictionary<object, object> items)
 		{
 			if (instance == null)
@@ -93,7 +76,6 @@ namespace PaymentsTU.Validation
 				this.InitializeServiceProvider(serviceType => serviceProvider.GetService(serviceType));
 			}
 
-#if !SILVERLIGHT
 			IServiceContainer container = serviceProvider as IServiceContainer;
 
 			if (container != null)
@@ -104,7 +86,6 @@ namespace PaymentsTU.Validation
 			{
 				this._serviceContainer = new ValidationContextServiceContainer();
 			}
-#endif
 
 			if (items != null)
 			{
@@ -147,11 +128,7 @@ namespace PaymentsTU.Validation
 		{
 			get
 			{
-#if SILVERLIGHT
-                return this.ObjectInstance.GetCustomOrCLRType();
-#else
 				return this.ObjectInstance.GetType();
-#endif
 			}
 		}
 
@@ -271,13 +248,6 @@ namespace PaymentsTU.Validation
 
 		#region IServiceProvider Members
 
-#if SILVERLIGHT
-        /// <summary>
-        /// See <see cref="IServiceProvider.GetService(Type)"/>.
-        /// </summary>
-        /// <param name="serviceType">The type of the service needed.</param>
-        /// <returns>An instance of that service or null if it is not available.</returns>
-#else
 		/// <summary>
 		/// See <see cref="IServiceProvider.GetService(Type)"/>.
 		/// When the <see cref="ServiceContainer"/> is in use, it will be used
@@ -288,17 +258,14 @@ namespace PaymentsTU.Validation
 		/// </summary>
 		/// <param name="serviceType">The type of the service needed.</param>
 		/// <returns>An instance of that service or null if it is not available.</returns>
-#endif
 		public object GetService(Type serviceType)
 		{
 			object service = null;
 
-#if !SILVERLIGHT
 			if (this._serviceContainer != null)
 			{
 				service = this._serviceContainer.GetService(serviceType);
 			}
-#endif
 
 			if (service == null && this._serviceProvider != null)
 			{
@@ -310,7 +277,6 @@ namespace PaymentsTU.Validation
 
 		#endregion
 
-#if !SILVERLIGHT
 		#region Service Container
 
 		private IServiceContainer _serviceContainer;
@@ -485,6 +451,5 @@ namespace PaymentsTU.Validation
 		}
 
 		#endregion
-#endif
 	}
 }

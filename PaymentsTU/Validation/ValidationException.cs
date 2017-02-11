@@ -23,11 +23,11 @@ namespace PaymentsTU.Validation
 		{
 			get
 			{
-				if (this._validationResult == null)
+				if (_validationResult == null)
 				{
-					this._validationResult = new ValidationResult(this.Message);
+					_validationResult = new ValidationResult(Message);
 				}
-				return this._validationResult;
+				return _validationResult;
 			}
 		}
 
@@ -45,7 +45,7 @@ namespace PaymentsTU.Validation
 		public ValidationException(ValidationResult validationResult, ValidationAttribute validatingAttribute, object value)
 			: this(validationResult.ErrorMessage, validatingAttribute, value)
 		{
-			this._validationResult = validationResult;
+			_validationResult = validationResult;
 		}
 
 		/// <summary>
@@ -57,8 +57,8 @@ namespace PaymentsTU.Validation
 		public ValidationException(string errorMessage, ValidationAttribute validatingAttribute, object value)
 			: base(errorMessage)
 		{
-			this.Value = value;
-			this.ValidationAttribute = validatingAttribute;
+			Value = value;
+			ValidationAttribute = validatingAttribute;
 		}
 
 
@@ -69,7 +69,6 @@ namespace PaymentsTU.Validation
 		/// </summary>
 		/// <remarks>The long form of this constructor is preferred because it gives better error reporting.</remarks>
 		public ValidationException()
-			: base()
 		{
 		}
 
@@ -90,7 +89,6 @@ namespace PaymentsTU.Validation
 		public ValidationException(string message, Exception innerException)
 			: base(message, innerException) { }
 
-#if !SILVERLIGHT    // Does not have SerializationInfo (it is internal)
 		/// <summary>
 		/// Constructor that takes serialization info
 		/// </summary>
@@ -98,6 +96,5 @@ namespace PaymentsTU.Validation
 		/// <param name="context"></param>
 		protected ValidationException(SerializationInfo info, StreamingContext context)
 			: base(info, context) { }
-#endif // !SILVERLIGHT
 	}
 }

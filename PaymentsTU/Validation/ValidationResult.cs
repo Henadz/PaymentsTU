@@ -50,7 +50,6 @@ namespace PaymentsTU.Validation
 			this._memberNames = memberNames ?? new string[0];
 		}
 
-#if !SILVERLIGHT
 		/// <summary>
 		/// Constructor that creates a copy of an existing ValidationResult.
 		/// </summary>
@@ -66,7 +65,6 @@ namespace PaymentsTU.Validation
 			this._errorMessage = validationResult._errorMessage;
 			this._memberNames = validationResult._memberNames;
 		}
-#endif
 		#endregion
 
 		#region Properties

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Globalization;
 using System.Reflection;
-using System.Windows.Controls;
 using FrameworkExtend;
 
 namespace PaymentsTU.Validation
@@ -253,9 +252,6 @@ namespace PaymentsTU.Validation
 		{
 			if (this._errorMessageResourceType != null && !string.IsNullOrEmpty(this._errorMessageResourceName))
 			{
-#if SILVERLIGHT
-                var property = this._errorMessageResourceType.GetProperty(this._errorMessageResourceName, BindingFlags.Public | BindingFlags.Static);
-#else
 				var property = this._errorMessageResourceType.GetProperty(this._errorMessageResourceName, BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic);
 				if (property != null)
 				{
@@ -267,7 +263,6 @@ namespace PaymentsTU.Validation
 						property = null;
 					}
 				}
-#endif
 				if (property == null)
 				{
 					throw new InvalidOperationException(
@@ -341,12 +336,7 @@ namespace PaymentsTU.Validation
 		/// <exception cref="NotImplementedException"> is thrown when neither overload of IsValid has been implemented
 		/// by a derived class.
 		/// </exception>
-#if !SILVERLIGHT
-		public
-#else
-        internal
-#endif
-		 virtual bool IsValid(object value)
+		public virtual bool IsValid(object value)
 		{
 			if (!this._hasBaseIsValid)
 			{
@@ -358,7 +348,6 @@ namespace PaymentsTU.Validation
 			return this.IsValid(value, null) == null;
 		}
 
-#if !SILVERLIGHT
 		/// <summary>
 		/// Protected virtual method to override and implement validation logic.
 		/// <para>
@@ -378,24 +367,6 @@ namespace PaymentsTU.Validation
 		/// <exception cref="NotImplementedException"> is thrown when <see cref="IsValid(object, ValidationContext)" />
 		/// has not been implemented by a derived class.
 		/// </exception>
-#else
-        /// <summary>
-        /// Protected virtual method to override and implement validation logic.
-        /// </summary>
-        /// <param name="value">The value to validate.</param>
-        /// <param name="validationContext">A <see cref="ValidationContext"/> instance that provides
-        /// context about the validation operation, such as the object and member being validated.</param>
-        /// <returns>
-        /// When validation is valid, <see cref="ValidationResult.Success"/>.
-        /// <para>
-        /// When validation is invalid, an instance of <see cref="ValidationResult"/>.
-        /// </para>
-        /// </returns>
-        /// <exception cref="InvalidOperationException"> is thrown if the current attribute is malformed.</exception>
-        /// <exception cref="NotImplementedException"> is thrown when <see cref="IsValid(object, ValidationContext)" />
-        /// has not been implemented by a derived class.
-        /// </exception>
-#endif
 		protected virtual ValidationResult IsValid(object value, ValidationContext validationContext)
 		{
 			if (this._hasBaseIsValid)
@@ -462,7 +433,6 @@ namespace PaymentsTU.Validation
 			return result;
 		}
 
-#if !SILVERLIGHT
 		/// <summary>
 		/// Validates the specified <paramref name="value"/> and throws <see cref="ValidationException"/> if it is not.
 		/// <para>
@@ -487,7 +457,6 @@ namespace PaymentsTU.Validation
 				throw new ValidationException(this.FormatErrorMessage(name), this, value);
 			}
 		}
-#endif
 
 		/// <summary>
 		/// Validates the specified <paramref name="value"/> and throws <see cref="ValidationException"/> if it is not.

@@ -1,8 +1,11 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Data;
+using System.Windows.Documents;
 using FrameworkExtend;
 using PaymentsTU.Model;
+using PaymentsTU.Validation;
 
 namespace PaymentsTU.Dialogs.DialogView
 {
@@ -10,7 +13,9 @@ namespace PaymentsTU.Dialogs.DialogView
 	{
 		public ListCollectionView DepartmentsDataView { get; set; }
 
+		[Required(ErrorMessage = "Поле является обязательным и не может быть пустым")]
 		public string Surname { get { return Record.Surname; } set { Record.Surname = value; } }
+		[Required(ErrorMessage = "Поле является обязательным и не может быть пустым")]
 		public string Name { get { return Record.Name; } set { Record.Name = value; } }
 		public string Patronymic { get { return Record.Patronymic; } set { Record.Patronymic = value; } }
 		public bool IsFired { get { return Record.IsFired; } set { Record.IsFired = value; } }
@@ -24,25 +29,14 @@ namespace PaymentsTU.Dialogs.DialogView
 			DepartmentsDataView.CustomSort = new DepartmentComparer();
 		}
 
-		public string this[string columnName]
+		public string this[string columnName] => AttributeValidator.Validate(this, columnName);
+
+		public string Error
 		{
 			get
 			{
-				string message = null;
-				switch (columnName)
-				{
-					case nameof(Surname):
-						if (string.IsNullOrEmpty(this.Surname))
-							message = "Должно быть заполнено";
-						break;
-					default:
-						message = null;
-						break;
-				}
-				return message;
+				throw new NotImplementedException();
 			}
 		}
-
-		public string Error { get; }
 	}
 }

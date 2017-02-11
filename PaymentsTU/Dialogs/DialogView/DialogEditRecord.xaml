@@ -3,17 +3,18 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:p="clr-namespace:PaymentsTU.Dialogs.DialogService"
              x:Class="PaymentsTU.Dialogs.DialogView.DialogEditRecord"
              mc:Ignorable="d" 
              d:DesignHeight="300" Width="400">
     <StackPanel Margin="4" FocusManager.FocusedElement="{Binding ElementName=Surname}">
         <StackPanel>
             <TextBlock Text="Фамилия" HorizontalAlignment="Left" VerticalAlignment="Top" />
-            <TextBox Name="Surname" Text="{Binding Surname, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" Height="24" IsTabStop="True" TabIndex="0" Focusable="True"/>
+            <TextBox Name="Surname" Text="{Binding Surname, ValidatesOnDataErrors=True, NotifyOnValidationError=True, UpdateSourceTrigger=PropertyChanged}" Height="24" IsTabStop="True" TabIndex="0" Focusable="True"  Validation.ErrorTemplate="{StaticResource ValidationFailedTemplate}"/>
         </StackPanel>
         <StackPanel>
             <TextBlock Text="Имя" HorizontalAlignment="Left" VerticalAlignment="Top" />
-            <TextBox Name="Name" Text="{Binding Name}" Height="24" IsTabStop="True" TabIndex="1" Focusable="True"/>
+            <TextBox Name="Name" Text="{Binding Name, ValidatesOnDataErrors=True, NotifyOnValidationError=True, UpdateSourceTrigger=PropertyChanged}" Height="24" IsTabStop="True" TabIndex="1" Focusable="True"/>
         </StackPanel>
         <StackPanel>
             <TextBlock Text="Отчество" HorizontalAlignment="Left" VerticalAlignment="Top" />
