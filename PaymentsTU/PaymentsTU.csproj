@@ -104,6 +104,10 @@
     <Compile Include="Model\EmployeeComparer.cs" />
     <Compile Include="Model\ViewType.cs" />
     <Compile Include="Properties\Annotations.cs" />
+    <Compile Include="Validation\ValidationAttribute.cs" />
+    <Compile Include="Validation\ValidationContext.cs" />
+    <Compile Include="Validation\ValidationException.cs" />
+    <Compile Include="Validation\ValidationResult.cs" />
     <Compile Include="ViewModel\DataNavigationBarViewModel.cs" />
     <Compile Include="ViewModel\DepartmentViewModel.cs" />
     <Compile Include="ViewModel\EmployeeViewModel.cs" />
