@@ -1,8 +1,9 @@
 ﻿using System;
+using System.ComponentModel;
 
 namespace PaymentsTU.Model
 {
-	public class Employee : ICloneable
+	public class Employee : ICloneable//, IDataErrorInfo
 	{
 		public long? Id { get; set; }
 		public string Surname { get; set; }
@@ -16,5 +17,26 @@ namespace PaymentsTU.Model
 		{
 			return this.MemberwiseClone();
 		}
+
+		//public string this[string columnName]
+		//{
+		//	get
+		//	{
+		//		string message = null;
+		//		switch (columnName)
+		//		{
+		//			case nameof(Surname):
+		//				if (string.IsNullOrEmpty(this.Surname))
+		//					message = "Должно быть заполнено";
+		//				break;
+		//			default:
+		//				message = null;
+		//				break;
+		//		}
+		//		return message;
+		//	}
+		//}
+
+		//public string Error { get; }
 	}
 }
