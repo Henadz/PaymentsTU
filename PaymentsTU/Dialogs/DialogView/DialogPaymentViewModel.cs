@@ -5,6 +5,7 @@ using System.Windows.Data;
 using FrameworkExtend;
 using PaymentsTU.Dialogs.DialogService;
 using PaymentsTU.Model;
+using PaymentsTU.Validation;
 
 namespace PaymentsTU.Dialogs.DialogView
 {
@@ -25,7 +26,7 @@ namespace PaymentsTU.Dialogs.DialogView
 			get { return _employees.FirstOrDefault(x => x.Id == Record.Id); }
 			set
 			{
-				if (Record.DepartmentId == default(int) && value != null)
+				if (value != null)
 				{
 					Record.DepartmentId = value.DepartmentId ?? 0;
 					OnPropertyChanged(nameof(CurrentDepartment));
@@ -44,6 +45,22 @@ namespace PaymentsTU.Dialogs.DialogView
 				OnPropertyChanged(nameof(CurrentDepartment));
 			}
 		}
+		[Required(ErrorMessage = "Поле является обязательным и не может быть пустым")]
+		public long? EmployeeId
+		{
+			get { return Record.EmployeeId == 0 ? (long?)null : Record.EmployeeId; }
+			set { Record.EmployeeId = value ?? 0; OnPropertyChanged(nameof(EmployeeId));}
+		}
+		[Required(ErrorMessage = "Поле является обязательным и не может быть пустым")]
+		public long PaymentTypeId { get { return Record.PaymentTypeId; } set { Record.PaymentTypeId = value; } }
+		[Required(ErrorMessage = "Поле является обязательным и не может быть пустым")]
+		public long DepartmentId { get { return Record.DepartmentId; } set { Record.DepartmentId = value; } }
+		[Required]
+		public DateTime DatePayment { get { return Record.DatePayment; } set { Record.DatePayment = value; } }
+		[Required]
+		public int CurrencyId { get { return Record.CurrencyId; } set { Record.CurrencyId = value; } }
+		[Required]
+		public decimal Value { get { return Record.Value; } set { Record.Value = value; } }
 
 		public DialogPaymentViewModel(string title, Payment record, Func<Payment, bool> applyDataFunc) : base(title, record, applyDataFunc)
 		{

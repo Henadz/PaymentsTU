@@ -8,7 +8,7 @@
 				return new ValidationResult(ErrorMessage);
 
 			var s = value as string;
-			if (s != null && string.IsNullOrEmpty(s))
+			if (s != null && string.IsNullOrEmpty(s.Trim()))
 				return new ValidationResult(ErrorMessage);
 
 			return ValidationResult.Success;

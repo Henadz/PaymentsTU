@@ -40,6 +40,7 @@ namespace PaymentsTU.Dialogs.DialogView
 			Title = title;
 			Record = record;
 			ApplyDataFunc = applyDataFunc;
+			_isModelValid = applyDataFunc != null;
 			this.ApplyCommand = new RelayCommand<Window>(OnApplyClicked, w => IsModelValid);
 			this.CancelCommand = new RelayCommand<Window>(OnCancelClicked);
 		}

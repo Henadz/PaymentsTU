@@ -10,11 +10,11 @@
     <StackPanel Margin="4" FocusManager.FocusedElement="{Binding ElementName=Surname}">
         <StackPanel>
             <TextBlock Text="Фамилия" HorizontalAlignment="Left" VerticalAlignment="Top" />
-            <TextBox Name="Surname" Text="{Binding Surname, ValidatesOnDataErrors=True, NotifyOnValidationError=True, UpdateSourceTrigger=PropertyChanged}" Height="24" IsTabStop="True" TabIndex="0" Focusable="True"/>
+            <TextBox Name="Surname" Text="{Binding Surname, ValidatesOnDataErrors=True, NotifyOnValidationError=True, UpdateSourceTrigger=PropertyChanged}" Height="24" IsTabStop="True" TabIndex="0" Focusable="True" Validation.ErrorTemplate="{StaticResource ValidationFailedTemplate}"/>
         </StackPanel>
         <StackPanel>
             <TextBlock Text="Имя" HorizontalAlignment="Left" VerticalAlignment="Top" />
-            <TextBox Name="Name" Text="{Binding Name, ValidatesOnDataErrors=True, NotifyOnValidationError=True, UpdateSourceTrigger=PropertyChanged}" Height="24" IsTabStop="True" TabIndex="1" Focusable="True"/>
+            <TextBox Name="Name" Text="{Binding Name, ValidatesOnDataErrors=True, NotifyOnValidationError=True, UpdateSourceTrigger=PropertyChanged}" Height="24" IsTabStop="True" TabIndex="1" Focusable="True" Validation.ErrorTemplate="{StaticResource ValidationFailedTemplate}"/>
         </StackPanel>
         <StackPanel>
             <TextBlock Text="Отчество" HorizontalAlignment="Left" VerticalAlignment="Top" />

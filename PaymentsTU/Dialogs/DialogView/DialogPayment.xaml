@@ -16,9 +16,12 @@
                       DisplayMemberPath="FullName"
                       SelectedValuePath="Id"
                       SelectedItem="{Binding Path=CurrentEmployee, Mode=TwoWay}"
-                      SelectedValue="{Binding Path=Record.EmployeeId, Mode=TwoWay}"
+                      SelectedValue="{Binding Path=EmployeeId, Mode=TwoWay, ValidatesOnDataErrors=True, NotifyOnValidationError=True, UpdateSourceTrigger=PropertyChanged}"
                       VerticalAlignment="Top"
-                      IsSynchronizedWithCurrentItem="False" IsTabStop="True" TabIndex="0">
+                      IsSynchronizedWithCurrentItem="False"
+                      IsTabStop="True"
+                      TabIndex="0"
+                      Validation.ErrorTemplate="{StaticResource ValidationFailedTemplate}">
             </ComboBox>
         </StackPanel>
         <StackPanel>
@@ -30,7 +33,7 @@
                       DisplayMemberPath="Name"
                       SelectedValuePath="Id"
                       SelectedItem="{Binding Path=CurrentDepartment, Mode=TwoWay}"
-                      SelectedValue="{Binding Path=Record.DepartmentId, Mode=TwoWay}"
+                      SelectedValue="{Binding Path=DepartmentId, Mode=TwoWay, ValidatesOnDataErrors=True, NotifyOnValidationError=True, UpdateSourceTrigger=PropertyChanged}"
                       VerticalAlignment="Top"
                       IsSynchronizedWithCurrentItem="False" TabIndex="1" IsTabStop="True"/>
         </StackPanel>
@@ -42,7 +45,7 @@
                       IsEditable="True"
                       DisplayMemberPath="Name"
                       SelectedValuePath="Id"
-                      SelectedValue="{Binding Path=Record.PaymentTypeId, Mode=TwoWay}"
+                      SelectedValue="{Binding Path=PaymentTypeId, Mode=TwoWay, ValidatesOnDataErrors=True, NotifyOnValidationError=True, UpdateSourceTrigger=PropertyChanged}"
                       VerticalAlignment="Top"
                       IsSynchronizedWithCurrentItem="False" TabIndex="2" IsTabStop="True"/>
         </StackPanel>
@@ -62,7 +65,7 @@
                     AutoCloseCalendar="True"
                     ButtonSpinnerLocation="Left"
                     Format="LongDate"
-                    Value="{Binding Record.DatePayment, Mode=TwoWay}"
+                    Value="{Binding Record.DatePayment, Mode=TwoWay, ValidatesOnDataErrors=True, NotifyOnValidationError=True, UpdateSourceTrigger=PropertyChanged}"
                     TimePickerAllowSpin="False"
                     TimePickerShowButtonSpinner="False"
                     TimePickerVisibility="Hidden"
@@ -73,7 +76,7 @@
                 <xwpf:DecimalUpDown Name="PaymentSum"
                                     Height="24"
                                     FormatString="#,##0.00"
-                                    Value="{Binding Record.Value, Mode=TwoWay}"
+                                    Value="{Binding Value, Mode=TwoWay, ValidatesOnDataErrors=True, NotifyOnValidationError=True, UpdateSourceTrigger=PropertyChanged}"
                                     Minimum="0"
                                     TabIndex="4"/>
             </StackPanel>
@@ -84,7 +87,7 @@
                           ItemsSource="{Binding CurrenciesDataView}"
                           DisplayMemberPath="Name"
                           SelectedValuePath="DigitalCode"
-                          SelectedValue="{Binding Path=Record.CurrencyId, Mode=TwoWay}"
+                          SelectedValue="{Binding Path=CurrencyId, Mode=TwoWay, ValidatesOnDataErrors=True, NotifyOnValidationError=True, UpdateSourceTrigger=PropertyChanged}"
                           VerticalAlignment="Top"
                           IsSynchronizedWithCurrentItem="False" TabIndex="5"/>
             </StackPanel>

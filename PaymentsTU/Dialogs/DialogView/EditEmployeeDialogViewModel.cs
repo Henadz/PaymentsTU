@@ -14,13 +14,13 @@ namespace PaymentsTU.Dialogs.DialogView
 		public ListCollectionView DepartmentsDataView { get; set; }
 
 		[Required(ErrorMessage = "Поле является обязательным и не может быть пустым")]
-		public string Surname { get { return Record.Surname; } set { Record.Surname = value; } }
+		public string Surname { get { return Record.Surname; } set { Record.Surname = value; OnPropertyChanged(nameof(Surname));} }
 		[Required(ErrorMessage = "Поле является обязательным и не может быть пустым")]
-		public string Name { get { return Record.Name; } set { Record.Name = value; } }
-		public string Patronymic { get { return Record.Patronymic; } set { Record.Patronymic = value; } }
-		public bool IsFired { get { return Record.IsFired; } set { Record.IsFired = value; } }
-		public string Note { get { return Record.Note; } set { Record.Note = value; } }
-		public long? DepartmentId { get { return Record.DepartmentId; } set { Record.DepartmentId = value; } }
+		public string Name { get { return Record.Name; } set { Record.Name = value; OnPropertyChanged(nameof(Name));} }
+		public string Patronymic { get { return Record.Patronymic; } set { Record.Patronymic = value; OnPropertyChanged(nameof(Patronymic));} }
+		public bool IsFired { get { return Record.IsFired; } set { Record.IsFired = value; OnPropertyChanged(nameof(IsFired));} }
+		public string Note { get { return Record.Note; } set { Record.Note = value; OnPropertyChanged(nameof(Note));} }
+		public long? DepartmentId { get { return Record.DepartmentId; } set { Record.DepartmentId = value; OnPropertyChanged(nameof(DepartmentId));} }
 
 		public EditEmployeeDialogViewModel(string title, Employee record, Func<Employee, bool> applyDataFunc) : base(title, record, applyDataFunc)
 		{
