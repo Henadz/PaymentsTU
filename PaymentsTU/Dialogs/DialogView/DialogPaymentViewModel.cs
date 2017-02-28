@@ -51,15 +51,14 @@ namespace PaymentsTU.Dialogs.DialogView
 			get { return Record.EmployeeId == 0 ? (long?)null : Record.EmployeeId; }
 			set { Record.EmployeeId = value ?? 0; OnPropertyChanged(nameof(EmployeeId));}
 		}
-		[Required(ErrorMessage = "Поле является обязательным и не может быть пустым")]
+		[Required(Type = typeof(long), InvalidValue = 0, ErrorMessage = "Поле является обязательным и не может быть пустым")]
 		public long PaymentTypeId { get { return Record.PaymentTypeId; } set { Record.PaymentTypeId = value; } }
-		[Required(ErrorMessage = "Поле является обязательным и не может быть пустым")]
+		[Required(Type = typeof(long), InvalidValue = 0, ErrorMessage = "Поле является обязательным и не может быть пустым")]
 		public long DepartmentId { get { return Record.DepartmentId; } set { Record.DepartmentId = value; } }
 		[Required]
 		public DateTime DatePayment { get { return Record.DatePayment; } set { Record.DatePayment = value; } }
-		[Required]
 		public int CurrencyId { get { return Record.CurrencyId; } set { Record.CurrencyId = value; } }
-		[Required]
+		[Required(Type = typeof(decimal), InvalidValue = 0, ErrorMessage = "Поле является обязательным и не может быть пустым")]
 		public decimal Value { get { return Record.Value; } set { Record.Value = value; } }
 
 		public DialogPaymentViewModel(string title, Payment record, Func<Payment, bool> applyDataFunc) : base(title, record, applyDataFunc)

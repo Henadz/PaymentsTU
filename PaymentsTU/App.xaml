@@ -11,7 +11,7 @@
                 <Setter Property="Focusable" Value="False"/>
             </Style>
             <ControlTemplate x:Key="ValidationFailedTemplate">
-                <Border BorderBrush="Red" BorderThickness="2" CornerRadius="2">
+                <Border BorderBrush="Red" BorderThickness="1" CornerRadius="2">
                     <Border.Visibility>
                         <Binding ElementName="placeholder" Path="AdornedElement.IsVisible">
                             <Binding.Converter>

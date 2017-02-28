@@ -55,8 +55,7 @@
                         Command="{Binding ApplyCommand}"
                         CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
                         TabIndex="7"
-                        IsDefault="True"
-                        IsEnabled="{Binding IsModelValid}"/>
+                        IsDefault="True"/>
             </StackPanel>
         </Grid>
     </StackPanel>
