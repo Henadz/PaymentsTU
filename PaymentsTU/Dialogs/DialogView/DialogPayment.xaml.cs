@@ -16,7 +16,7 @@ namespace PaymentsTU.Dialogs.DialogView
 	/// <summary>
 	/// Interaction logic for DialogPayment.xaml
 	/// </summary>
-	public partial class DialogPayment : UserControl
+	public partial class DialogPayment
 	{
 		public DialogPayment()
 		{

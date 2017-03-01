@@ -51,15 +51,41 @@ namespace PaymentsTU.Dialogs.DialogView
 			get { return Record.EmployeeId == 0 ? (long?)null : Record.EmployeeId; }
 			set { Record.EmployeeId = value ?? 0; OnPropertyChanged(nameof(EmployeeId));}
 		}
-		[Required(Type = typeof(long), InvalidValue = 0, ErrorMessage = "Поле является обязательным и не может быть пустым")]
-		public long PaymentTypeId { get { return Record.PaymentTypeId; } set { Record.PaymentTypeId = value; } }
-		[Required(Type = typeof(long), InvalidValue = 0, ErrorMessage = "Поле является обязательным и не может быть пустым")]
-		public long DepartmentId { get { return Record.DepartmentId; } set { Record.DepartmentId = value; } }
+
+		[Required(Type = typeof (long), InvalidValue = 0, ErrorMessage = "Поле является обязательным и не может быть пустым")]
+		public long PaymentTypeId
+		{
+			get { return Record.PaymentTypeId; }
+			set { Record.PaymentTypeId = value; OnPropertyChanged(nameof(PaymentTypeId));}
+		}
+
+		[Required(Type = typeof (long), InvalidValue = 0, ErrorMessage = "Поле является обязательным и не может быть пустым")]
+		public long DepartmentId
+		{
+			get { return Record.DepartmentId; }
+			set { Record.DepartmentId = value; OnPropertyChanged(nameof(DepartmentId));}
+		}
+
 		[Required]
-		public DateTime DatePayment { get { return Record.DatePayment; } set { Record.DatePayment = value; } }
-		public int CurrencyId { get { return Record.CurrencyId; } set { Record.CurrencyId = value; } }
-		[Required(Type = typeof(decimal), InvalidValue = 0, ErrorMessage = "Поле является обязательным и не может быть пустым")]
-		public decimal Value { get { return Record.Value; } set { Record.Value = value; } }
+		public DateTime DatePayment
+		{
+			get { return Record.DatePayment; }
+			set { Record.DatePayment = value; OnPropertyChanged(nameof(DatePayment));}
+		}
+
+		public int CurrencyId
+		{
+			get { return Record.CurrencyId; }
+			set { Record.CurrencyId = value; OnPropertyChanged(nameof(CurrencyId));}
+		}
+
+		[Required(Type = typeof (decimal), InvalidValue = 0,
+			ErrorMessage = "Поле является обязательным и не может быть пустым")]
+		public decimal Value
+		{
+			get { return Record.Value; }
+			set { Record.Value = value; OnPropertyChanged(nameof(Value));}
+		}
 
 		public DialogPaymentViewModel(string title, Payment record, Func<Payment, bool> applyDataFunc) : base(title, record, applyDataFunc)
 		{

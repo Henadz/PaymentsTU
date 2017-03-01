@@ -2,6 +2,7 @@
 using FrameworkExtend;
 using PaymentsTU.Dialogs.DialogService;
 using PaymentsTU.Model;
+using PaymentsTU.Validation;
 
 namespace PaymentsTU.Dialogs.DialogView
 {
@@ -9,10 +10,11 @@ namespace PaymentsTU.Dialogs.DialogView
 	{
 		public string RecordTitle => "Подразделение";
 
+		[Required(ErrorMessage = "Поле является обязательным и не может быть пустым")]
 		public string RecordData
 		{
 			get { return Record.Name; }
-			set { Record.Name = value; }
+			set { Record.Name = value; OnPropertyChanged(nameof(RecordData));}
 		}
 
 		public EditDepartmentViewModel(string title, Department record, Func<Department, bool> applyDataFunc) : base(title, record, applyDataFunc)
