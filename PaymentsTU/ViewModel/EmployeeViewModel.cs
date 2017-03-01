@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Data;
+using PaymentsTU.Converters;
 using PaymentsTU.Dialogs.DialogService;
 using PaymentsTU.Dialogs.DialogView;
 
@@ -22,6 +23,9 @@ namespace PaymentsTU.ViewModel
 			_employees = new ObservableCollection<Employee>(Dal.Instance.Employees());
 			ItemsDataView = (ListCollectionView)CollectionViewSource.GetDefaultView(_employees);
 			ItemsDataView.CustomSort = new EmployeeComparer();
+			var groupDescription = new PropertyGroupDescription("Surname", new FirstLetterConverter());
+			ItemsDataView?.GroupDescriptions?.Add(groupDescription);
+
 
 			ItemsDataView.MoveCurrentToPosition(_employees.Count > 0 ? 0 : - 1);
 

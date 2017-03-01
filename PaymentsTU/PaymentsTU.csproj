@@ -73,6 +73,7 @@
     <Compile Include="Controls\LabeledTextBox.xaml.cs">
       <DependentUpon>LabeledTextBox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converters\FirstLetterConverter.cs" />
     <Compile Include="Database\DatabaseCreationOperation.cs" />
     <Compile Include="Database\SQLiteDataReaderExtension.cs" />
     <Compile Include="Dialogs\DialogService\DialogResult.cs" />
