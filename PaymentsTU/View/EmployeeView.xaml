@@ -5,8 +5,13 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:view="clr-namespace:PaymentsTU.View"
              xmlns:behaviors="clr-namespace:PaymentsTU.Behaviors"
+             xmlns:conv="clr-namespace:PaymentsTU.Converters"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="500">
+    <UserControl.Resources>
+        <conv:EmployeeGroupExpanderConverter x:Key="EmployeeGroupExpanderConverter" />
+    </UserControl.Resources>
+
     <DockPanel Name="BasePanel">
         <view:DataNavigationBar DockPanel.Dock="Top" DataContext="{Binding NavigationBar, Mode=OneWay }" Height="30"></view:DataNavigationBar>
         <ListView Name="Directory" IsSynchronizedWithCurrentItem="True" ItemsSource="{Binding ItemsDataView, Mode=OneWay}" IsTabStop="True" SelectionMode="Single" VerticalAlignment="Stretch" behaviors:ScrollIntoViewBehavior.SelectedItem="{Binding ElementName=Directory, Path=SelectedItem}">
@@ -34,6 +39,12 @@
                                                     <TextBlock Text="{Binding Name}" FontWeight="Bold" Foreground="Silver" FontSize="22" VerticalAlignment="Bottom" />
                                                 </StackPanel>
                                             </Expander.Header>
+                                            <Expander.IsExpanded>
+                                                <MultiBinding Converter="{StaticResource EmployeeGroupExpanderConverter}">
+                                                    <Binding ElementName="Directory" Path="SelectedItem" Mode="OneWay"/>
+                                                    <Binding Path="Name" Mode="OneWay" />
+                                                </MultiBinding>
+                                            </Expander.IsExpanded>
                                             <ItemsPresenter />
                                         </Expander>
                                     </ControlTemplate>
@@ -43,8 +54,6 @@
                     </GroupStyle.ContainerStyle>
                 </GroupStyle>
             </ListView.GroupStyle>
-
-
         </ListView>
     </DockPanel>
 </UserControl>

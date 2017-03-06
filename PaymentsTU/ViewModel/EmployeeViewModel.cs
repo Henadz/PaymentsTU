@@ -16,6 +16,8 @@ namespace PaymentsTU.ViewModel
 		public DataNavigationBarViewModel<Employee> NavigationBar { get; private set; }
 		public ListCollectionView ItemsDataView { get; set; }
 
+		public Employee CurrentItem => (Employee) ItemsDataView.CurrentItem;
+
 		public string Title => "Сотрудники";
 
 		public EmployeeViewModel()
@@ -25,7 +27,6 @@ namespace PaymentsTU.ViewModel
 			ItemsDataView.CustomSort = new EmployeeComparer();
 			var groupDescription = new PropertyGroupDescription("Surname", new FirstLetterConverter());
 			ItemsDataView?.GroupDescriptions?.Add(groupDescription);
-
 
 			ItemsDataView.MoveCurrentToPosition(_employees.Count > 0 ? 0 : - 1);
 
@@ -38,6 +39,12 @@ namespace PaymentsTU.ViewModel
 				ItemsDataView.Refresh();
 				ItemsDataView.MoveCurrentToPosition(_employees.Count > 0 ? 0 : -1);
 			});
+			ItemsDataView.CurrentChanged += ItemsDataView_CurrentChanged;
+		}
+
+		private void ItemsDataView_CurrentChanged(object sender, EventArgs e)
+		{
+			OnPropertyChanged(nameof(CurrentItem));
 		}
 
 		private void OnAddEmployee(Employee employee)
