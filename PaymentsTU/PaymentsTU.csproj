@@ -105,6 +105,7 @@
     <Compile Include="Lazy.cs" />
     <Compile Include="Model\Currency.cs" />
     <Compile Include="Model\EmployeeComparer.cs" />
+    <Compile Include="Model\PaymentMatrixCell.cs" />
     <Compile Include="Model\ViewType.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Validation\AttributeValidator.cs" />

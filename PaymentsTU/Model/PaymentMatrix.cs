@@ -3,14 +3,9 @@ using System.Collections.Generic;
 
 namespace PaymentsTU.Model
 {
-    public sealed class PaymentMatrix : IEnumerable
+    internal sealed class PaymentMatrix
     {
         public List<Column> Columns { get; set; }
-        public List<object[]> Rows { get; set; }
-
-        public IEnumerator GetEnumerator()
-        {
-            return Rows.GetEnumerator();
-        }
+        public List<PaymentMatrixCell[]> Rows { get; set; }
     }
 }

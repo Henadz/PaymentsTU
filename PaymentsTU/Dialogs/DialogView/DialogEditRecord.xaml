@@ -14,7 +14,7 @@
         </StackPanel>
         <StackPanel>
             <TextBlock Text="Имя" HorizontalAlignment="Left" VerticalAlignment="Top" />
-            <TextBox Name="Name" Text="{Binding Name, ValidatesOnDataErrors=True, NotifyOnValidationError=True, UpdateSourceTrigger=PropertyChanged}" Height="24" IsTabStop="True" TabIndex="1" Focusable="True" Validation.ErrorTemplate="{StaticResource ValidationFailedTemplate}"/>
+            <TextBox Text="{Binding Name, ValidatesOnDataErrors=True, NotifyOnValidationError=True, UpdateSourceTrigger=PropertyChanged}" Height="24" IsTabStop="True" TabIndex="1" Focusable="True" Validation.ErrorTemplate="{StaticResource ValidationFailedTemplate}"/>
         </StackPanel>
         <StackPanel>
             <TextBlock Text="Отчество" HorizontalAlignment="Left" VerticalAlignment="Top" />

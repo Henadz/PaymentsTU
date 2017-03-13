@@ -5,10 +5,11 @@ using System.Configuration;
 using System.Data.SQLite;
 using System.Text;
 using PaymentsTU.Database;
+using FrameworkExtend;
 
 namespace PaymentsTU.Model
 {
-	public sealed class Dal
+	internal sealed class Dal
 	{
 		private Dal()
 		{
@@ -505,6 +506,158 @@ namespace PaymentsTU.Model
 			}
 
 			return result > 0;
+		}
+		#endregion
+
+		#region Reports
+
+		public PaymentMatrix PaymentReport(DateTime start, DateTime end)
+		{
+			//
+			var reportColumns = new HashSet<Column>();// new Dictionary<int, Column>();
+			var reportRows = new List<PaymentMatrixCell[]>();
+			var crossTabColumn = new List<PaymentType>();
+			using (var connection = new SQLiteConnection(_connectionString))
+			{
+				connection.Open();
+
+				const string statement = "SELECT Id, Name FROM PaymentType";
+
+				using (var command = new SQLiteCommand(statement, connection))
+				{
+					using (var reader = command.ExecuteReader())
+					{
+						while (reader.Read())
+						{
+							crossTabColumn.Add(new PaymentType
+							{
+								Id = reader.GetInt64(0),
+								Name = DataReaderExtensions.SafeGetString(reader, 1)
+							});
+						}
+					}
+				}
+
+				var reportStatement = new StringBuilder("SELECT");
+				var columnID = 0;
+				reportStatement.AppendLine("EmployeeId");
+				reportColumns.Add(new Column { ColumnName = "EmployeeId", DataType = typeof(long), Ordinal = ++columnID, IsVisible = false });
+				reportStatement.AppendLine(",e.Surname");
+				reportColumns.Add(new Column { ColumnName = "Surname", DataType = typeof(string), Ordinal = ++columnID, IsVisible = false });
+				reportStatement.AppendLine(",e.Name");
+				reportColumns.Add(new Column { ColumnName = "Name", DataType = typeof(string), Ordinal = ++columnID, IsVisible = false });
+				reportStatement.AppendLine(",e.Patronimic");
+				reportColumns.Add(new Column { ColumnName = "Patronimic", DataType = typeof(string), Ordinal = ++columnID, IsVisible = false });
+				reportStatement.AppendLine(",DepartmentId");
+				reportColumns.Add(new Column { ColumnName = "DepartmentId", DataType = typeof(long), Ordinal = ++columnID, IsVisible = false });
+				reportStatement.AppendLine(",d.Name as 'Department'");
+				reportColumns.Add(new Column { ColumnName = "Department", DataType = typeof(string), Ordinal = ++columnID });
+				foreach (var t in crossTabColumn)
+				{
+					var columnName = $",PaymentType_{t.Id}";
+					reportStatement.AppendLine(columnName);
+					reportColumns.Add(new Column { ColumnName = columnName, Caption = t.Name, DataType = typeof(object), Ordinal = ++columnID });
+				}
+				reportStatement.AppendLine("FROM");
+				reportStatement.AppendLine("(SELECT");
+				reportStatement.AppendLine("p.EmployeeId");
+				reportStatement.AppendLine(",p.DepartmentId");
+				foreach (var t in crossTabColumn)
+				{
+					reportStatement.AppendLine($",sum(CASE WHEN p.PaymentTypeId = {t.Id} THEN p.Value END) as PaymentType_{t.Id}");
+				}
+				reportStatement.AppendLine("FROM Payment p");
+				reportStatement.AppendLine("GROUP BY p.EmployeeId, p.DepartmentId");
+				reportStatement.AppendLine(") x");
+				reportStatement.AppendLine("INNER JOIN Employee e ON x.EmployeeId = e.Id");
+				reportStatement.AppendLine("INNER JOIN Department d ON x.DepartmentId = d.Id");
+				reportStatement.AppendLine("ORDER BY Department, Surname, e.Name, Patronimic");
+
+				using (var command = new SQLiteCommand(reportStatement.ToString(), connection))
+				{
+					using (var reader = command.ExecuteReader())
+					{
+						bool setColumnsType = true;
+						var rowid = 0;
+						while (reader.Read())
+						{
+							var row = new List<PaymentMatrixCell>(reportColumns.Count);
+							for (var c = 0; c < reader.FieldCount; c++)
+							{
+								var column = reportColumns.FirstOrDefault(x => x.Ordinal == c);
+								if (column == null)
+									continue;
+
+								var type = reader.GetFieldType(c);
+								if (setColumnsType)
+								{
+									column.DataType = type;
+								}
+
+								row.Add(new PaymentMatrixCell(type) {
+									RowId = ++rowid,
+									ColumnId = column.Ordinal,
+									Value = reader.IsDBNull(c) ? null : reader.GetValue(c)
+								});
+								setColumnsType = false;
+							}
+							reportRows.Add(row.ToArray());
+						}
+					}
+				}
+				/*
+				SELECT
+    EmployeeId,
+    e.Surname,
+    e.Name ,
+    e.Patronimic,
+    DepartmentId,
+    d.Name as "Department",
+    PaymentTypeId1,
+    PaymentTypeId2,
+    PaymentTypeId3,
+    PaymentTypeId4,
+    PaymentTypeId5,
+    PaymentTypeId6,
+    PaymentTypeId7,
+    PaymentTypeId8,
+    PaymentTypeId9,
+    "Продукты питания",
+    PaymentTypeId11
+FROM
+    (
+    SELECT 
+        p.EmployeeId,
+        p.DepartmentId,
+        sum(CASE WHEN p.PaymentTypeId = 1 THEN p.Value END) as PaymentTypeId1,
+        sum(CASE WHEN p.PaymentTypeId = 2 THEN p.Value END) as PaymentTypeId2,
+        sum(CASE WHEN p.PaymentTypeId = 3 THEN p.Value END) as PaymentTypeId3,
+        sum(CASE WHEN p.PaymentTypeId = 4 THEN p.Value END) as PaymentTypeId4,
+        sum(CASE WHEN p.PaymentTypeId = 5 THEN p.Value END) as PaymentTypeId5,
+        sum(CASE WHEN p.PaymentTypeId = 6 THEN p.Value END) as PaymentTypeId6,
+        sum(CASE WHEN p.PaymentTypeId = 7 THEN p.Value END) as PaymentTypeId7,
+        sum(CASE WHEN p.PaymentTypeId = 8 THEN p.Value END) as PaymentTypeId8,
+        sum(CASE WHEN p.PaymentTypeId = 9 THEN p.Value END) as PaymentTypeId9,
+        sum(CASE WHEN p.PaymentTypeId = 10 THEN p.Value END) as "Продукты питания",
+        sum(CASE WHEN p.PaymentTypeId = 11 THEN p.Value END) as PaymentTypeId11
+    FROM Payment p
+    GROUP BY EmployeeId
+    ) x
+INNER JOIN Employee e
+ON x.EmployeeId = e.Id
+INNER JOIN Department d
+ON x.DepartmentId = d.Id
+ORDER BY Department, Surname, e.Name, Patronimic
+				 */
+
+				connection.Close();
+			}
+
+			return new PaymentMatrix
+			{
+				Columns = reportColumns.ToList(),
+				Rows = reportRows
+			};
 		}
 		#endregion
 	}
