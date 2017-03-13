@@ -122,6 +122,7 @@
     <Compile Include="ViewModel\IPageBase.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\MatrixViewMode.cs" />
+    <Compile Include="ViewModel\PaymentReportViewModel.cs" />
     <Compile Include="ViewModel\PaymentTypeViewModel.cs" />
     <Compile Include="ViewModel\PaymentViewModel.cs" />
     <Compile Include="ViewModel\PeriodViewModel.cs" />
