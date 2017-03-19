@@ -24,7 +24,7 @@ namespace PaymentsTU.ViewModel
 			{
 				//new MatrixViewModel(),
 				new TabPageModel("Выплаты", new Lazy<IPageBase>(() => new PaymentViewModel())),
-				new TabPageModel("Отчет за период", new Lazy<IPageBase>(() => new PaymentReportViewModel())),
+				new TabPageModel("Отчет за период", new Lazy<IPageBase>(() => new ReportViewModel())),
 				new TabPageModel("Сотрудники", new Lazy<IPageBase>(() => new EmployeeViewModel())),
 				new TabPageModel("Подразделения", new Lazy<IPageBase>(() => new DepartmentViewModel())),
 				new TabPageModel("Виды платежей", new Lazy<IPageBase>(() => new PaymentTypeViewModel())),

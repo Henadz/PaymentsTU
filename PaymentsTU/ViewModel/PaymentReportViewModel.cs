@@ -5,7 +5,7 @@ using System.Text;
 
 namespace PaymentsTU.ViewModel
 {
-	public sealed class PaymentReportViewModel : ViewModelBase, IPageBase
+	public sealed class PaymentReportViewModel : ViewModelBase, IReport
 	{
 		public string Title => "Отчет по платежам";
 
