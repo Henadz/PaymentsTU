@@ -68,9 +68,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Behaviors\GridViewColumnCollectionBehaviour.cs" />
     <Compile Include="Behaviors\ScrollIntoViewBehavior.cs" />
     <Compile Include="Behaviors\TestBoxMaskBehavior.cs" />
     <Compile Include="Controls\GridHelpers.cs" />
+    <Compile Include="Controls\GridViewColumnCollection.cs" />
     <Compile Include="Controls\LabeledTextBox.xaml.cs">
       <DependentUpon>LabeledTextBox.xaml</DependentUpon>
     </Compile>
@@ -121,6 +123,7 @@
     <Compile Include="ViewModel\EmployeeViewModel.cs" />
     <Compile Include="ViewModel\IListPageViewModel.cs" />
     <Compile Include="ViewModel\IPageBase.cs" />
+    <Compile Include="ViewModel\IPeriodReportParams.cs" />
     <Compile Include="ViewModel\IReport.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\MatrixViewMode.cs" />
@@ -131,6 +134,9 @@
     <Compile Include="ViewModel\RelayCommand.cs" />
     <Compile Include="ViewModel\ReportViewModel.cs" />
     <Compile Include="ViewModel\ViewModelBase.cs" />
+    <Compile Include="View\PaymentReportView.xaml.cs">
+      <DependentUpon>PaymentReportView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\ReportView.xaml.cs">
       <DependentUpon>ReportView.xaml</DependentUpon>
     </Compile>
@@ -166,6 +172,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\NavigationImages.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\PaymentReportView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

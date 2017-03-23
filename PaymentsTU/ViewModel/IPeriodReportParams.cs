@@ -4,9 +4,9 @@ using System.Text;
 
 namespace PaymentsTU.ViewModel
 {
-	internal interface IReport
+	interface IPeriodReportParams
 	{
-		string Title { get; }
-		void Run<T>(T parameters) where T: IPeriodReportParams;
+		DateTime StartDate { get; set; }
+		DateTime EndDate { get; set; }
 	}
 }

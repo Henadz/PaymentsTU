@@ -514,7 +514,7 @@ namespace PaymentsTU.Model
 		public PaymentMatrix PaymentReport(DateTime start, DateTime end)
 		{
 			var reportColumns = new HashSet<Column>();
-			var reportRows = new List<PaymentMatrixCell[]>();
+			var reportRows = new List<Row>();
 			var crossTabColumn = new List<PaymentType>();
 			using (var connection = new SQLiteConnection(_connectionString))
 			{
@@ -540,13 +540,9 @@ namespace PaymentsTU.Model
 				var reportStatement = new StringBuilder("SELECT ");
 				var columnID = 0;
 				reportStatement.AppendLine("x.EmployeeId");
-				reportColumns.Add(new Column { ColumnName = "EmployeeId", DataType = typeof(long), Ordinal = columnID++, IsVisible = false });
-				reportStatement.AppendLine(",e.Surname");
-				reportColumns.Add(new Column { ColumnName = "Surname", DataType = typeof(string), Ordinal = columnID++, IsVisible = false });
-				reportStatement.AppendLine(",e.Name");
-				reportColumns.Add(new Column { ColumnName = "Name", DataType = typeof(string), Ordinal = columnID++, IsVisible = false });
-				reportStatement.AppendLine(",e.Patronimic");
-				reportColumns.Add(new Column { ColumnName = "Patronimic", DataType = typeof(string), Ordinal = columnID++, IsVisible = false });
+				reportColumns.Add(new Column { ColumnName = "EmployeeId", DataType = typeof(long), Ordinal = columnID++, IsVisible = true });
+				reportStatement.AppendLine(",IFNULL(e.Surname,'') || ' ' || IFNULL(e.Name,'') || ' ' || IFNULL(e.Patronimic,'')");
+				reportColumns.Add(new Column { ColumnName = "Surname", Caption = "Ф.И.О.", DataType = typeof(string), Ordinal = columnID++, IsVisible = true });
 				reportStatement.AppendLine(",x.DepartmentId");
 				reportColumns.Add(new Column { ColumnName = "DepartmentId", DataType = typeof(long), Ordinal = columnID++, IsVisible = false });
 				reportStatement.AppendLine(",d.Name as 'Department'");
@@ -579,7 +575,7 @@ namespace PaymentsTU.Model
 						var rowid = 0;
 						while (reader.Read())
 						{
-							var row = new List<PaymentMatrixCell>(reportColumns.Count);
+							var row = new List<Cell>(reportColumns.Count);
 							for (var c = 0; c < reader.FieldCount; c++)
 							{
 								var column = reportColumns.FirstOrDefault(x => x.Ordinal == c);
@@ -592,13 +588,12 @@ namespace PaymentsTU.Model
 									column.DataType = type;
 								}
 
-								row.Add(new PaymentMatrixCell(type) {
-									RowId = rowid,
+								row.Add(new Cell(type) {
 									ColumnId = column.Ordinal,
 									Value = reader.IsDBNull(c) ? null : reader.GetValue(c)
 								});
 							}
-							reportRows.Add(row.ToArray());
+							reportRows.Add(new Row {RowId = rowid, Cells = row });
 							rowid++;
 						}
 					}
