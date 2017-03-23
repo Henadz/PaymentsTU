@@ -6,6 +6,7 @@ using System.Data.SQLite;
 using System.Text;
 using PaymentsTU.Database;
 using FrameworkExtend;
+using System.Data;
 
 namespace PaymentsTU.Model
 {
@@ -551,7 +552,7 @@ namespace PaymentsTU.Model
 				{
 					var columnName = $",x.PaymentType_{t.Id}";
 					reportStatement.AppendLine(columnName);
-					reportColumns.Add(new Column { ColumnName = columnName, Caption = t.Name, DataType = typeof(object), Ordinal = columnID++ });
+					reportColumns.Add(new Column { ColumnName = columnName.TrimStart(',', 'x','.'), Caption = t.Name, DataType = typeof(object), Ordinal = columnID++ });
 				}
 				reportStatement.AppendLine("FROM");
 				reportStatement.AppendLine("(SELECT");
@@ -562,6 +563,8 @@ namespace PaymentsTU.Model
 					reportStatement.AppendLine($",sum(CASE WHEN p.PaymentTypeId = {t.Id} THEN p.Value END) as PaymentType_{t.Id}");
 				}
 				reportStatement.AppendLine("FROM Payment p");
+				reportStatement.AppendLine("WHERE p.DatePayment >= @DateStart");
+				reportStatement.AppendLine("AND p.DatePayment <= @DateEnd");
 				reportStatement.AppendLine("GROUP BY p.EmployeeId, p.DepartmentId");
 				reportStatement.AppendLine(") x");
 				reportStatement.AppendLine("INNER JOIN Employee e ON x.EmployeeId = e.Id");
@@ -570,6 +573,9 @@ namespace PaymentsTU.Model
 
 				using (var command = new SQLiteCommand(reportStatement.ToString(), connection))
 				{
+					command.Parameters.Add("@DateStart", DbType.DateTime).Value = start;
+					command.Parameters.Add("@DateEnd", DbType.DateTime).Value = end;
+
 					using (var reader = command.ExecuteReader())
 					{
 						var rowid = 0;

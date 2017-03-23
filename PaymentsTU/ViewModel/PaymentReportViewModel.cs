@@ -11,72 +11,88 @@ namespace PaymentsTU.ViewModel
 	{
 		public string Title => "Отчет по платежам";
 
-		public ObservableCollection<Row> Cells { get; private set; }
-
-		public int RowsCount { get; private set; }
-		public int ColumnsCount { get; private set; }
-
+		public ObservableCollection<PaymentReportRow> Rows { get; private set; }
 		public ObservableCollection<ColumnDescriptor> Columns { get; private set; }
 	
 
 		public PaymentReportViewModel()
 		{
-			Cells = new ObservableCollection<Row>();
+			Rows = new ObservableCollection<PaymentReportRow>();
 			Columns = new ObservableCollection<ColumnDescriptor>();
-			//Items = new ObservableCollection<Payment>(Dal.Instance.Payments().OrderByDescending(x => x.DatePayment).ThenBy(x => x.FullName));
-			//ItemsDataView.Culture = CultureInfo.CurrentCulture;
-			//ItemsDataView.MoveCurrentToPosition(Items.Count > 0 ? 0 : -1);
-			////TODO: refactoring viewmodel for navigation bar
-			//NavigationBar = new DataNavigationBarViewModel<Payment>(ItemsDataView, OnAdd, OnDelete, OnEdit, () =>
-			//{
-			//	Items.Clear();
-			//	foreach (var payment in Dal.Instance.Payments())
-			//	{
-			//		Items.Add(payment);
-			//	}
-			//	ItemsDataView.Refresh();
-			//	ItemsDataView.MoveCurrentToPosition(Items.Count > 0 ? 0 : -1);
-			//});
 		}
 
 		public void Run<T>(T parameters) where T: IPeriodReportParams
 		{
 			var reportData = Dal.Instance.PaymentReport(parameters.StartDate, parameters.EndDate);
 
-			var cols = new List<ColumnDescriptor>();
+			var cols = new List<ColumnDescriptor>
+			{
+				new ColumnDescriptor{ HeaderText = "Id", DisplayMember = "EmployeeId" },
+				new ColumnDescriptor{ HeaderText = "Ф.И.О.", DisplayMember = "Employee" },
+				new ColumnDescriptor{ HeaderText = "DepId", DisplayMember = "DepartmentId" },
+				new ColumnDescriptor{ HeaderText = "Подразделение", DisplayMember = "Department" },
+			};
+
+			var columnRowMap = new Dictionary<string, int>();
+			var paymentTypeMap = new Dictionary<int, string>();
 
 			foreach (var col in reportData.Columns)
 			{
-				if (col.IsVisible)
-					cols.Add(new ColumnDescriptor { HeaderText = col.Caption, DisplayMember = "Cells[" + col.Ordinal + "].Value" });
+				columnRowMap.Add(col.ColumnName, col.Ordinal);
+				if (col.IsVisible && col.ColumnName.StartsWith("PaymentType"))
+				{
+					paymentTypeMap.Add(col.Ordinal, col.ColumnName);
+					cols.Add(new ColumnDescriptor { HeaderText = col.Caption, DisplayMember = "Cells[" + col.ColumnName + "]" });
+				}
+			}
+
+			var rows = new List<PaymentReportRow>();
+			foreach (var row in reportData.Rows)
+			{
+				var r = new PaymentReportRow
+				{
+					RowId = row.RowId,
+					Cells = new Dictionary<string, object>(paymentTypeMap.Count)
+				};
+				foreach (var cell in row.Cells)
+				{
+					if (cell.ColumnId == columnRowMap["EmployeeId"])
+						r.EmployeeId = cell.Value == null ? null : (int?)Convert.ToInt32(cell.Value);
+					if (cell.ColumnId == columnRowMap["Surname"])
+						r.Employee = (string)cell.Value;
+					if (cell.ColumnId == columnRowMap["DepartmentId"])
+						r.DepartmentId = cell.Value == null ? null : (int?)Convert.ToInt32(cell.Value);
+					if (cell.ColumnId == columnRowMap["Department"])
+						r.Department = (string)cell.Value;
+
+					if (paymentTypeMap.TryGetValue(cell.ColumnId, out string t))
+						r.Cells.Add(t, cell.Value);
+				}
+				rows.Add(r);
 			}
 
 			Columns = new ObservableCollection<ColumnDescriptor>(cols);
-
-			RowsCount = reportData.Rows.Count;
-			ColumnsCount = reportData.Columns.Count;
-			OnPropertyChanged(nameof(RowsCount));
-			OnPropertyChanged(nameof(ColumnsCount));
-
-			//var cells = new List<PaymentMatrixCell>();
-			//foreach (var r in reportData.Rows)
-			//{
-			//	cells.AddRange(r);
-			//}
-			Cells = new ObservableCollection<Row>(reportData.Rows);
-			
+			Rows = new ObservableCollection<PaymentReportRow>(rows);
 		}
-
-		
 	}
 
-	public class PaymentReportParams: IPeriodReportParams
+	internal sealed class PaymentReportRow
+	{
+		public int RowId { get; set; }
+		public int? EmployeeId { get; set; }
+		public string Employee { get; set; }
+		public int? DepartmentId { get; set; }
+		public string Department { get; set; }
+		public Dictionary<string, object> Cells { get; set; } = new Dictionary<string, object>();
+	}
+
+	internal class PaymentReportParams: IPeriodReportParams
 	{
 		public DateTime StartDate { get; set; }
 		public DateTime EndDate { get; set; }
 	}
 
-	public class ColumnDescriptor
+	internal class ColumnDescriptor
 	{
 		public string HeaderText { get; set; }
 		public string DisplayMember { get; set; }

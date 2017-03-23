@@ -22,94 +22,65 @@
         </Style>
     </UserControl.Resources>
     <DockPanel LastChildFill="True">
-        <Border DockPanel.Dock="Left" CornerRadius="2" BorderThickness="1" BorderBrush="LightGray">
-        <StackPanel>
-            <GroupBox Header="Отчёт за период">
-                <StackPanel>
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                        <Label>Начиная:</Label>
-                        <xwpf:DateTimePicker
-                            Height="24"
-                            AutoCloseCalendar="True"
-                            ButtonSpinnerLocation="Left"
-                            Format="LongDate"
-                            Value="{Binding PeriodStart, Mode=TwoWay, ValidatesOnDataErrors=True, NotifyOnValidationError=True, UpdateSourceTrigger=PropertyChanged}"
-                            TimePickerAllowSpin="False"
-                            TimePickerShowButtonSpinner="False"
-                            TimePickerVisibility="Hidden"
-                            AllowTextInput="False"
-                            MinWidth="150"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                        <Label>Заканчивая:</Label>
-                        <xwpf:DateTimePicker
-                            Height="24"
-                            AutoCloseCalendar="True"
-                            ButtonSpinnerLocation="Left"
-                            Format="LongDate"
-                            Value="{Binding PeriodEnd, Mode=TwoWay, ValidatesOnDataErrors=True, NotifyOnValidationError=True, UpdateSourceTrigger=PropertyChanged}"
-                            TimePickerAllowSpin="False"
-                            TimePickerShowButtonSpinner="False"
-                            TimePickerVisibility="Hidden"
-                            AllowTextInput="False"
-                            MinWidth="150"/>
-                    </StackPanel>
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Visibility="Collapsed">
-                            <Label>Период:</Label>
-                            <ComboBox MinWidth="150"/>
+        <Border DockPanel.Dock="Left" CornerRadius="2" BorderThickness="1" BorderBrush="LightGray" Margin="0,0,4,0">
+            <StackPanel >
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <GroupBox Header="Отчёт за период" Grid.Row="0" Grid.ColumnSpan="2">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                <Label>Начиная:</Label>
+                                <xwpf:DateTimePicker
+                                Height="24"
+                                AutoCloseCalendar="True"
+                                ButtonSpinnerLocation="Left"
+                                Format="LongDate"
+                                Value="{Binding PeriodStart, Mode=TwoWay, ValidatesOnDataErrors=True, NotifyOnValidationError=True, UpdateSourceTrigger=PropertyChanged}"
+                                TimePickerAllowSpin="False"
+                                TimePickerShowButtonSpinner="False"
+                                TimePickerVisibility="Hidden"
+                                AllowTextInput="False"
+                                MinWidth="150"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                <Label>Заканчивая:</Label>
+                                <xwpf:DateTimePicker
+                                Height="24"
+                                AutoCloseCalendar="True"
+                                ButtonSpinnerLocation="Left"
+                                Format="LongDate"
+                                Value="{Binding PeriodEnd, Mode=TwoWay, ValidatesOnDataErrors=True, NotifyOnValidationError=True, UpdateSourceTrigger=PropertyChanged}"
+                                TimePickerAllowSpin="False"
+                                TimePickerShowButtonSpinner="False"
+                                TimePickerVisibility="Hidden"
+                                AllowTextInput="False"
+                                MinWidth="150"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Visibility="Collapsed">
+                                <Label>Период:</Label>
+                                <ComboBox MinWidth="150"/>
+                            </StackPanel>
                         </StackPanel>
-                    </StackPanel>
-            </GroupBox>
-        </StackPanel>
-        </Border>
-        <ScrollViewer>
-        <!--<ItemsControl ItemsSource="{Binding Report.Cells}">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <Grid ShowGridLines="true"
-                          ctrl:GridHelpers.RowCount="{Binding Report.RowsCount}"
-                          ctrl:GridHelpers.ColumnCount="{Binding Report.ColumnsCount}" />
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-            <ItemsControl.ItemContainerStyle>
-                <Style>
-                    <Setter Property="Grid.Row" Value="{Binding RowId}"/>
-                    <Setter Property="Grid.Column" Value="{Binding ColumnId}"/>
-                </Style>
-            </ItemsControl.ItemContainerStyle>
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <TextBlock Text="{Binding Value}" />
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>-->
-            <!--<ItemsControl ItemsSource="{Binding Report.Cells}" VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling">
-                --><!-- Set the Template for each row to a TextBlock and another ItemsControl --><!--
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel Orientation="Horizontal">
-                            --><!-- Need to set Width of name TextBlock so items line up correctly --><!--
-                            <TextBlock Width="20" Text="{Binding RowId}" />
+                    </GroupBox>
+                    <Button
+                        Margin="0,4,4,0"
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        Content="Сформировать"
+                        Command="{Binding RunCommand}"
+                    />
+                </Grid>
 
-                            <ItemsControl ItemsSource="{Binding Cells}">
-                                --><!-- Use a horizontal StackPanel to display columns --><!--
-                                <ItemsControl.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <StackPanel Orientation="Horizontal"/>
-                                    </ItemsPanelTemplate>
-                                </ItemsControl.ItemsPanel>
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Width="100" Text="{Binding Value}" />
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                        </StackPanel>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>-->
-        </ScrollViewer>
-        <ListView ItemsSource="{Binding Report.Cells}" IsSynchronizedWithCurrentItem="True" AlternationCount="2">
+            </StackPanel>
+        </Border>
+        <ListView ItemsSource="{Binding Report.Rows}" IsSynchronizedWithCurrentItem="True" AlternationCount="2">
             
             <ListView.View>
                 
