@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Reflection;
@@ -157,8 +158,12 @@ namespace PaymentsTU.Behaviors
 
 			if (!string.IsNullOrEmpty(this.WidthMember))
 			{
-				double width = (double)GetPropertyValue(columnSource, this.WidthMember);
-				column.Width = width;
+				var v = GetPropertyValue(columnSource, this.WidthMember);
+				if (v != null)
+				{
+					double width = (double)Convert.ChangeType(v, typeof(double));
+					column.Width = width;
+				}
 			}
 
 			return column;

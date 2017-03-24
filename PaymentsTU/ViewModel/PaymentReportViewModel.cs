@@ -28,9 +28,7 @@ namespace PaymentsTU.ViewModel
 			var cols = new List<ColumnDescriptor>
 			{
 				new ColumnDescriptor{ HeaderText = "Id", DisplayMember = "EmployeeId" },
-				new ColumnDescriptor{ HeaderText = "Ф.И.О.", DisplayMember = "Employee" },
-				new ColumnDescriptor{ HeaderText = "DepId", DisplayMember = "DepartmentId" },
-				new ColumnDescriptor{ HeaderText = "Подразделение", DisplayMember = "Department" },
+				new ColumnDescriptor{ HeaderText = "Ф.И.О.", DisplayMember = "Employee" }
 			};
 
 			var columnRowMap = new Dictionary<string, int>();
@@ -47,6 +45,7 @@ namespace PaymentsTU.ViewModel
 			}
 
 			var rows = new List<PaymentReportRow>();
+			PaymentReportRow totalRow = null;
 			foreach (var row in reportData.Rows)
 			{
 				var r = new PaymentReportRow
@@ -61,24 +60,61 @@ namespace PaymentsTU.ViewModel
 					if (cell.ColumnId == columnRowMap["Surname"])
 						r.Employee = (string)cell.Value;
 					if (cell.ColumnId == columnRowMap["DepartmentId"])
+					{
 						r.DepartmentId = cell.Value == null ? null : (int?)Convert.ToInt32(cell.Value);
+						if (totalRow == null || totalRow.DepartmentId != r.DepartmentId)
+						{
+							totalRow = new PaymentReportRow
+							{
+								RowId = int.MaxValue,
+								RowType = 1,
+								Employee = "Итого",
+								DepartmentId = r.DepartmentId
+							};
+							rows.Add(totalRow);
+						}
+					}
 					if (cell.ColumnId == columnRowMap["Department"])
+					{
 						r.Department = (string)cell.Value;
+					}
 
 					if (paymentTypeMap.TryGetValue(cell.ColumnId, out string t))
+					{
 						r.Cells.Add(t, cell.Value);
+						if (totalRow.Cells.TryGetValue(t, out object total))
+						{
+							if (cell.Value != null)
+							{
+								var v = Convert.ToDouble(cell.Value);
+								var tv = total == null ? 0 : Convert.ToDouble(total);
+								totalRow.Cells[t] = tv + v;
+							}
+						}
+						else
+						{
+							totalRow.Cells.Add(t, cell.Value);
+						}
+					}
 				}
+
+				if (totalRow != null && string.IsNullOrEmpty(totalRow.Department))
+				{
+					totalRow.Department = r.Department;
+				}
+
 				rows.Add(r);
 			}
 
 			Columns = new ObservableCollection<ColumnDescriptor>(cols);
-			Rows = new ObservableCollection<PaymentReportRow>(rows);
+			Rows = new ObservableCollection<PaymentReportRow>(rows.OrderBy(x => x.Department).ThenBy(x => x.RowType).ThenBy(x => x.Employee));
 		}
 	}
 
 	internal sealed class PaymentReportRow
 	{
 		public int RowId { get; set; }
+		public int RowType { get; set; }
 		public int? EmployeeId { get; set; }
 		public string Employee { get; set; }
 		public int? DepartmentId { get; set; }
@@ -96,5 +132,6 @@ namespace PaymentsTU.ViewModel
 	{
 		public string HeaderText { get; set; }
 		public string DisplayMember { get; set; }
+		public string Width { get; set; }
 	}
 }
