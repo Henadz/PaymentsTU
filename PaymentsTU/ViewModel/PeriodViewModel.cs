@@ -20,13 +20,13 @@ namespace PaymentsTU.ViewModel
 
 	    public ListCollectionView ItemsDataView { get; }
 
-	    public Dal Repository
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+	    //public Dal Repository
+     //   {
+     //       get
+     //       {
+     //           throw new NotImplementedException();
+     //       }
+     //   }
 
         public string Title
         {

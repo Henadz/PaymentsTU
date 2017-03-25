@@ -5,10 +5,12 @@ using System.Configuration;
 using System.Data.SQLite;
 using System.Text;
 using PaymentsTU.Database;
+using FrameworkExtend;
+using System.Data;
 
 namespace PaymentsTU.Model
 {
-	public sealed class Dal
+	internal sealed class Dal
 	{
 		private Dal()
 		{
@@ -505,6 +507,111 @@ namespace PaymentsTU.Model
 			}
 
 			return result > 0;
+		}
+		#endregion
+
+		#region Reports
+
+		public PaymentMatrix PaymentReport(DateTime start, DateTime end)
+		{
+			var reportColumns = new HashSet<Column>();
+			var reportRows = new List<Row>();
+			var crossTabColumn = new List<PaymentType>();
+			using (var connection = new SQLiteConnection(_connectionString))
+			{
+				connection.Open();
+
+				const string statement = "SELECT Id, Name FROM PaymentType";
+
+				using (var command = new SQLiteCommand(statement, connection))
+				{
+					using (var reader = command.ExecuteReader())
+					{
+						while (reader.Read())
+						{
+							crossTabColumn.Add(new PaymentType
+							{
+								Id = reader.GetInt64(0),
+								Name = DataReaderExtensions.SafeGetString(reader, 1)
+							});
+						}
+					}
+				}
+
+				var reportStatement = new StringBuilder("SELECT ");
+				var columnID = 0;
+				reportStatement.AppendLine("x.EmployeeId");
+				reportColumns.Add(new Column { ColumnName = "EmployeeId", DataType = typeof(long), Ordinal = columnID++, IsVisible = true });
+				reportStatement.AppendLine(",IFNULL(e.Surname,'') || ' ' || IFNULL(e.Name,'') || ' ' || IFNULL(e.Patronimic,'')");
+				reportColumns.Add(new Column { ColumnName = "Surname", Caption = "Ф.И.О.", DataType = typeof(string), Ordinal = columnID++, IsVisible = true });
+				reportStatement.AppendLine(",x.DepartmentId");
+				reportColumns.Add(new Column { ColumnName = "DepartmentId", DataType = typeof(long), Ordinal = columnID++, IsVisible = false });
+				reportStatement.AppendLine(",d.Name as 'Department'");
+				reportColumns.Add(new Column { ColumnName = "Department", DataType = typeof(string), Ordinal = columnID++ });
+				foreach (var t in crossTabColumn)
+				{
+					var columnName = $",x.PaymentType_{t.Id}";
+					reportStatement.AppendLine(columnName);
+					reportColumns.Add(new Column { ColumnName = columnName.TrimStart(',', 'x','.'), Caption = t.Name, DataType = typeof(object), Ordinal = columnID++ });
+				}
+				reportStatement.AppendLine("FROM");
+				reportStatement.AppendLine("(SELECT");
+				reportStatement.AppendLine("p.EmployeeId");
+				reportStatement.AppendLine(",p.DepartmentId");
+				foreach (var t in crossTabColumn)
+				{
+					reportStatement.AppendLine($",sum(CASE WHEN p.PaymentTypeId = {t.Id} THEN p.Value END) as PaymentType_{t.Id}");
+				}
+				reportStatement.AppendLine("FROM Payment p");
+				reportStatement.AppendLine("WHERE p.DatePayment >= @DateStart");
+				reportStatement.AppendLine("AND p.DatePayment <= @DateEnd");
+				reportStatement.AppendLine("GROUP BY p.EmployeeId, p.DepartmentId");
+				reportStatement.AppendLine(") x");
+				reportStatement.AppendLine("INNER JOIN Employee e ON x.EmployeeId = e.Id");
+				reportStatement.AppendLine("INNER JOIN Department d ON x.DepartmentId = d.Id");
+				reportStatement.AppendLine("ORDER BY Department, Surname, e.Name, Patronimic");
+
+				using (var command = new SQLiteCommand(reportStatement.ToString(), connection))
+				{
+					command.Parameters.Add("@DateStart", DbType.DateTime).Value = start;
+					command.Parameters.Add("@DateEnd", DbType.DateTime).Value = end;
+
+					using (var reader = command.ExecuteReader())
+					{
+						var rowid = 0;
+						while (reader.Read())
+						{
+							var row = new List<Cell>(reportColumns.Count);
+							for (var c = 0; c < reader.FieldCount; c++)
+							{
+								var column = reportColumns.FirstOrDefault(x => x.Ordinal == c);
+								if (column == null)
+									continue;
+
+								var type = reader.GetFieldType(c);
+								if (column.DataType is object && type != typeof(object))
+								{
+									column.DataType = type;
+								}
+
+								row.Add(new Cell(type) {
+									ColumnId = column.Ordinal,
+									Value = reader.IsDBNull(c) ? null : reader.GetValue(c)
+								});
+							}
+							reportRows.Add(new Row {RowId = rowid, Cells = row });
+							rowid++;
+						}
+					}
+				}
+				connection.Close();
+			}
+
+			return new PaymentMatrix
+			{
+				Columns = reportColumns.ToList(),
+				Rows = reportRows
+			};
 		}
 		#endregion
 	}
