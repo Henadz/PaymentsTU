@@ -3,7 +3,6 @@ using PaymentsTU.Model;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Text;
 
 namespace PaymentsTU.ViewModel
 {
@@ -68,7 +67,7 @@ namespace PaymentsTU.ViewModel
 							{
 								RowId = int.MaxValue,
 								RowType = 1,
-								Employee = "Итого",
+								Employee = "Итого, рублей",
 								DepartmentId = r.DepartmentId
 							};
 							rows.Add(totalRow);
@@ -93,7 +92,7 @@ namespace PaymentsTU.ViewModel
 						}
 						else
 						{
-							totalRow.Cells.Add(t, cell.Value);
+							totalRow.Cells.Add(t, cell.Value ?? 0);
 						}
 					}
 				}

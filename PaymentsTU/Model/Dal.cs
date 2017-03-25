@@ -521,7 +521,7 @@ namespace PaymentsTU.Model
 			{
 				connection.Open();
 
-				const string statement = "SELECT Id, Name FROM PaymentType";
+				const string statement = "SELECT Id, Name FROM PaymentType ORDER BY Name";
 
 				using (var command = new SQLiteCommand(statement, connection))
 				{
