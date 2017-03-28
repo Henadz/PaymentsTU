@@ -73,7 +73,7 @@
                     AutoCloseCalendar="True"
                     ButtonSpinnerLocation="Left"
                     Format="LongDate"
-                    Value="{Binding Record.DatePayment, Mode=TwoWay, ValidatesOnDataErrors=True, NotifyOnValidationError=True, UpdateSourceTrigger=PropertyChanged}"
+                    Value="{Binding DatePayment, Mode=TwoWay, ValidatesOnDataErrors=True, NotifyOnValidationError=True, UpdateSourceTrigger=PropertyChanged}"
                     TimePickerAllowSpin="False"
                     TimePickerShowButtonSpinner="False"
                     TimePickerVisibility="Hidden"
