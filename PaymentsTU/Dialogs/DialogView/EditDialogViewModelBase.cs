@@ -50,7 +50,10 @@ namespace PaymentsTU.Dialogs.DialogView
 			if (ApplyDataFunc(Record))
 			{
 				if (AddNextRecord)
+				{
 					Record = new T();
+					OnPropertyChanged(nameof(Record));
+				}
 				else
 					CloseDialogWithResult(parameter, DialogResult.Apply);
 			}
