@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
+﻿using System.Collections.ObjectModel;
 using System.Windows.Data;
-using System.Windows.Documents;
 using FrameworkExtend;
 using PaymentsTU.Model;
 using PaymentsTU.Validation;
+using System.Windows;
+using PaymentsTU.Dialogs.DialogService;
 
 namespace PaymentsTU.Dialogs.DialogView
 {
@@ -29,6 +28,24 @@ namespace PaymentsTU.Dialogs.DialogView
 			DepartmentsDataView.CustomSort = new DepartmentComparer();
 		}
 
-		
+		protected override void OnApplyClicked(Window parameter)
+		{
+			if (ApplyDataFunc(Record))
+			{
+				if (AddNextRecord)
+				{
+					Record = new Employee();
+					OnPropertyChanged(nameof(Surname));
+					OnPropertyChanged(nameof(Name));
+					OnPropertyChanged(nameof(Patronymic));
+					OnPropertyChanged(nameof(IsFired));
+					OnPropertyChanged(nameof(Note));
+					OnPropertyChanged(nameof(DepartmentId));
+				}
+				else
+					CloseDialogWithResult(parameter, DialogResult.Apply);
+			}
+		}
+
 	}
 }
