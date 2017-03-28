@@ -23,7 +23,7 @@ namespace PaymentsTU.Dialogs.DialogView
 
 		public Employee CurrentEmployee
 		{
-			get { return _employees.FirstOrDefault(x => x.Id == Record.Id); }
+			get { return _employees.FirstOrDefault(x => x.Id == Record.EmployeeId); }
 			set
 			{
 				if (value != null)
@@ -79,8 +79,7 @@ namespace PaymentsTU.Dialogs.DialogView
 			set { Record.CurrencyId = value; OnPropertyChanged(nameof(CurrencyId));}
 		}
 
-		[Required(Type = typeof (decimal), InvalidValue = 0,
-			ErrorMessage = "Поле является обязательным и не может быть пустым")]
+		[Required(Type = typeof (decimal), InvalidValue = 0, ErrorMessage = "Поле является обязательным и не может быть пустым")]
 		public decimal Value
 		{
 			get { return Record.Value; }
@@ -112,12 +111,18 @@ namespace PaymentsTU.Dialogs.DialogView
 			{
 				if (AddNextRecord)
 				{
-					Record = new Payment
-					{
-						Value = 0M,
-						DatePayment = DateTime.Today,
-						CurrencyId = 933
-					};
+					var paymentTypeId = Record.PaymentTypeId;
+					var value = Record.Value;
+					var currencyId = Record.CurrencyId;
+					var datePayment = Record.DatePayment;
+
+					Record = new Payment();
+					EmployeeId = null;
+					DepartmentId = 0;
+					PaymentTypeId = paymentTypeId;
+					Value = value;
+					DatePayment = datePayment;
+					CurrencyId = currencyId;
 				}
 				else
 					CloseDialogWithResult(parameter, DialogResult.Apply);
