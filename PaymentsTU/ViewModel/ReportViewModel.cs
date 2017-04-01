@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Text;
 using System.Windows.Input;
 
@@ -20,7 +21,14 @@ namespace PaymentsTU.ViewModel
 
 		public ICommand RunCommand { get; set; } = null;
 
-		public PaymentReportViewModel Report { get; private set; }
+		private IReport _report;
+		public IReport Report
+		{
+			get { return _report; }
+			set { _report = value; OnPropertyChanged(nameof(Report)); }
+		}
+
+		public ObservableCollection<IReport> Reports { get; private set; }
 
 		public ReportViewModel()
 		{
@@ -30,13 +38,21 @@ namespace PaymentsTU.ViewModel
 
 			RunCommand = new RelayCommand(OnRunCommand, _ => PeriodStart <= PeriodEnd);
 
-			Report = new PaymentReportViewModel();
+			Reports = new ObservableCollection<IReport>
+				(
+					new List<IReport>
+					{
+						new PaymentReportViewModel()
+					}
+				);
+
+			_report = Reports[0];
 		}
 
 		private void OnRunCommand()
 		{
-			Report.Run(new PaymentReportParams { StartDate = PeriodStart, EndDate = PeriodEnd });
-			OnPropertyChanged(nameof(Report));
+			_report.Run(new PaymentReportParams { StartDate = PeriodStart, EndDate = PeriodEnd });
+			//OnPropertyChanged(nameof(Report));
 		}
 	}
 }
