@@ -107,6 +107,8 @@ namespace PaymentsTU.ViewModel
 
 			Columns = new ObservableCollection<ColumnDescriptor>(cols);
 			Rows = new ObservableCollection<PaymentReportRow>(rows.OrderBy(x => x.Department).ThenBy(x => x.RowType).ThenBy(x => x.Employee));
+			OnPropertyChanged(nameof(Columns));
+			OnPropertyChanged(nameof(Rows));
 		}
 	}
 

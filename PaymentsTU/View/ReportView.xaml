@@ -5,52 +5,13 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:xwpf="clr-namespace:Xceed.Wpf.Toolkit;assembly=Xceed.Wpf.Toolkit"
              xmlns:local="clr-namespace:PaymentsTU.View"
-             xmlns:ctrl="clr-namespace:PaymentsTU.Controls"
              xmlns:localviewmodel="clr-namespace:PaymentsTU.ViewModel"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
-        <Style TargetType="ListViewItem">
-            <Style.Triggers>
-                <Trigger Property="ItemsControl.AlternationIndex"  Value="0">
-                    <Setter Property="Background" Value="White" />
-                </Trigger>
-                <Trigger Property="ItemsControl.AlternationIndex"  Value="1">
-                    <Setter Property="Background" Value="WhiteSmoke" />
-                </Trigger>
-                <DataTrigger Binding="{Binding Path=RowType}" Value="1">
-                    <Setter Property="FontWeight" Value="Bold" />
-                    <Setter Property="Foreground" Value="White" />
-                    <Setter Property="Background" Value="DarkGreen" />
-                </DataTrigger>
-
-            </Style.Triggers>
-        </Style>
-        <CollectionViewSource x:Key="DepartmentGroups" Source="{Binding Report.Rows}">
-            <CollectionViewSource.GroupDescriptions>
-                <PropertyGroupDescription PropertyName="Department" />
-            </CollectionViewSource.GroupDescriptions>
-        </CollectionViewSource>
-        <GroupStyle x:Key="GroupStyle">
-            <GroupStyle.ContainerStyle>
-                <Style TargetType="{x:Type GroupItem}">
-                    <Setter Property="Template">
-                        <Setter.Value>
-                            <ControlTemplate>
-                                <Expander IsExpanded="True"  Background="AliceBlue">
-                                    <Expander.Header>
-                                        <StackPanel>
-                                            <TextBlock Text="{Binding Path=Items[0].Department}" FontStyle="Italic" FontWeight="Bold" Foreground="BlueViolet"  VerticalAlignment="Bottom" />
-                                        </StackPanel>
-                                    </Expander.Header>
-                                    <ItemsPresenter />
-                                </Expander>
-                            </ControlTemplate>
-                        </Setter.Value>
-                    </Setter>
-                </Style>
-            </GroupStyle.ContainerStyle>
-        </GroupStyle>
+        <DataTemplate DataType="{x:Type localviewmodel:PaymentReportViewModel}">
+            <local:PaymentReportView></local:PaymentReportView>
+        </DataTemplate>
     </UserControl.Resources>
     <DockPanel LastChildFill="True">
         <Border DockPanel.Dock="Left" CornerRadius="2" BorderThickness="1" BorderBrush="LightGray" Margin="0,0,4,0">
@@ -111,17 +72,6 @@
 
             </StackPanel>
         </Border>
-        <ListView ItemsSource="{Binding Source={StaticResource DepartmentGroups}}" IsSynchronizedWithCurrentItem="True" AlternationCount="2">
-            <ListView.GroupStyle>
-                <StaticResourceExtension ResourceKey="GroupStyle" />
-            </ListView.GroupStyle>
-            <ListView.View>
-                <GridView ctrl:GridViewColumnCollection.HeaderTextMember="HeaderText"
-                          ctrl:GridViewColumnCollection.DisplayMemberMember="DisplayMember"
-                          ctrl:GridViewColumnCollection.WidthMember="Width"
-                          ctrl:GridViewColumnCollection.ColumnsSource="{Binding Report.Columns}"/>
-            </ListView.View>
-            
-        </ListView>
+        <ContentPresenter x:Name="ContentPresenter" Content="{Binding Report}"></ContentPresenter>
     </DockPanel>
 </UserControl>
