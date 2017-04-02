@@ -1,17 +1,21 @@
 ﻿using FrameworkExtend;
 using PaymentsTU.Model;
+using PaymentsTU.Properties;
 using System.Collections.ObjectModel;
+using System.Configuration;
 
 namespace PaymentsTU.ViewModel
 {
 	internal sealed class ReportPaymentForYearViewModel : ViewModelBase, IReport
 	{
-		public string Title => "Выплачено за год";
+		private readonly decimal _warningLimit;
+		public string Title => "Выплачено за период";
 
 		public ObservableCollection<ReportRow> Rows { get; private set; }
 
 		public ReportPaymentForYearViewModel()
 		{
+			_warningLimit = 90;//Settings.Default.Properties.
 			Rows = new ObservableCollection<ReportRow>();
 		}
 
@@ -21,7 +25,7 @@ namespace PaymentsTU.ViewModel
 			Rows = new ObservableCollection<ReportRow>
 				(
 					rows
-					.Select(x => new ReportRow { EmployeeId = x.EmployeeId, FullName = x.FullName, Total = x.Total, Warning = x.Total >= 101 })
+					.Select(x => new ReportRow { EmployeeId = x.EmployeeId, FullName = x.FullName, Total = x.Total, Warning = x.Total >= _warningLimit })
 					//.OrderByDescending(x => x.Total)
 				);
 			OnPropertyChanged(nameof(Rows));
