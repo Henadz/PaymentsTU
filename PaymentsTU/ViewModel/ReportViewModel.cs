@@ -42,7 +42,8 @@ namespace PaymentsTU.ViewModel
 				(
 					new List<IReport>
 					{
-						new PaymentReportViewModel()
+						new PaymentReportViewModel(),
+						new ReportPaymentForYearViewModel()
 					}
 				);
 

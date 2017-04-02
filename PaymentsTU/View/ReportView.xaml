@@ -12,6 +12,9 @@
         <DataTemplate DataType="{x:Type localviewmodel:PaymentReportViewModel}">
             <local:PaymentReportView></local:PaymentReportView>
         </DataTemplate>
+        <DataTemplate DataType="{x:Type localviewmodel:ReportPaymentForYearViewModel}">
+            <local:ReportPaymentForYearView></local:ReportPaymentForYearView>
+        </DataTemplate>
     </UserControl.Resources>
     <DockPanel LastChildFill="True">
         <Border DockPanel.Dock="Left" CornerRadius="2" BorderThickness="1" BorderBrush="LightGray" Margin="0,0,4,0">
