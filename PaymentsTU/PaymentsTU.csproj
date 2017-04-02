@@ -69,6 +69,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Behaviors\GridViewColumnCollectionBehaviour.cs" />
+    <Compile Include="Behaviors\GridViewSortBehaviour.cs" />
     <Compile Include="Behaviors\ScrollIntoViewBehavior.cs" />
     <Compile Include="Behaviors\TestBoxMaskBehavior.cs" />
     <Compile Include="Controls\GridHelpers.cs" />
