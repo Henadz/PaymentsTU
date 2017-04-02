@@ -39,7 +39,7 @@ namespace PaymentsTU.ViewModel
         public PeriodViewModel()
         {
             //Repository = new Dal();
-            _periods = new ObservableCollection<FinancialPeriod>(Dal.FinancialPeriods());
+            _periods = new ObservableCollection<FinancialPeriod>(Dal.Instance.FinancialPeriods());
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using FrameworkExtend;
 using PaymentsTU.Model;
 using PaymentsTU.Properties;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Configuration;
 
@@ -13,20 +14,30 @@ namespace PaymentsTU.ViewModel
 
 		public ObservableCollection<ReportRow> Rows { get; private set; }
 
+		private IList<FinancialPeriod> _periods;
+
 		public ReportPaymentForYearViewModel()
 		{
-			_warningLimit = 90;//Settings.Default.Properties.
+			_warningLimit = Settings.Default.WarningLimitPercent;
+			_periods = Dal.Instance.FinancialPeriods();
+
 			Rows = new ObservableCollection<ReportRow>();
 		}
 
 		public void Run<T>(T parameters) where T : IPeriodReportParams
 		{
-			var rows = Dal.Instance.PaymentByEmployeeReport(parameters.StartDate, parameters.EndDate);
+			var start = parameters.StartDate;
+			var end = parameters.EndDate;
+
+			var rows = Dal.Instance.PaymentByEmployeeReport(start, end);
+			var limit = _periods.FirstOrDefault(x => x.StartDate == start && x.EndDate == end)?.PaymentLimit;
+			limit = limit.HasValue ? limit * (_warningLimit / 100) : null;
+
 			Rows = new ObservableCollection<ReportRow>
 				(
 					rows
-					.Select(x => new ReportRow { EmployeeId = x.EmployeeId, FullName = x.FullName, Total = x.Total, Warning = x.Total >= _warningLimit })
-					//.OrderByDescending(x => x.Total)
+					.Select(x => new ReportRow { EmployeeId = x.EmployeeId, FullName = x.FullName, Total = x.Total, Warning = limit.HasValue ? x.Total >= limit : false })
+					.OrderBy(x => x.FullName)
 				);
 			OnPropertyChanged(nameof(Rows));
 		}

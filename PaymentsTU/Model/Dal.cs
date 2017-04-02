@@ -35,7 +35,7 @@ namespace PaymentsTU.Model
 
 		private readonly string _connectionString;
 
-		public static IList<FinancialPeriod> FinancialPeriods()
+		public IList<FinancialPeriod> FinancialPeriods()
 		{
 			return new[]
 			{
@@ -50,8 +50,6 @@ namespace PaymentsTU.Model
 			};
 		}
 
-
-
 		public bool ClosePeriod(int id)
 		{
 			return id >= 0;
@@ -60,11 +58,6 @@ namespace PaymentsTU.Model
 		public int UpdatePeriod(FinancialPeriod period)
 		{
 			return period.Id.HasValue ? 1 : 0;
-		}
-
-		public PaymentMatrix PaymentsInformation(DateTime startDate, DateTime endDate)
-		{
-			return new PaymentMatrix();
 		}
 
 		public IEnumerable<Employee> Employees(bool onlyActive = false)
