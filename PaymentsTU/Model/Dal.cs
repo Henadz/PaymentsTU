@@ -630,7 +630,7 @@ namespace PaymentsTU.Model
 				reportStatement.AppendLine("WHERE p.DatePayment >= @DateStart");
 				reportStatement.AppendLine("AND p.DatePayment <= @DateEnd");
 				reportStatement.AppendLine("AND p.Value IS NOT NULL");
-				reportStatement.AppendLine("GROUP BY p.EmployeeId, p.DepartmentId");
+				reportStatement.AppendLine("GROUP BY p.EmployeeId");
 				reportStatement.AppendLine("ORDER BY FullName");
 
 				using (var command = new SQLiteCommand(reportStatement.ToString(), connection))
