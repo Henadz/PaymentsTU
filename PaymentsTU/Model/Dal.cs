@@ -613,6 +613,51 @@ namespace PaymentsTU.Model
 				Rows = reportRows
 			};
 		}
+
+		public IEnumerable<EmployeeTotalRow> PaymentByEmployeeReport(DateTime start, DateTime end)
+		{
+			var reportRows = new List<EmployeeTotalRow>();
+			using (var connection = new SQLiteConnection(_connectionString))
+			{
+				connection.Open();
+
+				var reportStatement = new StringBuilder("SELECT ");
+				reportStatement.AppendLine("p.EmployeeId");
+				reportStatement.AppendLine(",IFNULL(e.Surname,'') || ' ' || IFNULL(e.Name,'') || ' ' || IFNULL(e.Patronimic,'') AS 'FullName'");
+				reportStatement.AppendLine(",SUM(p.Value) AS 'Total'");
+				reportStatement.AppendLine("FROM Payment p");
+				reportStatement.AppendLine("INNER JOIN Employee e ON p.EmployeeId = e.Id");
+				reportStatement.AppendLine("WHERE p.DatePayment >= @DateStart");
+				reportStatement.AppendLine("AND p.DatePayment <= @DateEnd");
+				reportStatement.AppendLine("AND p.Value IS NOT NULL");
+				reportStatement.AppendLine("GROUP BY p.EmployeeId, p.DepartmentId");
+				reportStatement.AppendLine("ORDER BY FullName");
+
+				using (var command = new SQLiteCommand(reportStatement.ToString(), connection))
+				{
+					command.Parameters.Add("@DateStart", DbType.DateTime).Value = start;
+					command.Parameters.Add("@DateEnd", DbType.DateTime).Value = end;
+
+					using (var reader = command.ExecuteReader())
+					{
+						while (reader.Read())
+						{
+							var row = new EmployeeTotalRow
+							{
+								EmployeeId = reader.GetInt64(0),
+								FullName = reader.GetString(1),
+								Total = reader.IsDBNull(2) ? 0 : reader.GetDecimal(2)
+							};
+							
+							reportRows.Add(row);
+						}
+					}
+				}
+				connection.Close();
+			}
+
+			return reportRows;
+		}
 		#endregion
 	}
 }

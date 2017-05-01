@@ -108,6 +108,7 @@
     <Compile Include="Lazy.cs" />
     <Compile Include="Model\Currency.cs" />
     <Compile Include="Model\EmployeeComparer.cs" />
+    <Compile Include="Model\EmployeeTotalRow.cs" />
     <Compile Include="Model\PaymentMatrixCell.cs" />
     <Compile Include="Model\ViewType.cs" />
     <Compile Include="Properties\Annotations.cs" />
@@ -132,10 +133,14 @@
     <Compile Include="ViewModel\PaymentViewModel.cs" />
     <Compile Include="ViewModel\PeriodViewModel.cs" />
     <Compile Include="ViewModel\RelayCommand.cs" />
+    <Compile Include="ViewModel\ReportPaymentForYear.cs" />
     <Compile Include="ViewModel\ReportViewModel.cs" />
     <Compile Include="ViewModel\ViewModelBase.cs" />
     <Compile Include="View\PaymentReportView.xaml.cs">
       <DependentUpon>PaymentReportView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\ReportPaymentForYearView.xaml.cs">
+      <DependentUpon>ReportPaymentForYearView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\ReportView.xaml.cs">
       <DependentUpon>ReportView.xaml</DependentUpon>
@@ -223,6 +228,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="View\ReportPaymentForYearView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\ReportView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
