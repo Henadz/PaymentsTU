@@ -21,7 +21,7 @@ namespace PaymentsTU.ViewModel
 			Rows = new ObservableCollection<ReportRow>
 				(
 					rows
-					.Select(x => new ReportRow { EmployeeId = x.EmployeeId, FullName = x.FullName, Total = x.Total, Warning = x.Total >= 101 })
+					.Select(x => new ReportRow { EmployeeId = x.EmployeeId, FullName = x.FullName, Total = x.Total, Warning = x.Total >= 270 })
 					//.OrderByDescending(x => x.Total)
 				);
 			OnPropertyChanged(nameof(Rows));

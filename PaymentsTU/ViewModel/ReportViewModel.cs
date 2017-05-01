@@ -10,7 +10,12 @@ namespace PaymentsTU.ViewModel
 	{
 		public string Title => "Отчеты";
 
-		public DateTime PeriodStart { get; set; }
+		private DateTime _periodStart;
+		public DateTime PeriodStart
+		{
+			get { return _periodStart; }
+			set { _periodStart = value; OnPropertyChanged(nameof(PeriodStart)); }
+		}
 
 		private DateTime _periodEnd;
 		public DateTime PeriodEnd
@@ -25,7 +30,22 @@ namespace PaymentsTU.ViewModel
 		public IReport Report
 		{
 			get { return _report; }
-			set { _report = value; OnPropertyChanged(nameof(Report)); }
+			set
+			{
+				_report = value;
+				OnPropertyChanged(nameof(Report));
+				var now = DateTime.Now;
+				if (_report is ReportPaymentForYearViewModel)
+				{
+					PeriodStart = new DateTime(now.Year, 1, 1);
+					PeriodEnd = new DateTime(now.Year, 12, 31);
+				}
+				else
+				{
+					PeriodStart = new DateTime(now.Year, now.Month, 1);
+					PeriodEnd = new DateTime(now.Year, now.Month, DateTime.DaysInMonth(now.Year, now.Month));
+				}
+			}
 		}
 
 		public ObservableCollection<IReport> Reports { get; private set; }

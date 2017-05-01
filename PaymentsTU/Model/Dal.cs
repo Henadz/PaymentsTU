@@ -42,10 +42,10 @@ namespace PaymentsTU.Model
 				new FinancialPeriod
 				{
 					Id = 0,
-					StartDate = new DateTime(2016, 1, 1),
-					EndDate = new DateTime(2016, 12, 31),
+					StartDate = new DateTime(2017, 1, 1),
+					EndDate = new DateTime(2017, 12, 31),
 					IsClosed = false,
-					PaymentLimit = (decimal) 260.00
+					PaymentLimit = (decimal) 300.00
 				}
 			};
 		}
