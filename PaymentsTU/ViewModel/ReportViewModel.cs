@@ -32,6 +32,8 @@ namespace PaymentsTU.ViewModel
 			get { return _report; }
 			set
 			{
+				if (value == null)
+					return;
 				_report = value;
 				OnPropertyChanged(nameof(Report));
 				var now = DateTime.Now;
