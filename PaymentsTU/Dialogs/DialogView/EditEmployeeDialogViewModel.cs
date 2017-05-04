@@ -30,7 +30,7 @@ namespace PaymentsTU.Dialogs.DialogView
 
 		protected override void OnApplyClicked(Window parameter)
 		{
-			if (ApplyDataFunc(Record))
+			if (CheckDuplicate(Record) == DialogResult.Yes && ApplyDataFunc(Record))
 			{
 				if (AddNextRecord)
 				{
@@ -45,6 +45,19 @@ namespace PaymentsTU.Dialogs.DialogView
 				else
 					CloseDialogWithResult(parameter, DialogResult.Apply);
 			}
+		}
+
+		private DialogResult CheckDuplicate(Employee employee)
+		{
+			var s = employee.Surname?.Trim();
+			var n = employee.Name?.Trim();
+			var p = employee.Patronymic?.Trim();
+			var r = Dal.Instance.Employees(x => x.Surname.Trim() == s && x.Name.Trim() == n && x.Patronymic.Trim() == p);
+			if (r.Count() == 0 || (r.Any(x => x.Id == employee.Id)))
+				return DialogResult.Yes;
+
+			var vm = new ConfirmDialogViewModel($"База данных уже содержит сотрудника {employee.FullName}.\r\nВы уверены что хотите добавить сотрудника с такими же Ф.И.О.?");
+			return DialogService.DialogService.OpenDialog(vm);
 		}
 
 	}

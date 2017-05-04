@@ -79,7 +79,11 @@
     <Compile Include="Converters\EmployeeGroupExpanderConverter.cs" />
     <Compile Include="Converters\FirstLetterConverter.cs" />
     <Compile Include="Database\DatabaseCreationOperation.cs" />
+    <Compile Include="Database\DBMetadata.cs" />
+    <Compile Include="Database\ExpressionVisitor.cs" />
     <Compile Include="Database\SQLiteDataReaderExtension.cs" />
+    <Compile Include="Database\WhereBuilder.cs" />
+    <Compile Include="Database\WhereTranslator.cs" />
     <Compile Include="Dialogs\DialogService\DialogResult.cs" />
     <Compile Include="Dialogs\DialogService\DialogService.cs" />
     <Compile Include="Dialogs\DialogService\DialogViewModelBase.cs" />
@@ -107,6 +111,7 @@
     <Compile Include="Dialogs\DialogView\EditPaymentTypeViewModel.cs" />
     <Compile Include="Lazy.cs" />
     <Compile Include="Model\Currency.cs" />
+    <Compile Include="Model\Dal.Employee.cs" />
     <Compile Include="Model\EmployeeComparer.cs" />
     <Compile Include="Model\EmployeeTotalRow.cs" />
     <Compile Include="Model\PaymentMatrixCell.cs" />
