@@ -25,6 +25,7 @@ namespace PaymentsTU.ViewModel
 		}
 
 		public ICommand RunCommand { get; set; } = null;
+		public ICommand PrintCommand { get; set; } = null;
 
 		private IReport _report;
 		public IReport Report
@@ -59,6 +60,7 @@ namespace PaymentsTU.ViewModel
 			PeriodEnd = new DateTime(now.Year, now.Month, DateTime.DaysInMonth(now.Year, now.Month));
 
 			RunCommand = new RelayCommand(OnRunCommand, _ => PeriodStart <= PeriodEnd);
+			PrintCommand = new RelayCommand(OnPrintCommand, _ => PeriodStart <= PeriodEnd);
 
 			Reports = new ObservableCollection<IReport>
 				(
@@ -76,6 +78,11 @@ namespace PaymentsTU.ViewModel
 		{
 			_report.Run(new PaymentReportParams { StartDate = PeriodStart, EndDate = PeriodEnd });
 			//OnPropertyChanged(nameof(Report));
+		}
+
+		private void OnPrintCommand()
+		{
+			_report.Print();
 		}
 	}
 }

@@ -110,6 +110,11 @@ namespace PaymentsTU.ViewModel
 			OnPropertyChanged(nameof(Columns));
 			OnPropertyChanged(nameof(Rows));
 		}
+
+		public void Print()
+		{
+			throw new NotImplementedException();
+		}
 	}
 
 	internal sealed class PaymentReportRow

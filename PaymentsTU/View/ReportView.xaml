@@ -29,6 +29,7 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
@@ -76,6 +77,13 @@
                         Grid.Column="1"
                         Content="Сформировать"
                         Command="{Binding RunCommand}"
+                    />
+                    <Button
+                        Margin="0,4,4,0"
+                        Grid.Row="2"
+                        Grid.Column="1"
+                        Content="Печать"
+                        Command="{Binding PrintCommand}"
                     />
                 </Grid>
             </StackPanel>
