@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26228.4
+VisualStudioVersion = 15.0.27004.2005
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaymentsTU", "PaymentsTU\PaymentsTU.csproj", "{C63B780F-9015-4939-8471-BE812CC99F8D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocumentModel", "DocumentModel\DocumentModel.csproj", "{A8F6CCC5-EEFB-439D-8960-FC74837B1C0A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,8 +17,15 @@ Global
 		{C63B780F-9015-4939-8471-BE812CC99F8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C63B780F-9015-4939-8471-BE812CC99F8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C63B780F-9015-4939-8471-BE812CC99F8D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A8F6CCC5-EEFB-439D-8960-FC74837B1C0A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A8F6CCC5-EEFB-439D-8960-FC74837B1C0A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A8F6CCC5-EEFB-439D-8960-FC74837B1C0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A8F6CCC5-EEFB-439D-8960-FC74837B1C0A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E4021990-4725-471A-82CC-B781BF4C7DA7}
 	EndGlobalSection
 EndGlobal

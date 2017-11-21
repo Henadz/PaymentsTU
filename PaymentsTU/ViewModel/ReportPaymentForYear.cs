@@ -72,7 +72,7 @@ namespace PaymentsTU.ViewModel
 			document.Blocks.Add(section);
 
 			var table = new Table();
-			table.CellSpacing = 10;
+			table.CellSpacing = 2;
 			table.Background = Brushes.White;
 			table.Columns.Add(new TableColumn());
 			table.Columns.Add(new TableColumn());
