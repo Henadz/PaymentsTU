@@ -46,7 +46,9 @@
     <Compile Include="NewPage.cs" />
     <Compile Include="Paragraph.cs" />
     <Compile Include="Processor\DefaultExportProcessor.cs" />
+    <Compile Include="Processor\DocumentBuilder.cs" />
     <Compile Include="Processor\DocumentType.cs" />
+    <Compile Include="Processor\IDocumentBuilder.cs" />
     <Compile Include="Processor\ProcessingChunk.cs" />
     <Compile Include="Processor\ProcessingModel.cs" />
     <Compile Include="Processor\IExportFactory.cs" />

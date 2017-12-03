@@ -6,6 +6,10 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
+using DocumentModel.Processor;
+using System.IO;
+using PaymentsTU.Document;
+using System.Collections.Generic;
 
 namespace PaymentsTU.ViewModel
 {
@@ -34,19 +38,64 @@ namespace PaymentsTU.ViewModel
 
 		public void Print()
 		{
-			var pageSize = new PageMediaSize(PageMediaSizeName.ISOA4);
-			var document = PrepareDocument();
-			var printDialog = new PrintDialog();
-			if (printDialog.ShowDialog() == true)
+			using (var memoryStream = new MemoryStream())
 			{
-				document.PageHeight = printDialog.PrintableAreaHeight;
-				document.PageWidth = printDialog.PrintableAreaWidth;
-				document.PagePadding = new Thickness(50, 15, 15, 15);
-				document.ColumnGap = 0;
-				document.ColumnWidth = printDialog.PrintableAreaWidth;
+				var docBuilder = new DocumentBuilder(DocumentType.Xps, memoryStream);
+				docBuilder.Build(PreparePrintDocumentModel, DocumentRendererFabric.GetDocumentRender);
 
-				printDialog.PrintDocument(((IDocumentPaginatorSource)document).DocumentPaginator, Title);
+
+				var pageSize = new PageMediaSize(PageMediaSizeName.ISOA4);
+				var document = PrepareDocument();
+				var printDialog = new PrintDialog();
+				if (printDialog.ShowDialog() == true)
+				{
+					document.PageHeight = printDialog.PrintableAreaHeight;
+					document.PageWidth = printDialog.PrintableAreaWidth;
+					document.PagePadding = new Thickness(50, 15, 15, 15);
+					document.ColumnGap = 0;
+					document.ColumnWidth = printDialog.PrintableAreaWidth;
+
+					printDialog.PrintDocument(((IDocumentPaginatorSource)document).DocumentPaginator, Title);
+				}
 			}
+		}
+
+		private IEnumerable<object> PreparePrintDocumentModel()
+		{
+			var title = new DocumentModel.FormattedText(Title);
+			title.FontSize = 14;
+			title.Bold = true;
+			yield return new DocumentModel.Paragraph(title)
+			{
+				Alignment = DocumentModel.ParagraphAlignment.Center
+			};
+
+			var table = new DocumentModel.Table();
+			var rows = new List<DocumentModel.Row>();
+
+			var header = new List<DocumentModel.Cell>
+			{
+				new DocumentModel.Cell(new DocumentModel.FormattedText("Ф.И.О. работника"){ Bold = true }){IsHeaderCell = true},
+				new DocumentModel.Cell(new DocumentModel.FormattedText("Всего выплачено, рублей"){ Bold = true }){IsHeaderCell = true}
+			};
+
+			rows.Add(new DocumentModel.Row(header));
+
+			foreach (var row in Rows)
+			{
+				var r = new DocumentModel.Cell[]
+				{
+					new DocumentModel.Cell(row.FullName){IsTextWrapped = true},
+					new DocumentModel.Cell(row.Total.ToString("#,###.00")){IsTextWrapped = true}
+				};
+				rows.Add(new DocumentModel.Row(r));
+			}
+
+			table.SetRows(rows);
+
+			yield return table;
+
+			yield break;
 		}
 
 		public sealed class ReportRow

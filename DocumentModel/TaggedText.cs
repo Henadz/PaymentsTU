@@ -10,16 +10,16 @@ namespace DocumentModel
 	/// Describes tagged text
 	/// </summary>
 	[DebuggerDisplay("{Text}")]
-    public class FormatedText
+    public class FormattedText
     {
-        internal FormatedText()
+        internal FormattedText()
         {
         }
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public FormatedText([Localizable(false)] string text)
+        public FormattedText([Localizable(false)] string text)
         {
             Text = text;
             TextColor = Color.Empty;
@@ -92,9 +92,9 @@ namespace DocumentModel
             get { return BackgroundColor != Color.Empty; }
         }
 
-        public FormatedText CreateCopy([Localizable(false)] string text)
+        public FormattedText CreateCopy([Localizable(false)] string text)
         {
-            var newValue = new FormatedText(text);
+            var newValue = new FormattedText(text);
             newValue.BackgroundColor = BackgroundColor;
             newValue.TextColor = TextColor;
             newValue.FontSize = FontSize;
@@ -111,7 +111,7 @@ namespace DocumentModel
             return newValue;
         }
 
-        internal FormatedText CreateCjkCopy([Localizable(false)] string text)
+        internal FormattedText CreateCjkCopy([Localizable(false)] string text)
         {
             var newValue = CreateCopy(text);
             newValue.HasCjk = true;
@@ -119,7 +119,7 @@ namespace DocumentModel
             return newValue;
         }
 
-        public static bool IsPlainEmpty(IEnumerable<FormatedText> source)
+        public static bool IsPlainEmpty(IEnumerable<FormattedText> source)
         {
             if (source == null)
                 return true;
@@ -127,7 +127,7 @@ namespace DocumentModel
             return source.All(x => string.IsNullOrEmpty(x.Text));
         }
 
-        public static string ToPlaintext(IEnumerable<FormatedText> source)
+        public static string ToPlaintext(IEnumerable<FormattedText> source)
         {
             if (source == null)
                 return string.Empty;

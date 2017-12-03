@@ -80,12 +80,12 @@ namespace DocumentModel
         }
 
 
-        public Cell(FormatedText text) : this()
+        public Cell(FormattedText text) : this()
         {
             Text = new Paragraph(Enumerable.Repeat(text, 1));
         }
 
-        public Cell(IEnumerable<FormatedText> text) : this()
+        public Cell(IEnumerable<FormattedText> text) : this()
         {
             Text = new Paragraph(text);
         }

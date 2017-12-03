@@ -4,6 +4,7 @@
 	{
 		string Title { get; }
 		void Run<T>(T parameters) where T: IPeriodReportParams;
+
 		void Print();
 	}
 }

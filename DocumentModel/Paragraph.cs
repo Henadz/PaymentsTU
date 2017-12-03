@@ -25,10 +25,10 @@ namespace DocumentModel
 			if (text == null) throw new ArgumentNullException("text");
 
 			Alignment = DefaultAlignment;
-			TextBlocks = new [] { new TextBlock(new FormatedText(text)) };
+			TextBlocks = new [] { new TextBlock(new FormattedText(text)) };
 		}
 
-		public Paragraph(FormatedText text)
+		public Paragraph(FormattedText text)
 		{
 			if (text == null) 
 				throw new ArgumentNullException("text");
@@ -37,7 +37,7 @@ namespace DocumentModel
 			TextBlocks = new [] { new TextBlock(text) };
 		}
 
-		public Paragraph(IEnumerable<FormatedText> text)
+		public Paragraph(IEnumerable<FormattedText> text)
 		{
 			if (text == null) throw new ArgumentNullException("text");
 

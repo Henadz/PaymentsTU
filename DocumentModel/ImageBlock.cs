@@ -39,7 +39,7 @@ namespace DocumentModel
             }
         }
 
-        public ImageBlock(Image image, FormatedText text)
+        public ImageBlock(Image image, FormattedText text)
             : base(text)
         {
             if (image == null) throw new ArgumentNullException("image");

@@ -12,16 +12,16 @@ namespace DocumentModel
         {
         }
 
-        public FormatedText Text { get; protected set; }
+        public FormattedText Text { get; protected set; }
 
-        public TextBlock(FormatedText text)
+        public TextBlock(FormattedText text)
         {
 			Text = text ?? throw new ArgumentNullException("text");
         }
 
         public TextBlock([Localizable(false)] string text)
         {
-            Text = new FormatedText(text);
+            Text = new FormattedText(text);
         }
     }
 }

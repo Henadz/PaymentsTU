@@ -18,27 +18,27 @@ namespace DocumentModel
         }
 
         public UrlBlock(Uri uri)
-            : this(uri, new FormatedText(""))
+            : this(uri, new FormattedText(""))
         {
         }
 
         public UrlBlock(Uri uri, [Localizable(false)] string text, Color color)
-            : this(uri, new FormatedText(text))
+            : this(uri, new FormattedText(text))
         {
             Color = color;
         }
 
         public UrlBlock(Uri uri, [Localizable(false)] string text)
-            : this(uri, new FormatedText(text))
+            : this(uri, new FormattedText(text))
         {
         }
 
-        public UrlBlock(Uri uri, FormatedText text)
+        public UrlBlock(Uri uri, FormattedText text)
             : this(uri, new[] { text })
         {
         }
 
-        public UrlBlock(Uri uri, IEnumerable<FormatedText> text)
+        public UrlBlock(Uri uri, IEnumerable<FormattedText> text)
         {
             if (uri == null)
                 throw new ArgumentNullException("uri");
@@ -49,7 +49,7 @@ namespace DocumentModel
 
             Url = uri;
 
-            if (FormatedText.IsPlainEmpty(lst))
+            if (FormattedText.IsPlainEmpty(lst))
                 TextBlocks = new ReadOnlyCollection<TextBlock>(new[] { new TextBlock(Url.ToString()) });
             else
                 TextBlocks = new ReadOnlyCollection<TextBlock>(new List<TextBlock>(lst.Select(t => new TextBlock(t))));

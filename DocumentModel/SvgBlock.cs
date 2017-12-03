@@ -26,7 +26,7 @@ namespace DocumentModel
             Svg = svg;
         }
 
-        public SvgBlock(string svg, FormatedText text)
+        public SvgBlock(string svg, FormattedText text)
             : base(text)
         {
             if (string.IsNullOrEmpty(svg.Trim())) throw new ArgumentNullException("svg");
