@@ -61,6 +61,5 @@
                           ctrl:GridViewColumnCollection.WidthMember="Width"
                           ctrl:GridViewColumnCollection.ColumnsSource="{Binding Columns}"/>
         </ListView.View>
-
     </ListView>
 </UserControl>

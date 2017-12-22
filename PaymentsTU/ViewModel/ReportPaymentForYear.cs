@@ -106,6 +106,24 @@ namespace PaymentsTU.ViewModel
 			public bool Warning { get; set; }
 		}
 
+		private FixedDocument PrepareFixedDocument()
+		{
+			var document = new FixedDocument();
+			var page = new FixedPage();
+			var tb = new TextBlock() { Text = "Test" };
+			tb.TextAlignment = TextAlignment.Left;
+			page.Children.Add(tb);
+			var grid = new Grid();
+			grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(300, GridUnitType.Pixel) });
+			grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
+			page.Children.Add(grid);
+			var content = new PageContent();
+			((System.Windows.Markup.IAddChild)content).AddChild(page);
+			document.Pages.Add(content);
+
+			return document;
+		}
+
 		private FlowDocument PrepareDocument()
 		{
 			var document = new FlowDocument();
