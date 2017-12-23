@@ -15,7 +15,12 @@ namespace DocumentModel
 			Alignment = DefaultAlignment;
 		}
 
-		public string FontName { get; set; }
+		public string FontFamilyName { get; set; }
+		/// <summary>
+		/// Font size in points
+		/// </summary>
+		public float? FontSize { get; set; }
+
 		public Color Color { get; set; }
 		public IEnumerable<IBlock> TextBlocks { get; private set; }
 		public ParagraphAlignment Alignment { get; set; }

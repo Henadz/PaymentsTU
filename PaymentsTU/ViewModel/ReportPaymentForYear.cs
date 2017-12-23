@@ -10,6 +10,9 @@ using DocumentModel.Processor;
 using System.IO;
 using PaymentsTU.Document;
 using System.Collections.Generic;
+using System.IO.Packaging;
+using System;
+using System.Windows.Xps.Packaging;
 
 namespace PaymentsTU.ViewModel
 {
@@ -40,23 +43,57 @@ namespace PaymentsTU.ViewModel
 		{
 			using (var memoryStream = new MemoryStream())
 			{
+				var printDialog = new PrintDialog();
+				//PageMediaSize pageSize = null;
+				//bool bA4 = false;
+
+				//if (bA4)
+				//{
+				//	pageSize = new PageMediaSize(PageMediaSizeName.NorthAmericaLetter);
+				//}
+				//else
+				//{
+				//	pageSize = new PageMediaSize(PageMediaSizeName.ISOA4);
+				//}
+
+				//printDialog.PrintTicket.PageMediaSize = pageSize;
+
+				//printDialog.ShowDialog();
+
+				//PrintTicket pt = printDialog.PrintTicket;
+				//Double printableWidth = pt.PageMediaSize.Width.Value;
+				//Double printableHeight = pt.PageMediaSize.Height.Value;
+
+				//var pageSize2 = new Size(printDialog.PrintableAreaWidth, printDialog.PrintableAreaHeight);
+
 				var docBuilder = new DocumentBuilder(DocumentType.Xps, memoryStream);
 				docBuilder.Build(PreparePrintDocumentModel, DocumentRendererFabric.GetDocumentRender);
+				docBuilder.DocumentStream.Position = 0;
 
+				var package = Package.Open(docBuilder.DocumentStream);
 
-				var pageSize = new PageMediaSize(PageMediaSizeName.ISOA4);
-				var document = PrepareDocument();
-				var printDialog = new PrintDialog();
+				//Create URI for Xps Package
+				//Any Uri will actually be fine here. It acts as a place holder for the
+				//Uri of the package inside of the PackageStore
+				string inMemoryPackageName = string.Format("memorystream://{0}.xps", Guid.NewGuid());
+				var packageUri = new Uri(inMemoryPackageName);
+
+				//Add package to PackageStore
+				PackageStore.AddPackage(packageUri, package);
+
+				var xpsDoc = new XpsDocument(package, CompressionOption.Fast, inMemoryPackageName);
+				var fixedDocumentSequence = xpsDoc.GetFixedDocumentSequence();
+
+				//var pageSize = new PageMediaSize(PageMediaSizeName.ISOA4);
+				//var document = PrepareDocument();
+				
 				if (printDialog.ShowDialog() == true)
 				{
-					document.PageHeight = printDialog.PrintableAreaHeight;
-					document.PageWidth = printDialog.PrintableAreaWidth;
-					document.PagePadding = new Thickness(50, 15, 15, 15);
-					document.ColumnGap = 0;
-					document.ColumnWidth = printDialog.PrintableAreaWidth;
-
-					printDialog.PrintDocument(((IDocumentPaginatorSource)document).DocumentPaginator, Title);
+					printDialog.PrintDocument(fixedDocumentSequence.DocumentPaginator, Title);
 				}
+
+				PackageStore.RemovePackage(packageUri);
+				xpsDoc.Close();
 			}
 		}
 

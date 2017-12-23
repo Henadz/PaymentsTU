@@ -1,5 +1,6 @@
 ﻿using DocumentModel.Processor;
 using System;
+using System.Windows;
 
 namespace PaymentsTU.Document
 {
@@ -10,7 +11,9 @@ namespace PaymentsTU.Document
 			switch (documentType)
 			{
 				case DocumentType.Xps:
-					return new XpsRenderStrategy();
+					{
+						return new XpsRenderStrategy(new Size(793, 1122), new Thickness(30, 15, 15, 15));
+					}
 				default:
 					throw new NotImplementedException($"Document format not supported: {documentType}");
 			}

@@ -38,7 +38,7 @@ namespace DocumentModel
         /// Font size in points
         /// </summary>
         public float? FontSize { get; set; }
-        public string FontFace { get; set; }
+        public string FontFamilyName { get; set; }
         public bool Bold { get; set; }
         /// <summary>
         /// Next text will be started from new line
@@ -98,7 +98,7 @@ namespace DocumentModel
             newValue.BackgroundColor = BackgroundColor;
             newValue.TextColor = TextColor;
             newValue.FontSize = FontSize;
-            newValue.FontFace = FontFace;
+            newValue.FontFamilyName = FontFamilyName;
             newValue.Bold = Bold;
             newValue.LineBreak = LineBreak;
             newValue.Underline = Underline;

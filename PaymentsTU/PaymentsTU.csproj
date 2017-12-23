@@ -53,6 +53,8 @@
       <HintPath>..\packages\System.Data.SQLite.Core.1.0.102.0\lib\net20\System.Data.SQLite.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Printing" />
     <Reference Include="System.Xml" />
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
@@ -111,6 +113,7 @@
     <Compile Include="Dialogs\DialogView\EditEmployeeDialogViewModel.cs" />
     <Compile Include="Dialogs\DialogView\EditPaymentTypeViewModel.cs" />
     <Compile Include="Document\DocumentRendererFabric.cs" />
+    <Compile Include="Document\FlowDocumentRenderStrategy.cs" />
     <Compile Include="Document\XpsRenderStrategy.cs" />
     <Compile Include="Lazy.cs" />
     <Compile Include="Model\Currency.cs" />
