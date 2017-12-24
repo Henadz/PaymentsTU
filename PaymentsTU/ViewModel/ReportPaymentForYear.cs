@@ -13,23 +13,26 @@ using System.Collections.Generic;
 using System.IO.Packaging;
 using System;
 using System.Windows.Xps.Packaging;
+using PaymentsTU.Reports;
 
 namespace PaymentsTU.ViewModel
 {
 	internal sealed class ReportPaymentForYearViewModel : ViewModelBase, IReport
 	{
-		public string Title => "Выплачено за год";
+		public string Title => "Выплачено за период";
 
 		public ObservableCollection<ReportRow> Rows { get; private set; }
+		public DateTime From { get; set; }
+		public DateTime To { get; set; }
 
 		public ReportPaymentForYearViewModel()
 		{
 			Rows = new ObservableCollection<ReportRow>();
 		}
 
-		public void Run<T>(T parameters) where T : IPeriodReportParams
+		public void Run()
 		{
-			var rows = Dal.Instance.PaymentByEmployeeReport(parameters.StartDate, parameters.EndDate);
+			var rows = Dal.Instance.PaymentByEmployeeReport(From, To);
 			Rows = new ObservableCollection<ReportRow>
 				(
 					rows
@@ -70,7 +73,7 @@ namespace PaymentsTU.ViewModel
 				docBuilder.Build(PreparePrintDocumentModel, DocumentRendererFabric.GetDocumentRender);
 				docBuilder.DocumentStream.Position = 0;
 
-				var package = Package.Open(docBuilder.DocumentStream);
+				var package = Package.Open(docBuilder.DocumentStream, FileMode.Open, FileAccess.Read);
 
 				//Create URI for Xps Package
 				//Any Uri will actually be fine here. It acts as a place holder for the
@@ -102,28 +105,32 @@ namespace PaymentsTU.ViewModel
 			var title = new DocumentModel.FormattedText(Title);
 			title.FontSize = 14;
 			title.Bold = true;
-			yield return new DocumentModel.Paragraph(title)
+			title.LineBreak = true;
+			var period = new DocumentModel.FormattedText($"с {From.ToString("dd.MM.yyyy")} по {To.ToString("dd.MM.yyyy")}");
+			yield return new DocumentModel.Paragraph(new[] { title, period })
 			{
 				Alignment = DocumentModel.ParagraphAlignment.Center
 			};
 
-			var table = new DocumentModel.Table();
-			var rows = new List<DocumentModel.Row>();
+			var table = new DocumentModel.Table(DocumentModel.SizeUnit.Pixels);
+			table.SetColumnsWidth(new[] { 200d, 80d });
+			
 
 			var header = new List<DocumentModel.Cell>
 			{
-				new DocumentModel.Cell(new DocumentModel.FormattedText("Ф.И.О. работника"){ Bold = true }){IsHeaderCell = true},
-				new DocumentModel.Cell(new DocumentModel.FormattedText("Всего выплачено, рублей"){ Bold = true }){IsHeaderCell = true}
+				new DocumentModel.Cell(new DocumentModel.FormattedText("Ф.И.О. работника"){ Bold = true, FontSize = 12 }),
+				new DocumentModel.Cell(new DocumentModel.FormattedText("Сумма, руб."){ Bold = true, FontSize = 12 }){IsTextWrapped = false, Alignment = DocumentModel.ParagraphAlignment.Right}
 			};
 
-			rows.Add(new DocumentModel.Row(header));
+			table.SetHeader(new[] { new DocumentModel.Row(header) });
 
+			var rows = new List<DocumentModel.Row>();
 			foreach (var row in Rows)
 			{
 				var r = new DocumentModel.Cell[]
 				{
-					new DocumentModel.Cell(row.FullName){IsTextWrapped = true},
-					new DocumentModel.Cell(row.Total.ToString("#,###.00")){IsTextWrapped = true}
+					new DocumentModel.Cell(row.FullName),
+					new DocumentModel.Cell(row.Total.ToString("#,###.00")){Alignment = DocumentModel.ParagraphAlignment.Right}
 				};
 				rows.Add(new DocumentModel.Row(r));
 			}
@@ -199,7 +206,7 @@ namespace PaymentsTU.ViewModel
 				tableRow.FontSize = 12;
 				tableRow.FontWeight = FontWeights.Normal;
 				tableRow.Cells.Add(new TableCell(new Paragraph(new Run(row.FullName))));
-				tableRow.Cells.Add(new TableCell(new Paragraph(new Run(row.Total.ToString("#,###.00")))));
+				tableRow.Cells.Add(new TableCell(new Paragraph(new Run(row.Total.ToString("#,###.00"))) { TextAlignment = TextAlignment.Right }));
 				rowGroup.Rows.Add(tableRow);
 			}
 

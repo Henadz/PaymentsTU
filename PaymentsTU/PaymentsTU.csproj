@@ -135,8 +135,8 @@
     <Compile Include="ViewModel\EmployeeViewModel.cs" />
     <Compile Include="ViewModel\IListPageViewModel.cs" />
     <Compile Include="ViewModel\IPageBase.cs" />
-    <Compile Include="ViewModel\IPeriodReportParams.cs" />
-    <Compile Include="ViewModel\IReport.cs" />
+    <Compile Include="Reports\IPeriodReportParams.cs" />
+    <Compile Include="Reports\IReport.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\MatrixViewMode.cs" />
     <Compile Include="ViewModel\PaymentReportViewModel.cs" />

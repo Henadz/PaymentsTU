@@ -45,6 +45,8 @@ namespace DocumentModel
         /// </summary>
         public string CellFormat { get; set; }
 
+		public ParagraphAlignment  Alignment { get => Text.Alignment; set => Text.Alignment = value; }
+
         internal Cell()
         {
             DisplayStyle = CellDisplayStyle.Text;

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
+﻿using System.Collections.Generic;
 
 namespace DocumentModel
 {
@@ -12,7 +10,8 @@ namespace DocumentModel
     {
         public SizeUnit Units { get; set; }
         public Paragraph Caption { get; set; }
-        public IList<Row> Body { get; private set; }
+		public IList<Row> Header { get; private set; }
+		public IList<Row> Body { get; private set; }
         public bool IsBorderless { get; set; }
         public IList<double> ColumnsWidth { get; private set; }
         public bool ScaleToPage { get; set; }
@@ -27,8 +26,12 @@ namespace DocumentModel
             Units = units;
         }
 
+		public void SetHeader(IList<Row> header)
+		{
+			Header = header;
+		}
 
-        public void SetRows(IList<Row> body)
+		public void SetRows(IList<Row> body)
         {
             Body = body;
         }

@@ -1,5 +1,6 @@
 ﻿using FrameworkExtend;
 using PaymentsTU.Model;
+using PaymentsTU.Reports;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -12,7 +13,8 @@ namespace PaymentsTU.ViewModel
 
 		public ObservableCollection<PaymentReportRow> Rows { get; private set; }
 		public ObservableCollection<ColumnDescriptor> Columns { get; private set; }
-	
+		public DateTime From { get; set; }
+		public DateTime To { get; set; }
 
 		public PaymentReportViewModel()
 		{
@@ -20,9 +22,9 @@ namespace PaymentsTU.ViewModel
 			Columns = new ObservableCollection<ColumnDescriptor>();
 		}
 
-		public void Run<T>(T parameters) where T: IPeriodReportParams
+		public void Run()
 		{
-			var reportData = Dal.Instance.PaymentReport(parameters.StartDate, parameters.EndDate);
+			var reportData = Dal.Instance.PaymentReport(From, To);
 
 			var cols = new List<ColumnDescriptor>
 			{

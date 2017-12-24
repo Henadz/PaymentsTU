@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PaymentsTU.Reports;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
@@ -76,7 +77,9 @@ namespace PaymentsTU.ViewModel
 
 		private void OnRunCommand()
 		{
-			_report.Run(new PaymentReportParams { StartDate = PeriodStart, EndDate = PeriodEnd });
+			_report.From = PeriodStart;
+			_report.To = PeriodEnd;
+			_report.Run();
 			//OnPropertyChanged(nameof(Report));
 		}
 
