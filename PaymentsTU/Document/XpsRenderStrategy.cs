@@ -103,6 +103,8 @@ namespace PaymentsTU.Document
 
 			var columns = SetColumnDefinition(grid, artifact);
 
+			//_page.SetContentColumns(2);
+
 			ArrangeTableHeader(columns, artifact.Header, pages);
 			ArrangeTableRows(columns, artifact, pages);
 		}
@@ -224,6 +226,8 @@ namespace PaymentsTU.Document
 
 		private void ArrangeTableHeader(IList<string> columnDefinitions, IList<Row> rows, IList<PageContent> pages)
 		{
+			_page.SetContentColumns(2);
+
 			foreach (var row in rows)
 			{
 				var tr = RenderTableRow(columnDefinitions, row);
@@ -231,6 +235,7 @@ namespace PaymentsTU.Document
 				if (_page.AddContent(tr)) continue;
 
 				pages.Add(_page.GetPageContent());
+
 				_page = CreateNewPage();
 				_page.AddContent(tr);
 			}

@@ -10,11 +10,16 @@ namespace PaymentsTU.Document
 		private Grid _pageGrid;
 
 		private Grid _content;
+		private Grid _baseContent;
+		private Grid _contentColumn;
 
 		private Size _pageSize;
 		private Thickness _pageMargin;
 
 		private double _availableHeight;
+		private double _columnHeight;
+
+		private int _columnIndex;
 
 		public PageLayout(Size pageSize, Thickness margin)
 		{
@@ -27,26 +32,27 @@ namespace PaymentsTU.Document
 		private void Initialize()
 		{
 			_pageGrid = new Grid();
-			_content = new Grid();
+			_baseContent = new Grid();
 
 			AddGridRow(_pageGrid, GridLength.Auto);
 			AddGridRow(_pageGrid, new GridLength(1d, GridUnitType.Star));
 			AddGridRow(_pageGrid, GridLength.Auto);
 
-			_content.SetValue(Grid.RowProperty, 1);
-			_pageGrid.Children.Add(_content);
+			_baseContent.SetValue(Grid.RowProperty, 1);
+			_pageGrid.Children.Add(_baseContent);
 
 			_availableHeight = _pageSize.Height - (_pageMargin.Top + _pageMargin.Bottom);
+
+			SetContentColumns(1);
 		}
 
-		private void AddGridRow(Grid grid, GridLength rowHeight)
+		private int AddGridRow(Grid grid, GridLength rowHeight)
 		{
-			if (grid == null)
-				return;
-
 			var rowDef = new RowDefinition {Height = rowHeight};
 
 			grid.RowDefinitions.Add(rowDef);
+
+			return grid.RowDefinitions.Count - 1;
 		}
 
 		public void SetHeader(object content)
@@ -72,16 +78,59 @@ namespace PaymentsTU.Document
 			var height = MeasureHeight(content);
 
 			if (height > _availableHeight)
-				return false;
+			{
+				if (_contentColumn == null || _columnIndex == _contentColumn.ColumnDefinitions.Count - 1)
+					return false;
+				ChangeColumnIndex(++_columnIndex);
+			}
 
-			AddGridRow(_content, new GridLength(1d, GridUnitType.Star));
-			content.SetValue(Grid.RowProperty, _content.RowDefinitions.Count - 1);
+			var rowIndex = AddGridRow(_content, new GridLength(1d, GridUnitType.Star));
+			content.SetValue(Grid.RowProperty, rowIndex);
+			content.SetValue(Grid.ColumnProperty, _columnIndex);
 
 			_content.Children.Add(content);
 
 			_availableHeight -= height;
 
 			return true;
+		}
+
+		//TODO Column content based on page grid?
+		public void SetContentColumns(int count)
+		{
+			var grid = new Grid();
+			var columnWidth = (_pageSize.Width - _pageMargin.Left - _pageMargin.Right) / count;
+
+			for (var i = 0; i < count; i++)
+			{
+				var colDefinition = new ColumnDefinition { Width = new GridLength(columnWidth, GridUnitType.Pixel) };
+				grid.ColumnDefinitions.Add(colDefinition);
+			}
+
+			AddGridRow(_baseContent, new GridLength(1d, GridUnitType.Star));
+			grid.SetValue(Grid.RowProperty, _baseContent.RowDefinitions.Count - 1);
+
+			_baseContent.Children.Add(grid);
+
+			_contentColumn = grid;
+			_columnHeight = _availableHeight;
+			ChangeColumnIndex(0);
+		}
+
+		private void ChangeColumnIndex(int index)
+		{
+			var grid = new Grid();
+
+			if (_contentColumn.RowDefinitions.Count == 0)
+				AddGridRow(_contentColumn, new GridLength(1d, GridUnitType.Star));
+			grid.SetValue(Grid.RowProperty, 0);
+			grid.SetValue(Grid.ColumnProperty, index);
+
+			_contentColumn.Children.Add(grid);
+
+			_content = grid;
+			_columnIndex = index;
+			_availableHeight = _columnHeight;
 		}
 
 		public PageContent GetPageContent()
