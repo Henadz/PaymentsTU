@@ -9,8 +9,8 @@ using System.Windows;
 using System.Windows.Media;
 using System.IO.Packaging;
 using System.Windows.Xps.Packaging;
-using FrameworkExtend;
 using System.Windows.Controls;
+using System.Windows.Markup;
 
 namespace PaymentsTU.Document
 {
@@ -19,8 +19,7 @@ namespace PaymentsTU.Document
 		private FixedDocument _document;
 		private Size _pageSize;
 		private Thickness _pageMargin;
-		private double _freeHeight = 0;
-		private FixedPage _page;
+		private PageLayout _page;
 
 		public XpsRenderStrategy(Size pageSize, Thickness pageMargin)
 		{
@@ -67,7 +66,7 @@ namespace PaymentsTU.Document
 						}
 						else
 						{
-							pages.Add(ToPageContent(_page));
+							pages.Add(_page.GetPageContent());
 							_page = CreateNewPage();
 						}
 					}
@@ -77,49 +76,45 @@ namespace PaymentsTU.Document
 
 						var p = RenderParagraph((DocumentModel.Paragraph)artifact);
 
-						var height = MeasureHeight(p);
+						if (_page.AddContent(p)) continue;
 
-						if (height <= _freeHeight)
-						{
-							_page.Children.Add(p);
-						}
-						else
-						{
-							pages.Add(ToPageContent(_page));
-							_page = CreateNewPage();
-							_page.Children.Add(p);
-						}
+						pages.Add(_page.GetPageContent());
+						_page = CreateNewPage();
+						_page.AddContent(p);
 					}
 					else if (artifact is DocumentModel.Table)
 					{
 						_page = _page ?? CreateNewPage();
 
-						RenderTableContent((DocumentModel.Table)artifact);
+						RenderTableContent((DocumentModel.Table)artifact, pages);
 					}
 				}
 			}
 
 			if (_page != null)
-				pages.Add(ToPageContent(_page));
+				pages.Add(_page.GetPageContent());
 
 			return pages;
 		}
 
-		private void RenderTableContent(DocumentModel.Table artifact)
+		private void RenderTableContent(DocumentModel.Table artifact, List<PageContent> pages)
 		{
-			var grid = CreateTableControl(artifact);
+			var grid = new Grid();
 
-			_page.Children.Add(grid);
+			var columns = SetColumnDefinition(grid, artifact);
+
+			ArrangeTableHeader(columns, artifact.Header, pages);
+			ArrangeTableRows(columns, artifact, pages);
 		}
 
 		private System.Windows.Controls.TextBlock RenderParagraph(DocumentModel.Paragraph p, double? desiredWidth = null)
 		{
-			var tb = new System.Windows.Controls.TextBlock()
+			var tb = new System.Windows.Controls.TextBlock
 			{
 				TextWrapping = TextWrapping.Wrap,
-				TextAlignment = ToWindowsAligment(p.Alignment)
+				TextAlignment = ToWindowsAligment(p.Alignment),
+				Width = desiredWidth ?? _pageSize.Width - (_pageMargin.Left + _pageMargin.Right)
 			};
-			tb.Width = desiredWidth ?? _pageSize.Width - (_pageMargin.Left + _pageMargin.Right);
 
 			if (p.Color != System.Drawing.Color.Empty)
 				tb.Foreground = new SolidColorBrush(Color.FromArgb(p.Color.A, p.Color.R, p.Color.G, p.Color.B));
@@ -134,7 +129,7 @@ namespace PaymentsTU.Document
 				if (text != null)
 				{
 					tb.Inlines.AddRange(RenderTextBlock(text));
-				};
+				}
 
 				//TODO: add another blocks
 			}
@@ -185,143 +180,83 @@ namespace PaymentsTU.Document
 			}
 		}
 
-		private FixedPage CreateNewPage()
+		private PageLayout CreateNewPage()
 		{
-			var page = new FixedPage();
-			page.RenderSize = _pageSize;
-			page.Margin = _pageMargin;
-			_freeHeight = _pageSize.Height - (_pageMargin.Top + _pageMargin.Bottom);
-
-			//Build the page inc header and footer
-			//var pageGrid = new Grid();
-
-			////Header row
-			//AddGridRow(pageGrid, GridLength.Auto);
-
-			////Content row
-			//AddGridRow(pageGrid, new GridLength(1.0d, GridUnitType.Star));
-
-			////Footer row
-			//AddGridRow(pageGrid, GridLength.Auto);
-
-			//ContentControl pageHeader = new ContentControl();
-			//pageHeader.Content = this.CreateDocumentHeader();
-			//pageGrid.Children.Add(pageHeader);
-
-			//if (content != null)
-			//{
-			//	content.SetValue(Grid.RowProperty, 1);
-			//	pageGrid.Children.Add(content);
-			//}
-
-			//ContentControl pageFooter = new ContentControl();
-			//pageFooter.Content = CreateDocumentFooter(pageNumber + 1);
-			//pageFooter.SetValue(Grid.RowProperty, 2);
-
-			//pageGrid.Children.Add(pageFooter);
-
-			//double width = this.PageSize.Width - (this.PageMargin.Left + this.PageMargin.Right);
-			//double height = this.PageSize.Height - (this.PageMargin.Top + this.PageMargin.Bottom);
-
-			//pageGrid.Measure(new Size(width, height));
-			//pageGrid.Arrange(new Rect(this.PageMargin.Left, this.PageMargin.Top, width, height));
-
+			var page = new PageLayout(_pageSize, _pageMargin);
 			return page;
 		}
 
-		private PageContent ToPageContent(FixedPage page)
+		private IList<string> SetColumnDefinition(Grid table, DocumentModel.Table source)
 		{
-			//page.Measure(_pageSize);
-			//page.Arrange(new Rect(_pageMargin.Left, _pageMargin.Top, _pageSize.Width, _pageSize.Height));
-			var content = new PageContent();
-			((System.Windows.Markup.IAddChild)content).AddChild(page);
-			return content;
-		}
-
-		private double MeasureHeight(FrameworkElement element)
-		{
-			if (element == null)
-				throw new ArgumentNullException("element");
-
-			element.Measure(new Size(_pageSize.Width - (_pageMargin.Left + _pageMargin.Right), _pageSize.Height));
-			return element.DesiredSize.Height;
-		}
-
-		private Grid CreateTableControl(DocumentModel.Table source)
-		{
-			Grid table = new Grid();
-
 			var totalColumnWidth = 0d;
 			foreach (var w in source.ColumnsWidth)
 				totalColumnWidth += w;
 
 			var totalColumns = source.ColumnsWidth.Count;
 
-			var columnDefinitions = new List<ColumnDefinition>(source.ColumnsWidth.Count);
+			var columnDefinitions = new List<string>(totalColumns);
 			for (var i = 0; i < source.ColumnsWidth.Count; i++)
 			{
-				columnDefinitions.Add(AddTableColumn(table, totalColumnWidth, source.ColumnsWidth[i]));
+				var cd = AddTableColumn(table, totalColumnWidth, source.ColumnsWidth[i]);
+				columnDefinitions.Add(XamlWriter.Save(cd));
 			}
 
-			int rowIndex = 0;
-			foreach (var row in source.Header)
+			return columnDefinitions;
+		}
+
+		private Grid RenderTableRow(IEnumerable<string> columnDefinitions, Row row)
+		{
+			var table = new Grid();
+			foreach (var columnDefinition in columnDefinitions)
 			{
-				for(var i = 0; i < totalColumns; i++)
-				{
-					AddTableCell(table, row.Items[i], i, rowIndex);
-				}
-				rowIndex++;
+				var copy = XamlReader.Parse(columnDefinition) as ColumnDefinition;
+				table.ColumnDefinitions.Add(copy);
 			}
 
-			foreach(var row in source.Body)
+			table.RowDefinitions.Add(new RowDefinition());
+			for (var i = 0; i < table.ColumnDefinitions.Count; i++)
 			{
-				table.RowDefinitions.Add(new RowDefinition());
-				for (var i = 0; i < totalColumns; i++)
-				{
-					AddTableCell(table, row.Items[i], i, rowIndex);
-				}
-				rowIndex++;
+				AddTableCell(table, row.Items[i], i, 0);
 			}
-
-			//var height = MeasureHeight(table);
-
-			//table.Measure(new Size(_pageSize.Width, _pageSize.Height));
-
-			//	foreach (DataGridColumn column in _documentSource.Columns)
-			//	{
-			//		if (column.Visibility == Visibility.Visible)
-			//		{
-			//			AddTableColumn(table, totalColumnWidth, columnIndex, column);
-			//			columnIndex++;
-			//		}
-			//	}
-
-			//if (this.TableHeaderBorderStyle != null)
-			//{
-			//	Border headerBackground = new Border();
-			//	headerBackground.Style = this.TableHeaderBorderStyle;
-			//	headerBackground.SetValue(Grid.ColumnSpanProperty, columnIndex);
-			//	headerBackground.SetValue(Grid.ZIndexProperty, -1);
-
-			//	table.Children.Add(headerBackground);
-			//}
-
-			//if (createRowDefinitions)
-			//{
-			//	for (int i = 0; i <= _rowsPerPage; i++)
-			//		table.RowDefinitions.Add(new RowDefinition());
-			//}
 
 			return table;
+		}
 
+		private void ArrangeTableHeader(IList<string> columnDefinitions, IList<Row> rows, IList<PageContent> pages)
+		{
+			foreach (var row in rows)
+			{
+				var tr = RenderTableRow(columnDefinitions, row);
+
+				if (_page.AddContent(tr)) continue;
+
+				pages.Add(_page.GetPageContent());
+				_page = CreateNewPage();
+				_page.AddContent(tr);
+			}
+		}
+
+		private void ArrangeTableRows(IList<string> columnDefinitions, DocumentModel.Table table, IList<PageContent> pages)
+		{
+			foreach (var row in table.Body)
+			{
+				var tr = RenderTableRow(columnDefinitions, row);
+
+				if (_page.AddContent(tr)) continue;
+
+				pages.Add(_page.GetPageContent());
+				_page = CreateNewPage();
+				if (table.RepeatHeader)
+					ArrangeTableHeader(columnDefinitions, table.Header, pages);
+				_page.AddContent(tr);
+			}
 		}
 
 		private ColumnDefinition AddTableColumn(Grid grid, double totalColumnWidth, double columnWidth)
 		{
 			//var proportion = columnWidth / (_pageSize.Width - (_pageMargin.Left + _pageMargin.Right));
 
-			var colDefinition = new ColumnDefinition();
-			colDefinition.Width = new GridLength(columnWidth, GridUnitType.Pixel);
+			var colDefinition = new ColumnDefinition {Width = new GridLength(columnWidth, GridUnitType.Pixel)};
 
 			grid.ColumnDefinitions.Add(colDefinition);
 

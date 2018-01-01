@@ -10,6 +10,7 @@ namespace DocumentModel
     {
         public SizeUnit Units { get; set; }
         public Paragraph Caption { get; set; }
+		public bool RepeatHeader { get; set; }
 		public IList<Row> Header { get; private set; }
 		public IList<Row> Body { get; private set; }
         public bool IsBorderless { get; set; }
@@ -19,9 +20,12 @@ namespace DocumentModel
         public Table()
         {
             Units = SizeUnit.AverageCharacter;
+	        RepeatHeader = true;
+
         }
 
         public Table(SizeUnit units)
+		:this()
         {
             Units = units;
         }

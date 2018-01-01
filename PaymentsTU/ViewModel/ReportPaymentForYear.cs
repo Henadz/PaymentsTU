@@ -78,7 +78,7 @@ namespace PaymentsTU.ViewModel
 				//Create URI for Xps Package
 				//Any Uri will actually be fine here. It acts as a place holder for the
 				//Uri of the package inside of the PackageStore
-				string inMemoryPackageName = string.Format("memorystream://{0}.xps", Guid.NewGuid());
+				string inMemoryPackageName = $"memorystream://{Guid.NewGuid()}.xps";
 				var packageUri = new Uri(inMemoryPackageName);
 
 				//Add package to PackageStore
@@ -102,18 +102,20 @@ namespace PaymentsTU.ViewModel
 
 		private IEnumerable<object> PreparePrintDocumentModel()
 		{
-			var title = new DocumentModel.FormattedText(Title);
-			title.FontSize = 14;
-			title.Bold = true;
-			title.LineBreak = true;
-			var period = new DocumentModel.FormattedText($"с {From.ToString("dd.MM.yyyy")} по {To.ToString("dd.MM.yyyy")}");
+			var title = new DocumentModel.FormattedText(Title)
+			{
+				FontSize = 14,
+				Bold = true,
+				LineBreak = true
+			};
+			var period = new DocumentModel.FormattedText($"с {From:dd.MM.yyyy} по {To:dd.MM.yyyy}");
 			yield return new DocumentModel.Paragraph(new[] { title, period })
 			{
 				Alignment = DocumentModel.ParagraphAlignment.Center
 			};
 
 			var table = new DocumentModel.Table(DocumentModel.SizeUnit.Pixels);
-			table.SetColumnsWidth(new[] { 200d, 80d });
+			table.SetColumnsWidth(200d, 80d);
 			
 
 			var header = new List<DocumentModel.Cell>
@@ -127,7 +129,7 @@ namespace PaymentsTU.ViewModel
 			var rows = new List<DocumentModel.Row>();
 			foreach (var row in Rows)
 			{
-				var r = new DocumentModel.Cell[]
+				var r = new []
 				{
 					new DocumentModel.Cell(row.FullName),
 					new DocumentModel.Cell(row.Total.ToString("#,###.00")){Alignment = DocumentModel.ParagraphAlignment.Right}
@@ -138,8 +140,6 @@ namespace PaymentsTU.ViewModel
 			table.SetRows(rows);
 
 			yield return table;
-
-			yield break;
 		}
 
 		public sealed class ReportRow
