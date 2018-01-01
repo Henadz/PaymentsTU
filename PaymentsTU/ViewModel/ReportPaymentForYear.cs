@@ -13,7 +13,11 @@ using System.Collections.Generic;
 using System.IO.Packaging;
 using System;
 using System.Windows.Xps.Packaging;
+using DocumentModel;
 using PaymentsTU.Reports;
+using Paragraph = System.Windows.Documents.Paragraph;
+using Table = System.Windows.Documents.Table;
+using TextBlock = System.Windows.Controls.TextBlock;
 
 namespace PaymentsTU.ViewModel
 {
@@ -114,9 +118,8 @@ namespace PaymentsTU.ViewModel
 				Alignment = DocumentModel.ParagraphAlignment.Center
 			};
 
-			var table = new DocumentModel.Table(DocumentModel.SizeUnit.Pixels);
-			table.SetColumnsWidth(200d, 80d);
-			
+			var table = new DocumentModel.Table(DocumentModel.SizeUnit.Pixels) {LayoutMode = TableLayoutMode.UseAllWidth};
+			table.SetColumnsWidth(150d, 80d);
 
 			var header = new List<DocumentModel.Cell>
 			{

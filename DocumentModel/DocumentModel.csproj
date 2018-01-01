@@ -61,6 +61,7 @@
     <Compile Include="Separator.cs" />
     <Compile Include="SvgBlock.cs" />
     <Compile Include="Table.cs" />
+    <Compile Include="TableLayoutMode.cs" />
     <Compile Include="TaggedText.cs" />
     <Compile Include="TextBlock.cs" />
     <Compile Include="UrlBlock.cs" />

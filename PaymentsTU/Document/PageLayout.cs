@@ -21,6 +21,8 @@ namespace PaymentsTU.Document
 
 		private int _columnIndex;
 
+		public event EventHandler<EventArgs> OnNewColumn;
+
 		public PageLayout(Size pageSize, Thickness margin)
 		{
 			_pageSize = pageSize;
@@ -84,7 +86,7 @@ namespace PaymentsTU.Document
 				ChangeColumnIndex(++_columnIndex);
 			}
 
-			var rowIndex = AddGridRow(_content, new GridLength(1d, GridUnitType.Star));
+			var rowIndex = AddGridRow(_content, GridLength.Auto);
 			content.SetValue(Grid.RowProperty, rowIndex);
 			content.SetValue(Grid.ColumnProperty, _columnIndex);
 
@@ -95,7 +97,6 @@ namespace PaymentsTU.Document
 			return true;
 		}
 
-		//TODO Column content based on page grid?
 		public void SetContentColumns(int count)
 		{
 			var grid = new Grid();
@@ -131,6 +132,8 @@ namespace PaymentsTU.Document
 			_content = grid;
 			_columnIndex = index;
 			_availableHeight = _columnHeight;
+
+			OnNewColumn?.Invoke(this, EventArgs.Empty);
 		}
 
 		public PageContent GetPageContent()

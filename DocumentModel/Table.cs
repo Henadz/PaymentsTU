@@ -15,13 +15,13 @@ namespace DocumentModel
 		public IList<Row> Body { get; private set; }
         public bool IsBorderless { get; set; }
         public IList<double> ColumnsWidth { get; private set; }
-        public bool ScaleToPage { get; set; }
+        public TableLayoutMode LayoutMode { get; set; }
 
         public Table()
         {
             Units = SizeUnit.AverageCharacter;
 	        RepeatHeader = true;
-
+	        LayoutMode = TableLayoutMode.None;
         }
 
         public Table(SizeUnit units)

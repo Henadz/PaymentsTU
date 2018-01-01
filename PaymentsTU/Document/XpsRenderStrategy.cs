@@ -11,12 +11,13 @@ using System.IO.Packaging;
 using System.Windows.Xps.Packaging;
 using System.Windows.Controls;
 using System.Windows.Markup;
+using Table = DocumentModel.Table;
 
 namespace PaymentsTU.Document
 {
 	internal class XpsRenderStrategy : IRenderStrategy
 	{
-		private FixedDocument _document;
+		private readonly FixedDocument _document;
 		private Size _pageSize;
 		private Thickness _pageMargin;
 		private PageLayout _page;
@@ -103,9 +104,15 @@ namespace PaymentsTU.Document
 
 			var columns = SetColumnDefinition(grid, artifact);
 
-			//_page.SetContentColumns(2);
+			if (artifact.RepeatHeader)
+				_page.OnNewColumn += (sender, args) => { ArrangeTableHeader(columns, artifact, pages); };
+			else
+			{
+				ArrangeTableHeader(columns, artifact, pages);
+			}
 
-			ArrangeTableHeader(columns, artifact.Header, pages);
+			SetTableContentLayout(artifact);
+
 			ArrangeTableRows(columns, artifact, pages);
 		}
 
@@ -224,11 +231,9 @@ namespace PaymentsTU.Document
 			return table;
 		}
 
-		private void ArrangeTableHeader(IList<string> columnDefinitions, IList<Row> rows, IList<PageContent> pages)
+		private void ArrangeTableHeader(IList<string> columnDefinitions, DocumentModel.Table table, IList<PageContent> pages)
 		{
-			_page.SetContentColumns(2);
-
-			foreach (var row in rows)
+			foreach (var row in table.Header)
 			{
 				var tr = RenderTableRow(columnDefinitions, row);
 
@@ -237,8 +242,31 @@ namespace PaymentsTU.Document
 				pages.Add(_page.GetPageContent());
 
 				_page = CreateNewPage();
+				//TODO: validate this case
+				SetTableContentLayout(table);
 				_page.AddContent(tr);
 			}
+		}
+
+		private void SetTableContentLayout(Table table)
+		{
+			var layoutColumns = 1;
+			if (table.LayoutMode == TableLayoutMode.UseAllWidth)
+			{
+				var totalColumnWidth = 0d;
+				foreach (var w in table.ColumnsWidth)
+					totalColumnWidth += w;
+
+				if (totalColumnWidth > 0)
+				{
+					var columns = (_pageSize.Width - (_pageMargin.Left + _pageMargin.Right)) / totalColumnWidth;
+
+					layoutColumns = (int) Math.Round(columns, MidpointRounding.AwayFromZero);
+				}
+			}
+
+
+			_page.SetContentColumns(layoutColumns);
 		}
 
 		private void ArrangeTableRows(IList<string> columnDefinitions, DocumentModel.Table table, IList<PageContent> pages)
@@ -252,7 +280,9 @@ namespace PaymentsTU.Document
 				pages.Add(_page.GetPageContent());
 				_page = CreateNewPage();
 				if (table.RepeatHeader)
-					ArrangeTableHeader(columnDefinitions, table.Header, pages);
+					_page.OnNewColumn += (sender, args) => { ArrangeTableHeader(columnDefinitions, table, pages); };
+
+				SetTableContentLayout(table);
 				_page.AddContent(tr);
 			}
 		}
