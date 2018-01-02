@@ -22,6 +22,9 @@ namespace PaymentsTU.ViewModel
 			Columns = new ObservableCollection<ColumnDescriptor>();
 		}
 
+		public bool IsPrintable => false;
+		public bool CanPrint => IsPrintable && Rows.Count > 0;
+
 		public void Run()
 		{
 			var reportData = Dal.Instance.PaymentReport(From, To);

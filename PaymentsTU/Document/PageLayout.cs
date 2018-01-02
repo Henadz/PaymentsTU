@@ -23,6 +23,8 @@ namespace PaymentsTU.Document
 
 		public event EventHandler<EventArgs> OnNewColumn;
 
+		public double ContentWidth { get; private set; }
+
 		public PageLayout(Size pageSize, Thickness margin)
 		{
 			_pageSize = pageSize;
@@ -97,10 +99,11 @@ namespace PaymentsTU.Document
 			return true;
 		}
 
-		public void SetContentColumns(int count)
+		public void SetContentColumns(int count, double columnGap = 25.0)
 		{
 			var grid = new Grid();
 			var columnWidth = (_pageSize.Width - _pageMargin.Left - _pageMargin.Right) / count;
+			ContentWidth = columnWidth - columnGap;
 
 			for (var i = 0; i < count; i++)
 			{

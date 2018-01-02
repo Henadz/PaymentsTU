@@ -49,6 +49,8 @@
     <Compile Include="Processor\DocumentBuilder.cs" />
     <Compile Include="Processor\DocumentType.cs" />
     <Compile Include="Processor\IDocumentBuilder.cs" />
+    <Compile Include="Processor\Margin.cs" />
+    <Compile Include="Processor\Page.cs" />
     <Compile Include="Processor\ProcessingChunk.cs" />
     <Compile Include="Processor\ProcessingModel.cs" />
     <Compile Include="Processor\IExportFactory.cs" />

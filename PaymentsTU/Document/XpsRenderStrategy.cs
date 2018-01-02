@@ -10,7 +10,6 @@ using System.Windows.Media;
 using System.IO.Packaging;
 using System.Windows.Xps.Packaging;
 using System.Windows.Controls;
-using System.Windows.Markup;
 using Table = DocumentModel.Table;
 
 namespace PaymentsTU.Document
@@ -36,17 +35,19 @@ namespace PaymentsTU.Document
 				_document.Pages.Add(content);
 			}
 
-			var package = Package.Open(stream, FileMode.Create, FileAccess.ReadWrite);
+			using (var package = Package.Open(stream, FileMode.Create, FileAccess.ReadWrite))
+			{
 
-			var documentUri = new Uri($"memorystream://{Guid.NewGuid()}.xps");
-			PackageStore.AddPackage(documentUri, package);
+				var documentUri = new Uri($"memorystream://{Guid.NewGuid()}.xps");
+				PackageStore.AddPackage(documentUri, package);
 
-			var xpsDocument = new XpsDocument(package, CompressionOption.NotCompressed, documentUri.AbsoluteUri);
-			var writer = XpsDocument.CreateXpsDocumentWriter(xpsDocument);
-			writer.Write(_document);
+				var xpsDocument = new XpsDocument(package, CompressionOption.Maximum, documentUri.AbsoluteUri);
+				var writer = XpsDocument.CreateXpsDocumentWriter(xpsDocument);
+				writer.Write(_document);
+				xpsDocument.Close();
 
-			PackageStore.RemovePackage(documentUri);
-			xpsDocument.Close();
+				PackageStore.RemovePackage(documentUri);
+			}
 		}
 
 		private IEnumerable<PageContent> GetPages(IEnumerable<ProcessingChunk> chunks)
@@ -83,11 +84,11 @@ namespace PaymentsTU.Document
 						_page = CreateNewPage();
 						_page.AddContent(p);
 					}
-					else if (artifact is DocumentModel.Table)
+					else if (artifact is Table)
 					{
 						_page = _page ?? CreateNewPage();
 
-						RenderTableContent((DocumentModel.Table)artifact, pages);
+						RenderTableContent((Table)artifact, pages);
 					}
 				}
 			}
@@ -98,22 +99,18 @@ namespace PaymentsTU.Document
 			return pages;
 		}
 
-		private void RenderTableContent(DocumentModel.Table artifact, List<PageContent> pages)
+		private void RenderTableContent(Table artifact, List<PageContent> pages)
 		{
-			var grid = new Grid();
-
-			var columns = SetColumnDefinition(grid, artifact);
-
 			if (artifact.RepeatHeader)
-				_page.OnNewColumn += (sender, args) => { ArrangeTableHeader(columns, artifact, pages); };
+				_page.OnNewColumn += (sender, args) => { ArrangeTableHeader(artifact, pages); };
 			else
 			{
-				ArrangeTableHeader(columns, artifact, pages);
+				ArrangeTableHeader(artifact, pages);
 			}
 
 			SetTableContentLayout(artifact);
 
-			ArrangeTableRows(columns, artifact, pages);
+			ArrangeTableRows(artifact, pages);
 		}
 
 		private System.Windows.Controls.TextBlock RenderParagraph(DocumentModel.Paragraph p, double? desiredWidth = null)
@@ -195,31 +192,12 @@ namespace PaymentsTU.Document
 			return page;
 		}
 
-		private IList<string> SetColumnDefinition(Grid table, DocumentModel.Table source)
-		{
-			var totalColumnWidth = 0d;
-			foreach (var w in source.ColumnsWidth)
-				totalColumnWidth += w;
-
-			var totalColumns = source.ColumnsWidth.Count;
-
-			var columnDefinitions = new List<string>(totalColumns);
-			for (var i = 0; i < source.ColumnsWidth.Count; i++)
-			{
-				var cd = AddTableColumn(table, totalColumnWidth, source.ColumnsWidth[i]);
-				columnDefinitions.Add(XamlWriter.Save(cd));
-			}
-
-			return columnDefinitions;
-		}
-
-		private Grid RenderTableRow(IEnumerable<string> columnDefinitions, Row row)
+		private Grid RenderTableRow(IEnumerable<ColumnDefinition> columnDefinitions, Row row)
 		{
 			var table = new Grid();
 			foreach (var columnDefinition in columnDefinitions)
 			{
-				var copy = XamlReader.Parse(columnDefinition) as ColumnDefinition;
-				table.ColumnDefinitions.Add(copy);
+				table.ColumnDefinitions.Add(new ColumnDefinition{Width = columnDefinition.Width});
 			}
 
 			table.RowDefinitions.Add(new RowDefinition());
@@ -231,11 +209,13 @@ namespace PaymentsTU.Document
 			return table;
 		}
 
-		private void ArrangeTableHeader(IList<string> columnDefinitions, DocumentModel.Table table, IList<PageContent> pages)
+		private void ArrangeTableHeader(Table table, IList<PageContent> pages)
 		{
+			var columns = GetColumnDefinitions(table, _page.ContentWidth);
+
 			foreach (var row in table.Header)
 			{
-				var tr = RenderTableRow(columnDefinitions, row);
+				var tr = RenderTableRow(columns, row);
 
 				if (_page.AddContent(tr)) continue;
 
@@ -269,33 +249,42 @@ namespace PaymentsTU.Document
 			_page.SetContentColumns(layoutColumns);
 		}
 
-		private void ArrangeTableRows(IList<string> columnDefinitions, DocumentModel.Table table, IList<PageContent> pages)
+		private void ArrangeTableRows(Table table, IList<PageContent> pages)
 		{
+			var columns = GetColumnDefinitions(table, _page.ContentWidth);
+
 			foreach (var row in table.Body)
 			{
-				var tr = RenderTableRow(columnDefinitions, row);
+				var tr = RenderTableRow(columns, row);
 
 				if (_page.AddContent(tr)) continue;
 
 				pages.Add(_page.GetPageContent());
 				_page = CreateNewPage();
 				if (table.RepeatHeader)
-					_page.OnNewColumn += (sender, args) => { ArrangeTableHeader(columnDefinitions, table, pages); };
+					_page.OnNewColumn += (sender, args) => { ArrangeTableHeader(table, pages); };
 
 				SetTableContentLayout(table);
 				_page.AddContent(tr);
 			}
 		}
 
-		private ColumnDefinition AddTableColumn(Grid grid, double totalColumnWidth, double columnWidth)
+		private IList<ColumnDefinition> GetColumnDefinitions(Table table, double width)
 		{
-			//var proportion = columnWidth / (_pageSize.Width - (_pageMargin.Left + _pageMargin.Right));
+			var tw = table.Width ?? width;
+			var proportion = 1d;
+			if (tw > width)
+				proportion = width / tw;
 
-			var colDefinition = new ColumnDefinition {Width = new GridLength(columnWidth, GridUnitType.Pixel)};
+			var definitions = new List<ColumnDefinition>(table.ColumnCount);
 
-			grid.ColumnDefinitions.Add(colDefinition);
+			foreach (var d in table.ColumnsWidth)
+			{
+				var cd = new ColumnDefinition { Width = new GridLength(d * proportion, GridUnitType.Pixel) };
+				definitions.Add(cd);
+			}
 
-			return colDefinition;
+			return definitions;
 		}
 
 		private void AddTableCell(Grid grid, Cell cell, int columnIndex, int rowIndex)

@@ -115,6 +115,7 @@
     <Compile Include="Document\DocumentRendererFabric.cs" />
     <Compile Include="Document\FlowDocumentRenderStrategy.cs" />
     <Compile Include="Document\PageLayout.cs" />
+    <Compile Include="Document\Utility.cs" />
     <Compile Include="Document\XpsRenderStrategy.cs" />
     <Compile Include="Lazy.cs" />
     <Compile Include="Model\Currency.cs" />

@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Text;
 using System.Windows.Input;
 
 namespace PaymentsTU.ViewModel
@@ -25,6 +24,8 @@ namespace PaymentsTU.ViewModel
 			set { _periodEnd = value; OnPropertyChanged(nameof(PeriodEnd)); }
 		}
 
+		public bool IsPrintingEnabled => _report != null && _report.IsPrintable;
+
 		public ICommand RunCommand { get; set; } = null;
 		public ICommand PrintCommand { get; set; } = null;
 
@@ -38,6 +39,7 @@ namespace PaymentsTU.ViewModel
 					return;
 				_report = value;
 				OnPropertyChanged(nameof(Report));
+				OnPropertyChanged(nameof(IsPrintingEnabled));
 				var now = DateTime.Now;
 				if (_report is ReportPaymentForYearViewModel)
 				{
@@ -61,7 +63,7 @@ namespace PaymentsTU.ViewModel
 			PeriodEnd = new DateTime(now.Year, now.Month, DateTime.DaysInMonth(now.Year, now.Month));
 
 			RunCommand = new RelayCommand(OnRunCommand, _ => PeriodStart <= PeriodEnd);
-			PrintCommand = new RelayCommand(OnPrintCommand, _ => PeriodStart <= PeriodEnd);
+			PrintCommand = new RelayCommand(OnPrintCommand, _ => _report.CanPrint);
 
 			Reports = new ObservableCollection<IReport>
 				(
@@ -85,7 +87,8 @@ namespace PaymentsTU.ViewModel
 
 		private void OnPrintCommand()
 		{
-			_report.Print();
+			if (_report.IsPrintable)
+				_report.Print();
 		}
 	}
 }

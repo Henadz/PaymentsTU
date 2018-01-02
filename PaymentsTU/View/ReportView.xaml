@@ -84,7 +84,18 @@
                         Grid.Column="1"
                         Content="Печать"
                         Command="{Binding PrintCommand}"
-                    />
+                    >
+                        <Button.Style>
+                            <Style TargetType="{x:Type Button}">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsPrintingEnabled}" Value="True">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
                 </Grid>
             </StackPanel>
         </Border>

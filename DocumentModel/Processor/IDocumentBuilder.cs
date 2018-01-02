@@ -5,6 +5,6 @@ namespace DocumentModel.Processor
 {
 	public interface IDocumentBuilder
 	{
-		void Build(Func<IEnumerable<object>> modelStrategy, Func<DocumentType, IRenderStrategy> renderFabric);
+		void Build(Func<IEnumerable<object>> modelStrategy, Func<DocumentType, Page, IRenderStrategy> renderFabric);
 	}
 }
