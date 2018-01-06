@@ -7,10 +7,11 @@ using PaymentsTU.Database;
 
 namespace PaymentsTU
 {
+	/// <inheritdoc />
 	/// <summary>
 	/// Interaction logic for App.xaml
 	/// </summary>
-	public partial class App : Application
+	public partial class App
 	{
 		public App()
 		{
@@ -20,6 +21,8 @@ namespace PaymentsTU
 		protected override void OnStartup(StartupEventArgs e)
 		{
 			base.OnStartup(e);
+
+			PortableSettings.ReadPortableSettings();
 
 			var connectionString = ConfigurationManager.ConnectionStrings["Payments"].ConnectionString;
 
@@ -34,7 +37,13 @@ namespace PaymentsTU
 			{
 				MessageBox.Show(exception.Message);
 			}
-			
+
+		}
+
+		protected override void OnExit(ExitEventArgs e)
+		{
+			PortableSettings.WritePortableSettings();
+			base.OnExit(e);
 		}
 
 		private static void InitializeCultures()
@@ -48,8 +57,7 @@ namespace PaymentsTU
 			//	Thread.CurrentThread.CurrentUICulture = new CultureInfo(Settings.Default.UICulture);
 			//}
 
-			FrameworkElement.LanguageProperty.OverrideMetadata(typeof(FrameworkElement), new FrameworkPropertyMetadata(
-				XmlLanguage.GetLanguage(CultureInfo.CurrentCulture.IetfLanguageTag)));
+			FrameworkElement.LanguageProperty.OverrideMetadata(typeof(FrameworkElement), new FrameworkPropertyMetadata(XmlLanguage.GetLanguage(CultureInfo.CurrentCulture.IetfLanguageTag)));
 		}
 	}
 }

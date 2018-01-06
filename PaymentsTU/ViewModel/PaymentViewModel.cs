@@ -6,6 +6,7 @@ using FrameworkExtend;
 using PaymentsTU.Dialogs.DialogService;
 using PaymentsTU.Dialogs.DialogView;
 using PaymentsTU.Model;
+using PaymentsTU.Properties;
 
 namespace PaymentsTU.ViewModel
 {
@@ -45,8 +46,8 @@ namespace PaymentsTU.ViewModel
 		{
 			var year = DateTime.Today.Year;
 			var month = DateTime.Today.Month;
-			_from = new DateTime(year, month, 1);
-			_to = new DateTime(year, month, DateTime.DaysInMonth(year, month));
+			_from = Settings.Default.PaymentsPeriodFrom == DateTime.MinValue ? new DateTime(year, month, 1) : Settings.Default.PaymentsPeriodFrom;
+			_to = Settings.Default.PaymentsPeriodTo == DateTime.MinValue ? new DateTime(year, month, DateTime.DaysInMonth(year, month)) : Settings.Default.PaymentsPeriodTo;
 
 			_items = new ObservableCollection<Payment>(Dal.Instance.Payments(_from, _to).OrderByDescending(x => x.DatePayment).ThenBy(x => x.FullName));
 
@@ -66,11 +67,13 @@ namespace PaymentsTU.ViewModel
 
 				ItemsDataView.Refresh();
 				ItemsDataView.MoveCurrentToPosition(_items.Count > 0 ? 0 : -1);
+
+				Settings.Default.PaymentsPeriodFrom = _from;
+				Settings.Default.PaymentsPeriodTo = _to;
 			})
 			{
 				RefreshCanExecute = () => _from <= _to
 			};
-
 		}
 
 		private void OnAdd(Payment item)

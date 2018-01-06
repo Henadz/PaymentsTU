@@ -124,6 +124,7 @@
     <Compile Include="Model\EmployeeTotalRow.cs" />
     <Compile Include="Model\PaymentMatrixCell.cs" />
     <Compile Include="Model\ViewType.cs" />
+    <Compile Include="PortableSettings.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Validation\AttributeValidator.cs" />
     <Compile Include="Validation\IDataValidation.cs" />
