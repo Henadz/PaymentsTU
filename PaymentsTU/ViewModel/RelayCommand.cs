@@ -16,10 +16,7 @@ namespace PaymentsTU.ViewModel
 
 		public RelayCommand(Action<T> action, Predicate<T> canExecute)
 		{
-			if (action == null)
-				throw new ArgumentNullException(nameof(action));
-
-			_action = action;
+			_action = action ?? throw new ArgumentNullException(nameof(action));
 			_canExecute = canExecute;
 		}
 
@@ -35,8 +32,8 @@ namespace PaymentsTU.ViewModel
 
 		public event EventHandler CanExecuteChanged
 		{
-			add { CommandManager.RequerySuggested += value; }
-			remove { CommandManager.RequerySuggested -= value; }
+			add => CommandManager.RequerySuggested += value;
+			remove => CommandManager.RequerySuggested -= value;
 		}
 	}
 
@@ -52,10 +49,7 @@ namespace PaymentsTU.ViewModel
 
 		public RelayCommand(Action action, Predicate<object> canExecute)
 		{
-			if (action == null)
-				throw new ArgumentNullException(nameof(action));
-
-			_action = action;
+			_action = action ?? throw new ArgumentNullException(nameof(action));
 			_canExecute = canExecute;
 		}
 
@@ -71,19 +65,8 @@ namespace PaymentsTU.ViewModel
 
 		public event EventHandler CanExecuteChanged
 		{
-			add { CommandManager.RequerySuggested += value; }
-			remove { CommandManager.RequerySuggested -= value; }
+			add => CommandManager.RequerySuggested += value;
+			remove => CommandManager.RequerySuggested -= value;
 		}
 	}
-
-	//public class RelayCommand : RelayCommand<object>
-	//{
-	//	public RelayCommand(Action<object> action) : base(action)
-	//	{
-	//	}
-
-	//	public RelayCommand(Action<object> action, Predicate<object> canExecute) : base(action, canExecute)
-	//	{
-	//	}
-	//}
 }

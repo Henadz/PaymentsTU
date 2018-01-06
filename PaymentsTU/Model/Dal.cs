@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Configuration;
 using System.Data.SQLite;
 using System.Text;
@@ -283,8 +282,15 @@ namespace PaymentsTU.Model
 		#endregion
 
 		#region Payments
-		internal List<Payment> Payments(long? id = null)
+		internal List<Payment> Payments(DateTime? from = null, DateTime? to = null, long? id = null)
 		{
+			var withPeriod = from.HasValue && to.HasValue;
+
+			if (from.HasValue && !to.HasValue)
+				throw new ArgumentOutOfRangeException(nameof(to), @"Parametr should be specified");
+			if (!from.HasValue && to.HasValue)
+				throw new ArgumentOutOfRangeException(nameof(from), @"Parametr should be specified");
+
 			var resultset = new List<Payment>();
 			using (var connection = new SQLiteConnection(_connectionString))
 			{
@@ -298,14 +304,24 @@ namespace PaymentsTU.Model
 				statement.AppendLine("INNER JOIN Department d ON p.DepartmentId = d.Id ");
 				statement.AppendLine("INNER JOIN PaymentType pt ON p.PaymentTypeId = pt.Id ");
 				statement.AppendLine("INNER JOIN Currency c ON p.CurrencyCode = c.DigitalCode");
+				statement.AppendLine("WHERE 1 = 1");
 
 				if (id.HasValue)
-					statement.AppendLine("WHERE p.Id = @Id");
+					statement.AppendLine("AND p.Id = @Id");
+				if (withPeriod)
+					statement.AppendLine("AND (p.DatePayment >= @DateStart AND p.DatePayment <= @DateEnd)");
 
 				using (var command = new SQLiteCommand(statement.ToString(), connection))
 				{
 					if (id.HasValue)
 						command.Parameters.AddWithValue("@Id", id.Value);
+
+					if (withPeriod)
+					{
+						command.Parameters.Add("@DateStart", DbType.DateTime).Value = from;
+						command.Parameters.Add("@DateEnd", DbType.DateTime).Value = to;
+					}
+
 					using (var reader = command.ExecuteReader())
 					{
 						while (reader.Read())
@@ -336,6 +352,11 @@ namespace PaymentsTU.Model
 			return resultset;
 		}
 
+		internal List<Payment> Payments(long id)
+		{
+			return Payments(null, null, id);
+		}
+
 		internal bool SavePayment(Payment record)
 		{
 			int result;
@@ -363,7 +384,7 @@ namespace PaymentsTU.Model
 					if (!record.Id.HasValue)
 						record.Id = connection.LastInsertRowId;
 
-					var recordData = Payments(record.Id)[0];
+					var recordData = Payments(record.Id.Value)[0];
 					record.Currency = recordData.Currency;
 					record.Department = recordData.Department;
 					record.PaymentType = recordData.PaymentType;
@@ -437,20 +458,20 @@ namespace PaymentsTU.Model
 				}
 
 				var reportStatement = new StringBuilder("SELECT ");
-				var columnID = 0;
+				var columnId = 0;
 				reportStatement.AppendLine("x.EmployeeId");
-				reportColumns.Add(new Column { ColumnName = "EmployeeId", DataType = typeof(long), Ordinal = columnID++, IsVisible = true });
+				reportColumns.Add(new Column { ColumnName = "EmployeeId", DataType = typeof(long), Ordinal = columnId++, IsVisible = true });
 				reportStatement.AppendLine(",IFNULL(e.Surname,'') || ' ' || IFNULL(e.Name,'') || ' ' || IFNULL(e.Patronimic,'')");
-				reportColumns.Add(new Column { ColumnName = "Surname", Caption = "Ф.И.О.", DataType = typeof(string), Ordinal = columnID++, IsVisible = true });
+				reportColumns.Add(new Column { ColumnName = "Surname", Caption = "Ф.И.О.", DataType = typeof(string), Ordinal = columnId++, IsVisible = true });
 				reportStatement.AppendLine(",x.DepartmentId");
-				reportColumns.Add(new Column { ColumnName = "DepartmentId", DataType = typeof(long), Ordinal = columnID++, IsVisible = false });
+				reportColumns.Add(new Column { ColumnName = "DepartmentId", DataType = typeof(long), Ordinal = columnId++, IsVisible = false });
 				reportStatement.AppendLine(",d.Name as 'Department'");
-				reportColumns.Add(new Column { ColumnName = "Department", DataType = typeof(string), Ordinal = columnID++ });
+				reportColumns.Add(new Column { ColumnName = "Department", DataType = typeof(string), Ordinal = columnId++ });
 				foreach (var t in crossTabColumn)
 				{
 					var columnName = $",x.PaymentType_{t.Id}";
 					reportStatement.AppendLine(columnName);
-					reportColumns.Add(new Column { ColumnName = columnName.TrimStart(',', 'x','.'), Caption = t.Name, DataType = typeof(object), Ordinal = columnID++ });
+					reportColumns.Add(new Column { ColumnName = columnName.TrimStart(',', 'x','.'), Caption = t.Name, DataType = typeof(object), Ordinal = columnId++ });
 				}
 				reportStatement.AppendLine("FROM");
 				reportStatement.AppendLine("(SELECT");
@@ -482,7 +503,8 @@ namespace PaymentsTU.Model
 							var row = new List<Cell>(reportColumns.Count);
 							for (var c = 0; c < reader.FieldCount; c++)
 							{
-								var column = reportColumns.FirstOrDefault(x => x.Ordinal == c);
+								var current = c;
+								var column = reportColumns.FirstOrDefault(x => x.Ordinal == current);
 								if (column == null)
 									continue;
 
@@ -494,7 +516,7 @@ namespace PaymentsTU.Model
 
 								row.Add(new Cell(type) {
 									ColumnId = column.Ordinal,
-									Value = reader.IsDBNull(c) ? null : reader.GetValue(c)
+									Value = reader.IsDBNull(current) ? null : reader.GetValue(current)
 								});
 							}
 							reportRows.Add(new Row {RowId = rowid, Cells = row });

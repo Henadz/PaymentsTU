@@ -13,41 +13,64 @@ namespace PaymentsTU.ViewModel
 	{
 		public string Title => "Выплаты";
 
-		private ObservableCollection<Payment> _items;
-		private CollectionViewSource _itemsView = null;
+		private readonly ObservableCollection<Payment> _items;
 
 		public DataNavigationBarViewModel<Payment> NavigationBar { get; private set; }
 
-		public ObservableCollection<Payment> Items
+		private DateTime _from;
+		public DateTime From
 		{
-			get { return _items; }
+			get => _from;
 			set
 			{
-				_items = value;
-				_itemsView = new CollectionViewSource();
-				_itemsView.Source = _items;
-				OnPropertyChanged(nameof(ItemsDataView));
+				_from = value;
+				OnPropertyChanged(nameof(From));
 			}
 		}
 
-		public ListCollectionView ItemsDataView => (ListCollectionView)_itemsView.View;
+		private DateTime _to;
+		public DateTime To
+		{
+			get => _to;
+			set
+			{
+				_to = value;
+				OnPropertyChanged(nameof(To));
+			}
+		}
+
+		public ListCollectionView ItemsDataView { get; }
 
 		public PaymentViewModel()
 		{
-			Items = new ObservableCollection<Payment>(Dal.Instance.Payments().OrderByDescending(x => x.DatePayment).ThenBy(x => x.FullName));
+			var year = DateTime.Today.Year;
+			var month = DateTime.Today.Month;
+			_from = new DateTime(year, month, 1);
+			_to = new DateTime(year, month, DateTime.DaysInMonth(year, month));
+
+			_items = new ObservableCollection<Payment>(Dal.Instance.Payments(_from, _to).OrderByDescending(x => x.DatePayment).ThenBy(x => x.FullName));
+
+			ItemsDataView = (ListCollectionView)CollectionViewSource.GetDefaultView(_items);
 			ItemsDataView.Culture = CultureInfo.CurrentCulture;
-			ItemsDataView.MoveCurrentToPosition(Items.Count > 0 ? 0 : -1);
+			ItemsDataView.MoveCurrentToPosition(_items.Count > 0 ? 0 : -1);
+
 			//TODO: refactoring viewmodel for navigation bar
 			NavigationBar = new DataNavigationBarViewModel<Payment>(ItemsDataView, OnAdd, OnDelete, OnEdit, () =>
 			{
-				Items.Clear();
-				foreach (var payment in Dal.Instance.Payments())
+				_items.Clear();
+				foreach (var payment in Dal.Instance.Payments(_from, _to).OrderByDescending(x => x.DatePayment)
+					.ThenBy(x => x.FullName))
 				{
-					Items.Add(payment);
+					_items.Add(payment);
 				}
+
 				ItemsDataView.Refresh();
-				ItemsDataView.MoveCurrentToPosition(Items.Count > 0 ? 0 : -1);
-			});
+				ItemsDataView.MoveCurrentToPosition(_items.Count > 0 ? 0 : -1);
+			})
+			{
+				RefreshCanExecute = () => _from <= _to
+			};
+
 		}
 
 		private void OnAdd(Payment item)
@@ -63,7 +86,7 @@ namespace PaymentsTU.ViewModel
 			{
 				if (Dal.Instance.SavePayment(p))
 				{
-					_items.Add(p);
+					_items.Insert(0, p);
 					ItemsDataView.Refresh();
 					ItemsDataView.MoveCurrentTo(p);
 					return true;
@@ -78,11 +101,11 @@ namespace PaymentsTU.ViewModel
 
 		private void OnDelete(Payment item)
 		{
-			var vm = new ConfirmDialogViewModel($"Вы действительно хотите удалить выплату?");
+			var vm = new ConfirmDialogViewModel("Вы действительно хотите удалить выплату?");
 			var result = DialogService.OpenDialog(vm);
 			if (result == DialogResult.Yes)
 				if (Dal.Instance.DeletePayment(item))
-					Items.Remove(item);
+					_items.Remove(item);
 		}
 
 		private void OnEdit(Payment item)
@@ -92,8 +115,8 @@ namespace PaymentsTU.ViewModel
 			{
 				if (Dal.Instance.SavePayment(p))
 				{
-					var index = Items.IndexOf(item);
-					Items[index] = editItem;
+					var index = _items.IndexOf(item);
+					_items[index] = editItem;
 					ItemsDataView.Refresh();
 					return true;
 				}

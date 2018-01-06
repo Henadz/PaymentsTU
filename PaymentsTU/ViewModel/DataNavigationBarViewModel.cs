@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Data;
 using System.Windows.Input;
+using FrameworkExtend;
 
 namespace PaymentsTU.ViewModel
 {
@@ -9,6 +10,8 @@ namespace PaymentsTU.ViewModel
 		private readonly CollectionView _view;
 
 		public T CurrentItem => (T)_view.CurrentItem;
+
+		public Func<bool> RefreshCanExecute { get; set; } = () => true;
 
 		public DataNavigationBarViewModel(CollectionView view, Action<T> newCommand, Action<T> deleteCommand, Action<T> editCommand, Action refreshCommand)
 		{
@@ -27,7 +30,7 @@ namespace PaymentsTU.ViewModel
 			NewCommand = newCommand == null ? new RelayCommand<T>(o => { }, _ => false) : new RelayCommand<T>(newCommand, _ => _view != null);
 			DeleteCommand = deleteCommand == null ? new RelayCommand<T>(o => { }, _ => false) : new RelayCommand<T>(deleteCommand, _ => _view != null && !_view.IsEmpty && !_view.IsCurrentAfterLast && !_view.IsCurrentBeforeFirst);
 			EditCommand = editCommand == null ? new RelayCommand<T>(o => { }, _ => false) : new RelayCommand<T>(editCommand, _ => _view != null && !_view.IsEmpty && !_view.IsCurrentAfterLast && !_view.IsCurrentBeforeFirst);
-			RefreshCommand = refreshCommand == null ? new RelayCommand(() => { }, _ => false) : new RelayCommand(refreshCommand, _ => _view != null);
+			RefreshCommand = refreshCommand == null ? new RelayCommand(() => { }, _ => false) : new RelayCommand(refreshCommand, _ => _view != null && RefreshCanExecute());
 		}
 
 		public ICommand FirstCommand { get; private set; }

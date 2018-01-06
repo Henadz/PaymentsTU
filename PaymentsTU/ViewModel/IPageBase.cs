@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace PaymentsTU.ViewModel
+﻿namespace PaymentsTU.ViewModel
 {
     public interface IPageBase
     {
